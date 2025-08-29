@@ -3,102 +3,293 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PlayZone</title>
+    <title>PlayZone - Sleek</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #00A8E8; /* Cool Cyan */
+            --dark-bg: #0A0A0A;
+            --card-bg: rgba(28, 28, 28, 0.7); /* Semi-transparent for glassmorphism */
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-color: #E0E0E0;
+            --secondary-text-color: #B0B0B0;
+        }
+
         body {
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Poppins', sans-serif;
             text-align: center;
-            background: #181818;
-            color: #fff;
+            background: linear-gradient(135deg, var(--dark-bg), #121212, #050505);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            color: var(--text-color);
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         h1 {
-            margin: 40px 0 20px;
+            margin: 40px 0 30px;
             font-weight: 700;
-            color: #A1FF2A;
-            font-size: 2.5em;
+            color: var(--primary-color);
+            font-size: 3.5em;
+            text-shadow: 0 0 15px var(--primary-color), 0 0 30px rgba(0, 168, 232, 0.4);
+            letter-spacing: 2px;
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: fadeInTop 1s ease-out forwards 0.5s;
         }
+
+        @keyframes fadeInTop {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .games {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
             padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
+            max-width: 1400px;
+            margin: 0 auto 50px;
+            perspective: 1000px;
         }
+
+        .card-wrapper {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInBottom 0.8s ease-out forwards;
+        }
+
+        .card-wrapper:nth-child(1) { animation-delay: 0.7s; }
+        .card-wrapper:nth-child(2) { animation-delay: 0.8s; }
+        .card-wrapper:nth-child(3) { animation-delay: 0.9s; }
+        .card-wrapper:nth-child(4) { animation-delay: 1.0s; }
+        .card-wrapper:nth-child(5) { animation-delay: 1.1s; }
+        .card-wrapper:nth-child(6) { animation-delay: 1.2s; }
+        .card-wrapper:nth-child(7) { animation-delay: 1.3s; }
+        .card-wrapper:nth-child(8) { animation-delay: 1.4s; }
+        .card-wrapper:nth-child(9) { animation-delay: 1.5s; }
+        .card-wrapper:nth-child(10) { animation-delay: 1.6s; }
+
+
+        @keyframes fadeInBottom {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .card {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 30px;
-            background: #222;
-            color: #fff;
-            border-radius: 12px;
+            padding: 40px 20px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 18px;
             text-decoration: none;
-            font-size: 1.2em;
-            font-weight: 400;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--text-color);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, border-color 0.2s ease-out;
+            position: relative;
+            overflow: hidden;
+            will-change: transform, box-shadow;
         }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: inherit;
+            pointer-events: none;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 168, 232, 0.3) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease-out;
+            z-index: 0;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            transform: scale(1.03);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), 0 0 30px var(--primary-color);
+            border-color: var(--primary-color);
         }
+
         .card .icon {
-            font-size: 4em;
-            color: #A1FF2A;
-            margin-bottom: 10px;
+            font-size: 4.5em;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            line-height: 1;
+            transition: transform 0.3s ease-out, filter 0.3s ease-out;
+            z-index: 1;
+        }
+
+        /* Specific icon animations on hover */
+        .card:hover .icon.snake { animation: snakePulse 1.5s infinite; }
+        .card:hover .icon.tictactoe { transform: scale(1.2); filter: drop-shadow(0 0 8px var(--primary-color)); }
+        .card:hover .icon.memory { transform: rotateY(180deg); }
+        .card:hover .icon.flappy { animation: flappyWings 0.5s infinite alternate; }
+        .card:hover .icon.pong { transform: scaleX(1.3); }
+        .card:hover .icon.breakout { transform: scale(1.1); filter: drop-shadow(0 0 8px var(--primary-color)); }
+        .card:hover .icon.hangman { transform: scale(1.1); filter: drop-shadow(0 0 8px var(--primary-color)); }
+        .card:hover .icon.quiz { transform: rotate(15deg); }
+        .card:hover .icon.rockpaperscissors { animation: rockPaperScissors 0.5s infinite alternate; }
+        .card:hover .icon.whackamole { transform: translateY(-15px); }
+
+
+        @keyframes snakePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes flappyWings {
+            0% { transform: translateY(-5px) rotate(-10deg); }
+            100% { transform: translateY(5px) rotate(10deg); }
+        }
+
+        @keyframes rockPaperScissors {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(15deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            h1 { font-size: 3em; }
+            .games { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; }
+            .card { padding: 30px 15px; font-size: 1.1em; }
+            .card .icon { font-size: 4em; }
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.2em; margin: 30px 0 20px; }
+            .games { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; }
+            .card { padding: 25px 10px; font-size: 1em; }
+            .card .icon { font-size: 3.5em; }
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 1.8em; margin: 20px 0 15px; }
+            .games { grid-template-columns: 1fr; gap: 15px; padding: 15px; }
+            .card { padding: 20px; font-size: 1.1em; }
+            .card .icon { font-size: 4em; }
         }
     </style>
 </head>
 <body>
     <h1>🎮 PlayZone 🎮</h1>
-    <div class="games">
-        <a href="snake/index.html" class="card">
-            <span class="icon">🐍</span>
-            Snake Game
-        </a>
-        <a href="tic-tac-toe/index.html" class="card">
-            <span class="icon">❌</span>
-            Tic Tac Toe
-        </a>
-        <a href="memory/index.html" class="card">
-            <span class="icon">🧠</span>
-            Memory Game
-        </a>
-        <a href="flappy/index.html" class="card">
-            <span class="icon">🐦</span>
-            Flappy Bird
-        </a>
-        <a href="pong/index.html" class="card">
-            <span class="icon">🎾</span>
-            Pong
-        </a>
-        <a href="breakout/index.html" class="card">
-            <span class="icon">🧱</span>
-            Breakout
-        </a>
-        <a href="hangman/index.html" class="card">
-            <span class="icon">🤔</span>
-            Hangman
-        </a>
-        <a href="quiz/index.html" class="card">
-            <span class="icon">❓</span>
-            Quiz Game
-        </a>
-        <a href="rock-paper-scissors/index.html" class="card">
-            <span class="icon">✊</span>
-            Rock Paper Scissors
-        </a>
-        <a href="whack-a-mole/index.html" class="card">
-            <span class="icon">🦔</span>
-            Whack a Mole
-        </a>
+    <div class="games" id="game-cards">
+        <div class="card-wrapper">
+            <a href="snake/index.html" class="card">
+                <span class="icon snake">🐍</span>
+                Snake Game
+            </a>
+        </div>
+        <div class="card-wrapper">
+            <a href="tic-tac-toe/index.html" class="card">
+                <span class="icon tictactoe">❌</span>
+                Tic Tac Toe
+            </a>
+        </div>
+        <div class="card-wrapper">
+            <a href="memory/index.html" class="card">
+                <span class="icon memory">🧠</span>
+                Memory Game
+            </a>
+        </div>
+        <div class="card-wrapper">
+            <a href="flappy/index.html" class="card">
+                <span class="icon flappy">🐦</span>
+                Flappy Bird
+            </a>
+        </div>
+        <div class="card-wrapper">
+            <a href="pong/index.html" class="card">
+                <span class="icon pong">🎾</span>
+                Pong
+            </a>
+        </div>
+        <div class="card-wrapper">
+            <a href="breakout/index.html" class="card">
+                <span class="icon breakout">🧱</span>
+                Breakout
+            </a>
+        </div>
+        <div class="card-wrapper">
+            <a href="hangman/index.html" class="card">
+                <span class="icon hangman">🤔</span>
+                Hangman
+            </a>
+        </div>
+        <div class="card-wrapper">
+            <a href="quiz/index.html" class="card">
+                <span class="icon quiz">❓</span>
+                Quiz Game
+            </a>
+        </div>
+        <div class="card-wrapper">
+            <a href="rock-paper-scissors/index.html" class="card">
+                <span class="icon rockpaperscissors">✊</span>
+                Rock Paper Scissors
+            </a>
+        </div>
+        <div class="card-wrapper">
+            <a href="whack-a-mole/index.html" class="card">
+                <span class="icon whackamole">🦔</span>
+                Whack a Mole
+            </a>
+        </div>
     </div>
+
+    <script>
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                const rotateX = ((y - centerY) / centerY) * 10;
+                const rotateY = ((centerX - x) / centerX) * 10;
+
+                card.style.transform = `scale(1.03) perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+                card.style.setProperty('--mouse-x', `${(x / rect.width) * 100}%`);
+                card.style.setProperty('--mouse-y', `${(y / rect.height) * 100}%`);
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'scale(1.0)';
+                card.style.setProperty('--mouse-x', '50%');
+                card.style.setProperty('--mouse-y', '50%');
+            });
+        });
+    </script>
 </body>
 </html>
