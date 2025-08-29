@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlayZone - Flappy Bird</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1>Flappy Bird</h1>
+    </header>
+
+    <main class="game-container">
+        <a href="index.html" class="back-button">Back to Home</a>
+        <div class="score-board">
+            <h2>Score: <span id="score">0</span></h2>
+        </div>
+        <div class="game-area">
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+        </div>
+        <div class="instructions">
+            <h2>Instructions</h2>
+            <p>Click or tap to make the bird flap. Navigate through the pipes without hitting them or the ground. Get a point for each pipe you pass!</p>
+        </div>
+    </main>
+
+    <script>
+        window.onload = function() {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            const scoreDisplay = document.getElementById('score');
+
+            // Game variables
+            let score = 0;
+            let bird = { x: 50, y: canvas.height / 2, width: 40, height: 30, velocity: 0, gravity: 0.3, jump: -6 };
+            let pipes = [];
+            let pipeGap = 150;
+            let pipeWidth = 60;
+            let pipeInterval = 1500; // milliseconds
+            let gameLoopInterval;
+            let isGameOver = false;
+
+            // Draw the bird
+            function drawBird() {
+                ctx.fillStyle = '#ffd700'; /* A golden yellow color */
+                ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
+            }
+
+            // Draw the pipes
+            function drawPipes() {
+                ctx.fillStyle = '#2ecc71'; /* A vibrant green */
+                for (let i = 0; i < pipes.length; i++) {
+                    const p = pipes[i];
+                    ctx.fillRect(p.x, 0, pipeWidth, p.top);
+                    ctx.fillRect(p.x, p.top + pipeGap, pipeWidth, canvas.height - (p.top + pipeGap));
+                }
+            }
+
+            // Update game state
+            function update() {
+                if (isGameOver) {
+                    return;
+                }
+
+                // Apply gravity to the bird
+                bird.velocity += bird.gravity;
+                bird.y += bird.velocity;
+
+                // Check for ground collision
+                if (bird.y + bird.height > canvas.height || bird.y < 0) {
+                    gameOver();
+                    return;
+                }
+
+                // Move and draw pipes
+                for (let i = pipes.length - 1; i >= 0; i--) {
+                    const p = pipes[i];
+                    p.x -= 2; // Pipe speed
+
+                    // Check for pipe passage
+                    if (p.x + pipeWidth < bird.x && !p.scored) {
+                        score++;
+                        scoreDisplay.textContent = score;
+                        p.scored = true;
+                    }
+
+                    // Check for collision with pipes
+                    if (
+                        bird.x < p.x + pipeWidth &&
+                        bird.x + bird.width > p.x &&
+                        (bird.y < p.top || bird.y + bird.height > p.top + pipeGap)
+                    ) {
+                        gameOver();
+                        return;
+                    }
+                    
+                    // Remove pipes that are off-screen
+                    if (p.x + pipeWidth < 0) {
+                        pipes.splice(i, 1);
+                    }
+                }
+
+                // Clear canvas
+                ctx.fillStyle = '#111';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                drawBird();
+                drawPipes();
+            }
+
+            // Game over logic
+            function gameOver() {
+                isGameOver = true;
+                clearInterval(gameLoopInterval);
+                ctx.fillStyle = '#fff';
+                ctx.font = '48px Fredoka';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('Game Over', canvas.width / 2, canvas.height / 2);
+            }
+
+            // Handle bird jump
+            function flap() {
+                if (!isGameOver) {
+                    bird.velocity = bird.jump;
+                }
+            }
+            
+            // Generate a new pipe pair
+            function generatePipe() {
+                const minHeight = 50;
+                const maxHeight = canvas.height - pipeGap - minHeight;
+                const topPipeHeight = Math.floor(Math.random() * (maxHeight - minHeight + 1)) + minHeight;
+                pipes.push({
+                    x: canvas.width,
+                    top: topPipeHeight,
+                    scored: false
+                });
+            }
+
+            // Start the game
+            function startGame() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === ' ' || e.key === 'ArrowUp') {
+                        flap();
+                    }
+                });
+                canvas.addEventListener('mousedown', flap);
+                canvas.addEventListener('touchstart', flap);
+                
+                gameLoopInterval = setInterval(update, 1000 / 60); // 60 FPS
+                setInterval(generatePipe, pipeInterval);
+            }
+
+            startGame();
+        }
+    </script>
+</body>
+</html>
