@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlayZone</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /*
+         * Site-wide styles for PlayZone
+         * This file contains common styles for the entire website.
+         */
+        :root {
+            --bg-color: #0b0b0b;
+            --primary-color: #2e8b57;
+            --secondary-color: #1a1a1a;
+            --text-color: #f0f0f0;
+            --card-bg: #1c1c1c;
+            --hover-color: #3cb371;
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        header {
+            text-align: center;
+            padding: 2rem;
+            border-bottom: 2px solid var(--secondary-color);
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        header .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        header .logo i {
+            font-size: 3rem;
+            color: var(--text-color);
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 0;
+            list-style: none;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            text-align: center;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            margin: 0;
+        }
+
+        /* Common Styles for Game Pages */
+        .game-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--secondary-color);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .game-header h2 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .instructions-box {
+            background: var(--bg-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid var(--primary-color);
+        }
+
+        .instructions-box p {
+            margin: 0;
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background-color: var(--hover-color);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <i class="fas fa-gamepad"></i>
+            <h1>PlayZone</h1>
+        </div>
+        <p>A collection of classic games, all in one place!</p>
+    </header>
+
+    <main class="game-grid">
+        <!-- Beginner Games -->
+        <a href="games/rock-paper-scissors/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-hand-rock"></i></div>
+            <h3 class="card-title">Rock Paper Scissors</h3>
+        </a>
+        <a href="games/tic-tac-toe/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-times"></i><i class="fas fa-circle"></i></div>
+            <h3 class="card-title">Tic-Tac-Toe</h3>
+        </a>
+        <a href="games/number-guessing/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-question"></i></div>
+            <h3 class="card-title">Number Guessing</h3>
+        </a>
+        <a href="games/coin-toss/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-coins"></i></div>
+            <h3 class="card-title">Coin Toss</h3>
+        </a>
+        <a href="games/dice-roller/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-dice"></i></div>
+            <h3 class="card-title">Dice Roller</h3>
+        </a>
+        <a href="games/quiz/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-pen-nib"></i></div>
+            <h3 class="card-title">Quiz</h3>
+        </a>
+        <a href="games/typing-test/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-keyboard"></i></div>
+            <h3 class="card-title">Typing Test</h3>
+        </a>
+        <a href="games/color-guessing/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-palette"></i></div>
+            <h3 class="card-title">Color Guessing</h3>
+        </a>
+        <a href="games/whack-a-mole/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-hammer"></i></div>
+            <h3 class="card-title">Whack-a-Mole</h3>
+        </a>
+
+        <!-- Medium Games -->
+        <a href="games/memory-cards/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-brain"></i></div>
+            <h3 class="card-title">Memory Cards</h3>
+        </a>
+        <a href="games/hangman/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-gavel"></i></div>
+            <h3 class="card-title">Hangman</h3>
+        </a>
+        <a href="games/connect-four/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-grip-horizontal"></i></div>
+            <h3 class="card-title">Connect Four</h3>
+        </a>
+        <a href="games/simon-says/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-lightbulb"></i></div>
+            <h3 class="card-title">Simon Says</h3>
+        </a>
+        <a href="games/sliding-puzzle/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-th-large"></i></div>
+            <h3 class="card-title">Sliding Puzzle</h3>
+        </a>
+        <a href="games/minesweeper/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-bomb"></i></div>
+            <h3 class="card-title">Minesweeper</h3>
+        </a>
+        <a href="games/sudoku/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-hashtag"></i></div>
+            <h3 class="card-title">Sudoku</h3>
+        </a>
+        <a href="games/word-search/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-search"></i></div>
+            <h3 class="card-title">Word Search</h3>
+        </a>
+        <a href="games/tower-of-hanoi/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-cube"></i></div>
+            <h3 class="card-title">Tower of Hanoi</h3>
+        </a>
+
+        <!-- Arcade Games -->
+        <a href="games/snake/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-snake"></i></div>
+            <h3 class="card-title">Snake</h3>
+        </a>
+        <a href="games/flappy-bird/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-bird"></i></div>
+            <h3 class="card-title">Flappy Bird</h3>
+        </a>
+        <a href="games/breakout/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-square-full"></i></div>
+            <h3 class="card-title">Breakout</h3>
+        </a>
+        <a href="games/pong/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-table-tennis"></i></div>
+            <h3 class="card-title">Pong</h3>
+        </a>
+        <a href="games/space-invaders/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-rocket"></i></div>
+            <h3 class="card-title">Space Invaders</h3>
+        </a>
+        <a href="games/asteroids/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-meteor"></i></div>
+            <h3 class="card-title">Asteroids</h3>
+        </a>
+        <a href="games/helicopter/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-helicopter"></i></div>
+            <h3 class="card-title">Helicopter Game</h3>
+        </a>
+        <a href="games/car-racing/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-car-side"></i></div>
+            <h3 class="card-title">Car Racing</h3>
+        </a>
+        <a href="games/platformer/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-person-running"></i></div>
+            <h3 class="card-title">Platformer</h3>
+        </a>
+
+        <!-- Advanced Games -->
+        <a href="games/chess/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-chess-knight"></i></div>
+            <h3 class="card-title">Chess</h3>
+        </a>
+        <a href="games/checkers/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-chess-pawn"></i></div>
+            <h3 class="card-title">Checkers</h3>
+        </a>
+        <a href="games/ludo/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-dice-one"></i></div>
+            <h3 class="card-title">Ludo</h3>
+        </a>
+        <a href="games/reversi/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-yin-yang"></i></div>
+            <h3 class="card-title">Reversi</h3>
+        </a>
+        <a href="games/rpg-adventure/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-hat-wizard"></i></div>
+            <h3 class="card-title">RPG Adventure</h3>
+        </a>
+        <a href="games/shooter-2d/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-crosshairs"></i></div>
+            <h3 class="card-title">2D Shooter</h3>
+        </a>
+        <a href="games/physics-balls/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-billiards"></i></div>
+            <h3 class="card-title">Physics Balls</h3>
+        </a>
+
+        <!-- Extra Games -->
+        <a href="games/reaction-test/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-bolt"></i></div>
+            <h3 class="card-title">Reaction Test</h3>
+        </a>
+        <a href="games/maze/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-map-marked-alt"></i></div>
+            <h3 class="card-title">Maze Generator</h3>
+        </a>
+        <a href="games/catch-object/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-basket-shopping"></i></div>
+            <h3 class="card-title">Catch Object</h3>
+        </a>
+        <a href="games/typing-attack/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-spell-check"></i></div>
+            <h3 class="card-title">Typing Attack</h3>
+        </a>
+        <a href="games/cps-counter/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-mouse-pointer"></i></div>
+            <h3 class="card-title">CPS Counter</h3>
+        </a>
+        <a href="games/2048/index.html" class="game-card">
+            <div class="card-icon">2048</div>
+            <h3 class="card-title">2048</h3>
+        </a>
+        <a href="games/lights-out/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-lightbulb-off"></i></div>
+            <h3 class="card-title">Lights Out</h3>
+        </a>
+        <a href="games/math-quiz/index.html" class="game-card">
+            <div class="card-icon"><i class="fas fa-calculator"></i></div>
+            <h3 class="card-title">Math Quiz</h3>
+        </a>
+    </main>
+</body>
+</html>
