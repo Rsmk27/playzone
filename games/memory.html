@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlayZone - Memory Card Flip</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Specific CSS for the Memory game */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 10px;
+            width: 380px;
+            height: 380px;
+            perspective: 1000px;
+            margin: 20px auto;
+        }
+
+        .card {
+            background: #333;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+            cursor: pointer;
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            border-radius: 8px;
+        }
+
+        .card-back {
+            background: #3498db;
+            color: #fff;
+            transform: rotateY(0deg);
+        }
+
+        .card-front {
+            background: #fff;
+            transform: rotateY(180deg);
+            color: #1a1a1a;
+        }
+
+        .card.matched {
+            box-shadow: 0 0 15px 5px #2ecc71;
+            cursor: default;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Memory Card Flip</h1>
+    </header>
+
+    <main class="game-container">
+        <a href="index.html" class="back-button">Back to Home</a>
+        <div class="score-board">
+            <h2>Matches: <span id="score">0</span></h2>
+        </div>
+        <div class="game-area">
+            <div class="grid-container" id="gameGrid"></div>
+        </div>
+        <div class="instructions">
+            <h2>Instructions</h2>
+            <p>Click on a card to flip it. Find matching pairs to make them disappear. Find all pairs to win!</p>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const grid = document.getElementById('gameGrid');
+            const scoreDisplay = document.getElementById('score');
+            
+            const cardEmojis = ['🍎', '🍇', '🍉', '🍊', '🍌', '🍍', '🍓', '🍒'];
+            let cards = [...cardEmojis, ...cardEmojis];
+            let flippedCards = [];
+            let matchedPairs = 0;
+            let canFlip = true;
+            
+            // Shuffle the cards
+            function shuffleCards() {
+                for (let i = cards.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [cards[i], cards[j]] = [cards[j], cards[i]];
+                }
+            }
+
+            // Create the card elements
+            function createBoard() {
+                shuffleCards();
+                grid.innerHTML = '';
+                cards.forEach((emoji, index) => {
+                    const card = document.createElement('div');
+                    card.classList.add('card');
+                    card.dataset.emoji = emoji;
+                    card.dataset.index = index;
+
+                    const cardBack = document.createElement('div');
+                    cardBack.classList.add('card-face', 'card-back');
+                    cardBack.textContent = '?';
+
+                    const cardFront = document.createElement('div');
+                    cardFront.classList.add('card-face', 'card-front');
+                    cardFront.textContent = emoji;
+
+                    card.appendChild(cardBack);
+                    card.appendChild(cardFront);
+                    
+                    card.addEventListener('click', flipCard);
+                    grid.appendChild(card);
+                });
+            }
+
+            // Handle card flipping logic
+            function flipCard(event) {
+                if (!canFlip) return;
+                const clickedCard = event.currentTarget;
+                
+                if (flippedCards.length < 2 && !clickedCard.classList.contains('flipped')) {
+                    clickedCard.classList.add('flipped');
+                    flippedCards.push(clickedCard);
+                }
+
+                if (flippedCards.length === 2) {
+                    canFlip = false;
+                    setTimeout(checkForMatch, 1000);
+                }
+            }
+
+            // Check if the two flipped cards match
+            function checkForMatch() {
+                const [card1, card2] = flippedCards;
+                if (card1.dataset.emoji === card2.dataset.emoji) {
+                    // It's a match!
+                    card1.classList.add('matched');
+                    card2.classList.add('matched');
+                    card1.removeEventListener('click', flipCard);
+                    card2.removeEventListener('click', flipCard);
+                    
+                    matchedPairs++;
+                    scoreDisplay.textContent = matchedPairs;
+                    
+                    if (matchedPairs === cardEmojis.length) {
+                        setTimeout(() => alert('You won!'), 500);
+                    }
+                } else {
+                    // No match, flip back
+                    card1.classList.remove('flipped');
+                    card2.classList.remove('flipped');
+                }
+                
+                flippedCards = [];
+                canFlip = true;
+            }
+
+            createBoard();
+        });
+    </script>
+</body>
+</html>
