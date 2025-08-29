@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlayZone - Rock Paper Scissors</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Specific CSS for the RPS game */
+        .choice-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .choice-button {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem 2rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            border-radius: 10px;
+            border: 2px solid var(--accent-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .choice-button:hover {
+            transform: scale(1.1);
+            background-color: var(--accent-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .results {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .result-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            min-height: 2.5rem;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .player-score, .computer-score {
+            background-color: #333;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Rock Paper Scissors</h1>
+    </header>
+
+    <main class="game-container">
+        <a href="index.html" class="back-button">Back to Home</a>
+        <div class="instructions">
+            <h2>Instructions</h2>
+            <p>Choose your weapon: Rock, Paper, or Scissors. Your choice will be compared against the computer's random choice. Can you win?</p>
+        </div>
+        <div class="game-area">
+            <div class="choice-buttons">
+                <button class="choice-button" data-choice="rock">✊ Rock</button>
+                <button class="choice-button" data-choice="paper">✋ Paper</button>
+                <button class="choice-button" data-choice="scissors">✌️ Scissors</button>
+            </div>
+            <div class="results">
+                <p>Your Choice: <span id="playerChoice"></span></p>
+                <p>Computer's Choice: <span id="computerChoice"></span></p>
+                <div class="result-text" id="result">Choose your move to begin!</div>
+            </div>
+            <div class="score-board">
+                <div class="player-score">Player: <span id="playerScore">0</span></div>
+                <div class="computer-score">Computer: <span id="computerScore">0</span></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const choiceButtons = document.querySelectorAll('.choice-button');
+        const playerChoiceDisplay = document.getElementById('playerChoice');
+        const computerChoiceDisplay = document.getElementById('computerChoice');
+        const resultDisplay = document.getElementById('result');
+        const playerScoreDisplay = document.getElementById('playerScore');
+        const computerScoreDisplay = document.getElementById('computerScore');
+        
+        const choices = ['rock', 'paper', 'scissors'];
+        const outcomeEmojis = {
+            'win': '🎉',
+            'lose': '💔',
+            'draw': '🤝'
+        };
+
+        let playerScore = 0;
+        let computerScore = 0;
+        
+        // Add event listeners to each button
+        choiceButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const playerChoice = button.getAttribute('data-choice');
+                const computerChoice = choices[Math.floor(Math.random() * choices.length)];
+                
+                // Display choices
+                playerChoiceDisplay.textContent = playerChoice.toUpperCase();
+                computerChoiceDisplay.textContent = computerChoice.toUpperCase();
+                
+                // Determine the winner
+                let result = '';
+                if (playerChoice === computerChoice) {
+                    result = 'draw';
+                } else if (
+                    (playerChoice === 'rock' && computerChoice === 'scissors') ||
+                    (playerChoice === 'paper' && computerChoice === 'rock') ||
+                    (playerChoice === 'scissors' && computerChoice === 'paper')
+                ) {
+                    result = 'win';
+                    playerScore++;
+                } else {
+                    result = 'lose';
+                    computerScore++;
+                }
+                
+                // Update results and scores
+                if (result === 'win') {
+                    resultDisplay.textContent = `You Win! ${outcomeEmojis.win}`;
+                } else if (result === 'lose') {
+                    resultDisplay.textContent = `You Lose! ${outcomeEmojis.lose}`;
+                } else {
+                    resultDisplay.textContent = `It's a Draw! ${outcomeEmojis.draw}`;
+                }
+
+                playerScoreDisplay.textContent = playerScore;
+                computerScoreDisplay.textContent = computerScore;
+            });
+        });
+    </script>
+</body>
+</html>
