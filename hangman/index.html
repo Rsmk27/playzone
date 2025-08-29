@@ -1,25 +1,223 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hangman</title>
-  <style>
-    body { font-family: Arial, sans-serif; display: flex; flex-direction: column;
-           align-items: center; justify-content: center; background: #111; color: #fff; height: 100vh; margin: 0; }
-    h1 { margin-bottom: 20px; }
-    canvas { border: 2px solid #fff; background: #000; }
-    a { margin-top: 20px; color: #4caf50; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangman Game</title>
+    <style>
+        body {
+            background-color: #0A0A0A;
+            color: #E0E0E0;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .container {
+            background-color: #1C1C1C;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 168, 232, 0.2);
+            max-width: 800px;
+            width: 90%;
+            border: 1px solid #00A8E8;
+        }
+        h1 {
+            color: #00A8E8;
+            text-shadow: 0 0 5px #00A8E8;
+        }
+        .word-display {
+            font-size: 2.5em;
+            letter-spacing: 5px;
+            margin: 20px 0;
+        }
+        .guesses-info {
+            font-size: 1.2em;
+            color: #B0B0B0;
+        }
+        .input-group {
+            margin-top: 20px;
+        }
+        .input-group input {
+            padding: 10px;
+            font-size: 1em;
+            width: 50px;
+            text-align: center;
+            border: 2px solid #00A8E8;
+            background-color: #1c1c1c;
+            color: #E0E0E0;
+            border-radius: 8px;
+        }
+        .input-group button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #00A8E8;
+            color: #0A0A0A;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: background-color 0.3s;
+        }
+        .input-group button:hover {
+            background-color: #008cc0;
+        }
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(28, 28, 28, 0.9);
+            border: 2px solid #00A8E8;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 168, 232, 0.5);
+            text-align: center;
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+        .message-box h2 {
+            margin-top: 0;
+            color: #00A8E8;
+        }
+        .message-box button {
+            background-color: #00A8E8;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 10px;
+        }
+        .hangman-drawing {
+            margin-top: 20px;
+        }
+        .hangman-drawing svg {
+            width: 200px;
+            height: 200px;
+            stroke: #E0E0E0;
+            stroke-width: 2;
+            fill: transparent;
+        }
+        .hangman-drawing .part {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <h1>Hangman</h1>
-  <p>🚧 Hangman will be implemented here 🚧</p>
-  <a href="../index.html">⬅ Back to Home</a>
+    <div class="container">
+        <h1>Hangman</h1>
+        <div class="hangman-drawing">
+            <svg viewBox="0 0 200 200">
+                <!-- Gallow -->
+                <line x1="10" y1="190" x2="180" y2="190"/>
+                <line x1="40" y1="190" x2="40" y2="10"/>
+                <line x1="40" y1="10" x2="120" y2="10"/>
+                <line x1="120" y1="10" x2="120" y2="30"/>
+                <!-- Parts of the hangman -->
+                <circle id="head" class="part" cx="120" cy="50" r="20" stroke="#00A8E8" fill="transparent"/>
+                <line id="body" class="part" x1="120" y1="70" x2="120" y2="120" stroke="#00A8E8"/>
+                <line id="left-arm" class="part" x1="120" y1="80" x2="90" y2="110" stroke="#00A8E8"/>
+                <line id="right-arm" class="part" x1="120" y1="80" x2="150" y2="110" stroke="#00A8E8"/>
+                <line id="left-leg" class="part" x1="120" y1="120" x2="90" y2="160" stroke="#00A8E8"/>
+                <line id="right-leg" class="part" x1="120" y1="120" x2="150" y2="160" stroke="#00A8E8"/>
+            </svg>
+        </div>
+        <div class="word-display" id="wordDisplay"></div>
+        <p class="guesses-info" id="guessesInfo"></p>
+        <div class="input-group">
+            <input type="text" id="guessInput" maxlength="1" onkeypress="return /[a-z]/i.test(event.key)">
+            <button onclick="guessLetter()">Guess</button>
+        </div>
+    </div>
+    <div id="messageBox" class="message-box">
+        <h2 id="messageTitle"></h2>
+        <p id="messageText"></p>
+        <button onclick="startGame()">Play Again</button>
+    </div>
 
-  <script>
-    // Placeholder logic for Hangman
-    console.log("Hangman game loaded!");
-  </script>
+    <script>
+        const words = ['JAVASCRIPT', 'HTML', 'CSS', 'DEVELOPER', 'CODING', 'CANVAS', 'PROGRAMMING'];
+        let selectedWord = '';
+        let guessedLetters = [];
+        let wrongGuesses = 0;
+        const maxWrongGuesses = 6;
+        const hangmanParts = ['head', 'body', 'left-arm', 'right-arm', 'left-leg', 'right-leg'];
+
+        const wordDisplay = document.getElementById('wordDisplay');
+        const guessesInfo = document.getElementById('guessesInfo');
+        const guessInput = document.getElementById('guessInput');
+
+        function updateDisplay() {
+            let displayWord = '';
+            let wordGuessed = true;
+            for (const char of selectedWord) {
+                if (guessedLetters.includes(char)) {
+                    displayWord += char + ' ';
+                } else {
+                    displayWord += '_ ';
+                    wordGuessed = false;
+                }
+            }
+            wordDisplay.innerText = displayWord.trim();
+            guessesInfo.innerText = `Incorrect guesses: ${wrongGuesses} / ${maxWrongGuesses}`;
+            
+            if (wordGuessed) {
+                showMessageBox('You Won!', `The word was: ${selectedWord}`);
+            } else if (wrongGuesses >= maxWrongGuesses) {
+                showMessageBox('Game Over!', `The word was: ${selectedWord}`);
+            }
+        }
+
+        function guessLetter() {
+            const letter = guessInput.value.toUpperCase();
+            guessInput.value = '';
+            if (!letter) return;
+            
+            if (guessedLetters.includes(letter)) {
+                // Already guessed, do nothing
+                return;
+            }
+
+            guessedLetters.push(letter);
+            
+            if (selectedWord.includes(letter)) {
+                // Correct guess
+            } else {
+                // Incorrect guess
+                wrongGuesses++;
+                if (hangmanParts[wrongGuesses - 1]) {
+                    document.getElementById(hangmanParts[wrongGuesses - 1]).style.display = 'block';
+                }
+            }
+            updateDisplay();
+        }
+
+        function showMessageBox(title, text) {
+            document.getElementById('messageTitle').innerText = title;
+            document.getElementById('messageText').innerText = text;
+            document.getElementById('messageBox').style.display = 'flex';
+        }
+
+        function startGame() {
+            selectedWord = words[Math.floor(Math.random() * words.length)];
+            guessedLetters = [];
+            wrongGuesses = 0;
+            document.getElementById('messageBox').style.display = 'none';
+            document.querySelectorAll('.part').forEach(part => part.style.display = 'none');
+            updateDisplay();
+        }
+
+        window.onload = function() {
+            startGame();
+        };
+    </script>
 </body>
 </html>
