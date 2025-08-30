@@ -85,6 +85,12 @@
         .card-wrapper:nth-child(8) { animation-delay: 1.4s; }
         .card-wrapper:nth-child(9) { animation-delay: 1.5s; }
         .card-wrapper:nth-child(10) { animation-delay: 1.6s; }
+        .card-wrapper:nth-child(11) { animation-delay: 1.7s; }
+        .card-wrapper:nth-child(12) { animation-delay: 1.8s; }
+        .card-wrapper:nth-child(13) { animation-delay: 1.9s; }
+        .card-wrapper:nth-child(14) { animation-delay: 2.0s; }
+        .card-wrapper:nth-child(15) { animation-delay: 2.1s; }
+        .card-wrapper:nth-child(16) { animation-delay: 2.2s; }
 
 
         @keyframes fadeInBottom {
@@ -160,6 +166,12 @@
         .card:hover .icon.quiz { transform: rotate(15deg); }
         .card:hover .icon.rockpaperscissors { animation: rockPaperScissors 0.5s infinite alternate; }
         .card:hover .icon.whackamole { transform: translateY(-15px); }
+        .card:hover .icon.number-2048 { animation: pulse 0.8s infinite alternate; }
+        .card:hover .icon.catch-fruit { animation: bounce 0.5s infinite; }
+        .card:hover .icon.chess { transform: scale(1.1) rotate(5deg); }
+        .card:hover .icon.connect-4 { animation: connect4Bounce 0.6s infinite alternate; }
+        .card:hover .icon.ludo { animation: rollDice 0.8s infinite; }
+        .card:hover .icon.number-guessing { transform: scale(1.2); }
 
 
         @keyframes snakePulse {
@@ -175,6 +187,26 @@
         @keyframes rockPaperScissors {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(15deg); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        @keyframes connect4Bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-5px); }
+        }
+        
+        @keyframes rollDice {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         /* Responsive Design */
@@ -261,6 +293,42 @@
             <a href="whack-a-mole/index.html" class="card">
                 <span class="icon whackamole">🦔</span>
                 Whack a Mole
+            </a>
+        </div>
+        <div class="card-wrapper">
+            <a href="2048.html" class="card">
+                <span class="icon number-2048">🔢</span>
+                2048
+            </a>
+        </div>
+        <div class="card-wrapper">
+            <a href="catch-fruit.html" class="card">
+                <span class="icon catch-fruit">🍎</span>
+                Catch Fruit
+            </a>
+        </div>
+        <div class="card-wrapper">
+            <a href="chess.html" class="card">
+                <span class="icon chess">♟️</span>
+                Chess
+            </a>
+        </div>
+        <div class="card-wrapper">
+            <a href="connect-4.html" class="card">
+                <span class="icon connect-4">⚫</span>
+                Connect 4
+            </a>
+        </div>
+        <div class="card-wrapper">
+            <a href="ludo.html" class="card">
+                <span class="icon ludo">🎲</span>
+                Ludo
+            </a>
+        </div>
+        <div class="card-wrapper">
+            <a href="number-guessing.html" class="card">
+                <span class="icon number-guessing">🧐</span>
+                Number Guessing
             </a>
         </div>
     </div>
