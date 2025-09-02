@@ -31,6 +31,7 @@
     color: #111;
     font-weight: bold;
     border-radius: 6px;
+    transition: 0.2s;
   }
   .back:hover {
     background: #fdd835;

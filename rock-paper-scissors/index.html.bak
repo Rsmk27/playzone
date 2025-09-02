@@ -68,6 +68,7 @@
   <div class="score" id="score">Player: 0 | Computer: 0</div>
   
   <a href="index.html">⬅ Back to Home</a>
+  <a href="../index.html">⬅ Back to Home</a>
 
   <script>
     let playerScore = 0;

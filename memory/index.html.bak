@@ -54,6 +54,7 @@
     background: #00ffff;
     color: #111;
     border-radius: 6px;
+    transition: 0.2s;
   }
   a:hover {
     background: #00cccc;
