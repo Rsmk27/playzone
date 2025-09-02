@@ -3,361 +3,692 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PlayZone - Sleek</title>
+    <title>PlayZone - Modern Gaming Hub</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
     <style>
         :root {
-            --primary-color: #00A8E8; /* Cool Cyan */
-            --dark-bg: #0A0A0A;
-            --card-bg: rgba(28, 28, 28, 0.7); /* Semi-transparent for glassmorphism */
-            --card-border: rgba(255, 255, 255, 0.1);
-            --text-color: #E0E0E0;
-            --secondary-text-color: #B0B0B0;
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --bg-primary: #0f0f23;
+            --bg-secondary: #1a1a2e;
+            --bg-card: #16213e;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --border: #374151;
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-card: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --border: #e5e7eb;
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            text-align: center;
-            background: linear-gradient(135deg, var(--dark-bg), #121212, #050505);
-            background-size: 400% 400%;
-            animation: gradientAnimation 15s ease infinite;
-            color: var(--text-color);
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            color: var(--text-primary);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            transition: var(--transition);
         }
 
-        @keyframes gradientAnimation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
         }
 
-        h1 {
-            margin: 40px 0 30px;
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .logo {
+            font-size: 3.5rem;
             font-weight: 700;
-            color: var(--primary-color);
-            font-size: 3.5em;
-            text-shadow: 0 0 15px var(--primary-color), 0 0 30px rgba(0, 168, 232, 0.4);
-            letter-spacing: 2px;
-            opacity: 0;
-            transform: translateY(-20px);
-            animation: fadeInTop 1s ease-out forwards 0.5s;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
         }
 
-        @keyframes fadeInTop {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-weight: 400;
         }
 
-        .games {
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .search-container {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .theme-toggle {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-primary);
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-secondary);
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--bg-card);
+            padding: 0.25rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+
+        .filter-tab {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: none;
+            border-radius: calc(var(--radius) - 2px);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .filter-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .games-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            padding: 20px;
-            max-width: 1400px;
-            margin: 0 auto 50px;
-            perspective: 1000px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
         }
 
-        .card-wrapper {
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeInBottom 0.8s ease-out forwards;
-        }
-
-        .card-wrapper:nth-child(1) { animation-delay: 0.7s; }
-        .card-wrapper:nth-child(2) { animation-delay: 0.8s; }
-        .card-wrapper:nth-child(3) { animation-delay: 0.9s; }
-        .card-wrapper:nth-child(4) { animation-delay: 1.0s; }
-        .card-wrapper:nth-child(5) { animation-delay: 1.1s; }
-        .card-wrapper:nth-child(6) { animation-delay: 1.2s; }
-        .card-wrapper:nth-child(7) { animation-delay: 1.3s; }
-        .card-wrapper:nth-child(8) { animation-delay: 1.4s; }
-        .card-wrapper:nth-child(9) { animation-delay: 1.5s; }
-        .card-wrapper:nth-child(10) { animation-delay: 1.6s; }
-        .card-wrapper:nth-child(11) { animation-delay: 1.7s; }
-        .card-wrapper:nth-child(12) { animation-delay: 1.8s; }
-        .card-wrapper:nth-child(13) { animation-delay: 1.9s; }
-        .card-wrapper:nth-child(14) { animation-delay: 2.0s; }
-        .card-wrapper:nth-child(15) { animation-delay: 2.1s; }
-        .card-wrapper:nth-child(16) { animation-delay: 2.2s; }
-
-
-        @keyframes fadeInBottom {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--card-border);
-            border-radius: 18px;
+        .game-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
             text-decoration: none;
-            font-size: 1.3em;
-            font-weight: 700;
-            color: var(--text-color);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, border-color 0.2s ease-out;
+            color: inherit;
+            transition: var(--transition);
             position: relative;
             overflow: hidden;
-            will-change: transform, box-shadow;
+            cursor: pointer;
         }
 
-        .card::before {
+        .game-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            border-radius: inherit;
-            pointer-events: none;
-            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 168, 232, 0.3) 0%, transparent 70%);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             opacity: 0;
-            transition: opacity 0.3s ease-out;
+            transition: var(--transition);
             z-index: 0;
         }
 
-        .card:hover::before {
-            opacity: 1;
+        .game-card:hover::before {
+            opacity: 0.05;
         }
 
-        .card:hover {
-            transform: scale(1.03);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), 0 0 30px var(--primary-color);
-            border-color: var(--primary-color);
+        .game-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow);
+            border-color: var(--primary);
         }
 
-        .card .icon {
-            font-size: 4.5em;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-            line-height: 1;
-            transition: transform 0.3s ease-out, filter 0.3s ease-out;
+        .game-card-content {
+            position: relative;
             z-index: 1;
         }
 
-        /* Specific icon animations on hover */
-        .card:hover .icon.snake { animation: snakePulse 1.5s infinite; }
-        .card:hover .icon.tictactoe { transform: scale(1.2); filter: drop-shadow(0 0 8px var(--primary-color)); }
-        .card:hover .icon.memory { transform: rotateY(180deg); }
-        .card:hover .icon.flappy { animation: flappyWings 0.5s infinite alternate; }
-        .card:hover .icon.pong { transform: scaleX(1.3); }
-        .card:hover .icon.breakout { transform: scale(1.1); filter: drop-shadow(0 0 8px var(--primary-color)); }
-        .card:hover .icon.hangman { transform: scale(1.1); filter: drop-shadow(0 0 8px var(--primary-color)); }
-        .card:hover .icon.quiz { transform: rotate(15deg); }
-        .card:hover .icon.rockpaperscissors { animation: rockPaperScissors 0.5s infinite alternate; }
-        .card:hover .icon.whackamole { transform: translateY(-15px); }
-        .card:hover .icon.number-2048 { animation: pulse 0.8s infinite alternate; }
-        .card:hover .icon.catch-fruit { animation: bounce 0.5s infinite; }
-        .card:hover .icon.chess { transform: scale(1.1) rotate(5deg); }
-        .card:hover .icon.connect-4 { animation: connect4Bounce 0.6s infinite alternate; }
-        .card:hover .icon.ludo { animation: rollDice 0.8s infinite; }
-        .card:hover .icon.number-guessing { transform: scale(1.2); }
-
-
-        @keyframes snakePulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+        .game-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+            transition: var(--transition);
         }
 
-        @keyframes flappyWings {
-            0% { transform: translateY(-5px) rotate(-10deg); }
-            100% { transform: translateY(5px) rotate(10deg); }
+        .game-card:hover .game-icon {
+            transform: scale(1.1);
         }
 
-        @keyframes rockPaperScissors {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(15deg); }
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.1); }
-        }
-        
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-        
-        @keyframes connect4Bounce {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-5px); }
-        }
-        
-        @keyframes rollDice {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .game-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
         }
 
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            h1 { font-size: 3em; }
-            .games { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; }
-            .card { padding: 30px 15px; font-size: 1.1em; }
-            .card .icon { font-size: 4em; }
+        .game-description {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .game-category {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .leaderboard {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+        }
+
+        .leaderboard h3 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .leaderboard-item:last-child {
+            border-bottom: none;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
         }
 
         @media (max-width: 768px) {
-            h1 { font-size: 2.2em; margin: 30px 0 20px; }
-            .games { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; }
-            .card { padding: 25px 10px; font-size: 1em; }
-            .card .icon { font-size: 3.5em; }
+            .container {
+                padding: 1rem;
+            }
+
+            .logo {
+                font-size: 2.5rem;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-container {
+                max-width: none;
+            }
+
+            .games-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1rem;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
         }
 
-        @media (max-width: 480px) {
-            h1 { font-size: 1.8em; margin: 20px 0 15px; }
-            .games { grid-template-columns: 1fr; gap: 15px; padding: 15px; }
-            .card { padding: 20px; font-size: 1.1em; }
-            .card .icon { font-size: 4em; }
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
 <body>
-    <h1>🎮 PlayZone 🎮</h1>
-    <div class="games" id="game-cards">
-        <div class="card-wrapper">
-            <a href="snake/index.html" class="card">
-                <span class="icon snake">🐍</span>
-                Snake Game
+    <div class="container">
+        <header>
+            <h1 class="logo">🎮 PlayZone</h1>
+            <p class="subtitle">Your ultimate destination for browser-based gaming</p>
+        </header>
+
+        <div class="controls">
+            <div class="search-container">
+                <div class="search-icon">🔍</div>
+                <input type="text" class="search-input" placeholder="Search games..." id="searchInput">
+            </div>
+            
+            <div class="filter-tabs">
+                <button class="filter-tab active" data-category="all">All Games</button>
+                <button class="filter-tab" data-category="classic">Classic</button>
+                <button class="filter-tab" data-category="puzzle">Puzzle</button>
+                <button class="filter-tab" data-category="action">Action</button>
+            </div>
+
+            <button class="theme-toggle" id="themeToggle">🌙</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalGames">19</div>
+                <div class="stat-label">Total Games</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="gamesPlayed">0</div>
+                <div class="stat-label">Games Played</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="highScore">0</div>
+                <div class="stat-label">Best Score</div>
+            </div>
+        </div>
+
+        <div class="games-grid" id="gamesGrid">
+            <a href="snake/index.html" class="game-card" data-category="classic">
+                <div class="game-category">Classic</div>
+                <div class="game-card-content">
+                    <span class="game-icon">🐍</span>
+                    <h3 class="game-title">Snake</h3>
+                    <p class="game-description">Guide the snake to eat food and grow longer without hitting walls or yourself</p>
+                </div>
+            </a>
+
+            <a href="tic-tac-toe/index.html" class="game-card" data-category="classic">
+                <div class="game-category">Classic</div>
+                <div class="game-card-content">
+                    <span class="game-icon">❌</span>
+                    <h3 class="game-title">Tic Tac Toe</h3>
+                    <p class="game-description">Classic strategy game - get three in a row to win</p>
+                </div>
+            </a>
+
+            <a href="memory/index.html" class="game-card" data-category="puzzle">
+                <div class="game-category">Puzzle</div>
+                <div class="game-card-content">
+                    <span class="game-icon">🧠</span>
+                    <h3 class="game-title">Memory Match</h3>
+                    <p class="game-description">Test your memory by matching pairs of cards</p>
+                </div>
+            </a>
+
+            <a href="flappy/index.html" class="game-card" data-category="action">
+                <div class="game-category">Action</div>
+                <div class="game-card-content">
+                    <span class="game-icon">🐦</span>
+                    <h3 class="game-title">Flappy Bird</h3>
+                    <p class="game-description">Navigate through pipes by tapping to keep the bird flying</p>
+                </div>
+            </a>
+
+            <a href="pong/index.html" class="game-card" data-category="classic">
+                <div class="game-category">Classic</div>
+                <div class="game-card-content">
+                    <span class="game-icon">🏓</span>
+                    <h3 class="game-title">Pong</h3>
+                    <p class="game-description">The classic arcade game - bounce the ball past your opponent</p>
+                </div>
+            </a>
+
+            <a href="breakout/index.html" class="game-card" data-category="action">
+                <div class="game-category">Action</div>
+                <div class="game-card-content">
+                    <span class="game-icon">🧱</span>
+                    <h3 class="game-title">Breakout</h3>
+                    <p class="game-description">Break all the bricks with your ball and paddle</p>
+                </div>
+            </a>
+
+            <a href="hangman/index.html" class="game-card" data-category="puzzle">
+                <div class="game-category">Puzzle</div>
+                <div class="game-card-content">
+                    <span class="game-icon">🎯</span>
+                    <h3 class="game-title">Hangman</h3>
+                    <p class="game-description">Guess the word letter by letter before time runs out</p>
+                </div>
+            </a>
+
+            <a href="quiz/index.html" class="game-card" data-category="puzzle">
+                <div class="game-category">Puzzle</div>
+                <div class="game-card-content">
+                    <span class="game-icon">❓</span>
+                    <h3 class="game-title">Quiz Game</h3>
+                    <p class="game-description">Test your knowledge with coding and general trivia</p>
+                </div>
+            </a>
+
+            <a href="rock-paper-scissors/index.html" class="game-card" data-category="classic">
+                <div class="game-category">Classic</div>
+                <div class="game-card-content">
+                    <span class="game-icon">✊</span>
+                    <h3 class="game-title">Rock Paper Scissors</h3>
+                    <p class="game-description">The timeless hand game against the computer</p>
+                </div>
+            </a>
+
+            <a href="whack-a-mole/index.html" class="game-card" data-category="action">
+                <div class="game-category">Action</div>
+                <div class="game-card-content">
+                    <span class="game-icon">🔨</span>
+                    <h3 class="game-title">Whack-A-Mole</h3>
+                    <p class="game-description">Quick reflexes needed to whack the moles as they pop up</p>
+                </div>
+            </a>
+
+            <a href="2048/2048.html" class="game-card" data-category="puzzle">
+                <div class="game-category">Puzzle</div>
+                <div class="game-card-content">
+                    <span class="game-icon">🔢</span>
+                    <h3 class="game-title">2048</h3>
+                    <p class="game-description">Combine tiles to reach the 2048 tile in this addictive puzzle</p>
+                </div>
+            </a>
+
+            <a href="catch-fruit/catch-fruit.html" class="game-card" data-category="action">
+                <div class="game-category">Action</div>
+                <div class="game-card-content">
+                    <span class="game-icon">🍎</span>
+                    <h3 class="game-title">Catch Fruit</h3>
+                    <p class="game-description">Catch falling fruits while avoiding the bombs</p>
+                </div>
+            </a>
+
+            <a href="chess/chess.html" class="game-card" data-category="classic">
+                <div class="game-category">Classic</div>
+                <div class="game-card-content">
+                    <span class="game-icon">♟️</span>
+                    <h3 class="game-title">Chess</h3>
+                    <p class="game-description">The ultimate strategy game for two players</p>
+                </div>
+            </a>
+
+            <a href="connect-4/connect-4.html" class="game-card" data-category="classic">
+                <div class="game-category">Classic</div>
+                <div class="game-card-content">
+                    <span class="game-icon">🔴</span>
+                    <h3 class="game-title">Connect 4</h3>
+                    <p class="game-description">Connect four pieces in a row to win this strategic game</p>
+                </div>
+            </a>
+
+            <a href="ludo/ludo.html" class="game-card" data-category="classic">
+                <div class="game-category">Classic</div>
+                <div class="game-card-content">
+                    <span class="game-icon">🎲</span>
+                    <h3 class="game-title">Ludo</h3>
+                    <p class="game-description">Roll the dice and race your pieces to the finish</p>
+                </div>
+            </a>
+
+            <a href="number-guessing/number-guessing.html" class="game-card" data-category="puzzle">
+                <div class="game-category">Puzzle</div>
+                <div class="game-card-content">
+                    <span class="game-icon">🔮</span>
+                    <h3 class="game-title">Number Guessing</h3>
+                    <p class="game-description">Can you guess the secret number in the fewest tries?</p>
+                </div>
+            </a>
+
+            <a href="sudoku/index.html" class="game-card" data-category="puzzle">
+                <div class="game-category">Puzzle</div>
+                <div class="game-card-content">
+                    <span class="game-icon">🔢</span>
+                    <h3 class="game-title">Sudoku</h3>
+                    <p class="game-description">Fill the 9x9 grid with numbers following the classic rules</p>
+                </div>
+            </a>
+
+            <a href="tetris/index.html" class="game-card" data-category="puzzle">
+                <div class="game-category">Puzzle</div>
+                <div class="game-card-content">
+                    <span class="game-icon">🧩</span>
+                    <h3 class="game-title">Tetris</h3>
+                    <p class="game-description">Arrange falling blocks to clear lines in this timeless puzzle</p>
+                </div>
+            </a>
+
+            <a href="space-invaders/index.html" class="game-card" data-category="action">
+                <div class="game-category">Action</div>
+                <div class="game-card-content">
+                    <span class="game-icon">👾</span>
+                    <h3 class="game-title">Space Invaders</h3>
+                    <p class="game-description">Defend Earth from waves of alien invaders</p>
+                </div>
             </a>
         </div>
-        <div class="card-wrapper">
-            <a href="tic-tac-toe/index.html" class="card">
-                <span class="icon tictactoe">❌</span>
-                Tic Tac Toe
-            </a>
-        </div>
-        <div class="card-wrapper">
-            <a href="memory/index.html" class="card">
-                <span class="icon memory">🧠</span>
-                Memory Game
-            </a>
-        </div>
-        <div class="card-wrapper">
-            <a href="flappy/index.html" class="card">
-                <span class="icon flappy">🐦</span>
-                Flappy Bird
-            </a>
-        </div>
-        <div class="card-wrapper">
-            <a href="pong/index.html" class="card">
-                <span class="icon pong">🎾</span>
-                Pong
-            </a>
-        </div>
-        <div class="card-wrapper">
-            <a href="breakout/index.html" class="card">
-                <span class="icon breakout">🧱</span>
-                Breakout
-            </a>
-        </div>
-        <div class="card-wrapper">
-            <a href="hangman/index.html" class="card">
-                <span class="icon hangman">🤔</span>
-                Hangman
-            </a>
-        </div>
-        <div class="card-wrapper">
-            <a href="quiz/index.html" class="card">
-                <span class="icon quiz">❓</span>
-                Quiz Game
-            </a>
-        </div>
-        <div class="card-wrapper">
-            <a href="rock-paper-scissors/index.html" class="card">
-                <span class="icon rockpaperscissors">✊</span>
-                Rock Paper Scissors
-            </a>
-        </div>
-        <div class="card-wrapper">
-            <a href="whack-a-mole/index.html" class="card">
-                <span class="icon whackamole">🦔</span>
-                Whack a Mole
-            </a>
-        </div>
-        <div class="card-wrapper">
-            <a href="2048/2048.html" class="card">
-                <span class="icon number-2048">🔢</span>
-                2048
-            </a>
-        </div>
-        <div class="card-wrapper">
-            <a href="catch-fruit/catch-fruit.html" class="card">
-                <span class="icon catch-fruit">🍎</span>
-                Catch Fruit
-            </a>
-        </div>
-        <div class="card-wrapper">
-            <a href="chess/chess.html" class="card">
-                <span class="icon chess">♟️</span>
-                Chess
-            </a>
-        </div>
-        <div class="card-wrapper">
-            <a href="connect-4/connect-4.html" class="card">
-                <span class="icon connect-4">⚫</span>
-                Connect 4
-            </a>
-        </div>
-        <div class="card-wrapper">
-            <a href="ludo/ludo.html" class="card">
-                <span class="icon ludo">🎲</span>
-                Ludo
-            </a>
-        </div>
-        <div class="card-wrapper">
-            <a href="number-guessing/number-guessing.html" class="card">
-                <span class="icon number-guessing">🧐</span>
-                Number Guessing
-            </a>
+
+        <div class="leaderboard">
+            <h3>🏆 Recent High Scores</h3>
+            <div id="leaderboardList">
+                <div class="leaderboard-item">
+                    <span>Snake - Anonymous</span>
+                    <span>150 pts</span>
+                </div>
+                <div class="leaderboard-item">
+                    <span>2048 - Anonymous</span>
+                    <span>4096 pts</span>
+                </div>
+                <div class="leaderboard-item">
+                    <span>Tetris - Anonymous</span>
+                    <span>2500 pts</span>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        document.querySelectorAll('.card').forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        if (savedTheme === 'light') {
+            body.setAttribute('data-theme', 'light');
+            themeToggle.textContent = '☀️';
+        }
 
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            body.setAttribute('data-theme', newTheme);
+            themeToggle.textContent = newTheme === 'light' ? '☀️' : '🌙';
+            localStorage.setItem('theme', newTheme);
+        });
 
-                const rotateX = ((y - centerY) / centerY) * 10;
-                const rotateY = ((centerX - x) / centerX) * 10;
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const gamesGrid = document.getElementById('gamesGrid');
+        const gameCards = document.querySelectorAll('.game-card');
 
-                card.style.transform = `scale(1.03) perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            filterGames(searchTerm, getActiveCategory());
+        });
 
-                card.style.setProperty('--mouse-x', `${(x / rect.width) * 100}%`);
-                card.style.setProperty('--mouse-y', `${(y / rect.height) * 100}%`);
-            });
-
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'scale(1.0)';
-                card.style.setProperty('--mouse-x', '50%');
-                card.style.setProperty('--mouse-y', '50%');
+        // Filter functionality
+        const filterTabs = document.querySelectorAll('.filter-tab');
+        
+        filterTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                filterTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                const category = tab.getAttribute('data-category');
+                const searchTerm = searchInput.value.toLowerCase();
+                filterGames(searchTerm, category);
             });
         });
+
+        function getActiveCategory() {
+            return document.querySelector('.filter-tab.active').getAttribute('data-category');
+        }
+
+        function filterGames(searchTerm, category) {
+            let visibleCount = 0;
+            
+            gameCards.forEach(card => {
+                const title = card.querySelector('.game-title').textContent.toLowerCase();
+                const description = card.querySelector('.game-description').textContent.toLowerCase();
+                const cardCategory = card.getAttribute('data-category');
+                
+                const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
+                const matchesCategory = category === 'all' || cardCategory === category;
+                
+                if (matchesSearch && matchesCategory) {
+                    card.style.display = 'block';
+                    card.classList.add('fade-in');
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                    card.classList.remove('fade-in');
+                }
+            });
+
+            // Show no results message
+            const existingNoResults = document.querySelector('.no-results');
+            if (existingNoResults) {
+                existingNoResults.remove();
+            }
+
+            if (visibleCount === 0) {
+                const noResults = document.createElement('div');
+                noResults.className = 'no-results';
+                noResults.innerHTML = `
+                    <h3>No games found</h3>
+                    <p>Try adjusting your search or filter criteria</p>
+                `;
+                gamesGrid.appendChild(noResults);
+            }
+        }
+
+        // Game tracking
+        function trackGamePlay(gameName) {
+            let gamesPlayed = parseInt(localStorage.getItem('gamesPlayed') || '0');
+            gamesPlayed++;
+            localStorage.setItem('gamesPlayed', gamesPlayed.toString());
+            document.getElementById('gamesPlayed').textContent = gamesPlayed;
+        }
+
+        // Track clicks on game cards
+        gameCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const gameName = card.querySelector('.game-title').textContent;
+                trackGamePlay(gameName);
+            });
+        });
+
+        // Load stats on page load
+        window.addEventListener('load', () => {
+            const gamesPlayed = localStorage.getItem('gamesPlayed') || '0';
+            const highScore = localStorage.getItem('highScore') || '0';
+            
+            document.getElementById('gamesPlayed').textContent = gamesPlayed;
+            document.getElementById('highScore').textContent = highScore;
+        });
+
+        // Add smooth scroll behavior
+        document.documentElement.style.scrollBehavior = 'smooth';
     </script>
 </body>
 </html>
