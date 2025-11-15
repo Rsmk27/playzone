@@ -1,28 +1,6 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tower of Hanoi – PlayZone</title>
-  <link rel="stylesheet" href="../../styles/global.css">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="page">
-    <div class="game-header">
-      <h1 class="game-title">Tower of Hanoi</h1>
-      <div class="actions">
-        <a class="btn" href="../../index.html">← Back to Home</a>
-        <span id="score" class="score hidden"></span>
-      </div>
-    </div>
-    <div class="info" id="info">Use controls below to play.</div>
-    <div class="canvas-wrap">
-      
-    </div>
-    <div class="controls" id="controls"></div>
-    <div class="small">PlayZone · Static JS game</div>
-  </div>
-  <script src="script.js"></script>
-</body>
-</html>
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Tower of Hanoi – PlayZone</title><style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui;background:linear-gradient(135deg,#f093fb,#f5576c);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}.container{background:#fff;border-radius:20px;padding:40px;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center}h1{color:#f5576c;margin-bottom:20px}.moves{font-size:1.2em;margin-bottom:20px}.towers{display:flex;justify-content:space-around;margin:30px 0}.tower{width:150px;height:250px;background:#f0f0f0;border-radius:10px;position:relative;cursor:pointer;border:3px solid transparent}.tower:hover{border-color:#f5576c}.disk{height:25px;border-radius:5px;position:absolute;bottom:5px;left:50%;transform:translateX(-50%);cursor:pointer}.disk:hover{opacity:0.8}button{padding:12px 30px;font-size:1.1em;border:none;border-radius:10px;cursor:pointer;background:#f5576c;color:#fff;margin:5px}button:hover{background:#e04659}.home-btn{background:#6b7280}.home-btn:hover{background:#4b5563}
+</style></head><body><div class="container"><h1>🗼 Tower of Hanoi</h1><div class="moves">Moves: <span id="moves">0</span></div><div class="towers"><div class="tower" id="t0" onclick="selectTower(0)"></div><div class="tower" id="t1" onclick="selectTower(1)"></div><div class="tower" id="t2" onclick="selectTower(2)"></div></div><button onclick="newGame()">New Game</button><a href="../../index.html" style="text-decoration:none"><button class="home-btn">← Back to Home</button></a></div><script>
+let towers=[[],[],[]],selected=null,moves=0;function newGame(){towers=[[3,2,1],[],[]];selected=null;moves=0;render()}function render(){document.getElementById('moves').textContent=moves;const colors=['#e74c3c','#f39c12','#3498db'];for(let i=0;i<3;i++){const t=document.getElementById('t'+i);t.innerHTML='';towers[i].forEach((disk,idx)=>{const d=document.createElement('div');d.className='disk';d.style.width=disk*40+'px';d.style.background=colors[disk-1];d.style.bottom=(idx*30+5)+'px';t.appendChild(d)})}}function selectTower(to){if(selected===null){if(towers[to].length>0){selected=to;document.getElementById('t'+to).style.borderColor='#10b981'}}else{if(to!==selected){const disk=towers[selected][towers[selected].length-1];const canMove=towers[to].length===0||towers[to][towers[to].length-1]>disk;if(canMove){towers[to].push(towers[selected].pop());moves++;if(towers[2].length===3){setTimeout(()=>alert('You won in '+moves+' moves!'),100)}}}document.getElementById('t'+selected).style.borderColor='transparent';selected=null;render()}}newGame()
+</script></body></html>

@@ -1,28 +1,160 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sliding Puzzle – PlayZone</title>
-  <link rel="stylesheet" href="../../styles/global.css">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sliding Puzzle – PlayZone</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        h1 {
+            color: #ff6b9d;
+            margin-bottom: 20px;
+        }
+        .moves {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .puzzle {
+            display: inline-grid;
+            grid-template-columns: repeat(4, 80px);
+            gap: 5px;
+            background: #ddd;
+            padding: 5px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .tile {
+            width: 80px;
+            height: 80px;
+            background: #ff6b9d;
+            color: white;
+            font-size: 2em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.2s;
+        }
+        .tile:hover {
+            background: #ff5a8a;
+        }
+        .tile.empty {
+            background: transparent;
+            cursor: default;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background: #ff6b9d;
+            color: white;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #ff5a8a;
+            transform: translateY(-2px);
+        }
+        .home-btn {
+            background: #6b7280;
+        }
+        .home-btn:hover {
+            background: #4b5563;
+        }
+    </style>
 </head>
 <body>
-  <div class="page">
-    <div class="game-header">
-      <h1 class="game-title">Sliding Puzzle</h1>
-      <div class="actions">
-        <a class="btn" href="../../index.html">← Back to Home</a>
-        <span id="score" class="score hidden"></span>
-      </div>
+    <div class="container">
+        <h1>🧩 Sliding Puzzle</h1>
+        <div class="moves">Moves: <span id="moves">0</span></div>
+        <div class="puzzle" id="puzzle"></div>
+        <br>
+        <button onclick="shuffle()">New Game</button>
+        <a href="../../index.html" style="text-decoration: none;"><button class="home-btn">← Back to Home</button></a>
     </div>
-    <div class="info" id="info">Use controls below to play.</div>
-    <div class="canvas-wrap">
-      
-    </div>
-    <div class="controls" id="controls"></div>
-    <div class="small">PlayZone · Static JS game</div>
-  </div>
-  <script src="script.js"></script>
+
+    <script>
+        let tiles = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0];
+        let moves = 0;
+
+        function render() {
+            const puzzle = document.getElementById('puzzle');
+            puzzle.innerHTML = '';
+            tiles.forEach((num, idx) => {
+                const tile = document.createElement('div');
+                tile.className = 'tile' + (num === 0 ? ' empty' : '');
+                tile.textContent = num || '';
+                if (num !== 0) {
+                    tile.onclick = () => moveTile(idx);
+                }
+                puzzle.appendChild(tile);
+            });
+            document.getElementById('moves').textContent = moves;
+        }
+
+        function moveTile(idx) {
+            const emptyIdx = tiles.indexOf(0);
+            const validMoves = [
+                emptyIdx - 4, emptyIdx + 4, // up, down
+                (emptyIdx % 4 !== 0 ? emptyIdx - 1 : -1), // left
+                (emptyIdx % 4 !== 3 ? emptyIdx + 1 : -1)  // right
+            ];
+            
+            if (validMoves.includes(idx)) {
+                [tiles[idx], tiles[emptyIdx]] = [tiles[emptyIdx], tiles[idx]];
+                moves++;
+                render();
+                
+                if (checkWin()) {
+                    setTimeout(() => alert(`You won in ${moves} moves!`), 100);
+                }
+            }
+        }
+
+        function checkWin() {
+            for (let i = 0; i < 15; i++) {
+                if (tiles[i] !== i + 1) return false;
+            }
+            return tiles[15] === 0;
+        }
+
+        function shuffle() {
+            moves = 0;
+            for (let i = 0; i < 1000; i++) {
+                const emptyIdx = tiles.indexOf(0);
+                const validMoves = [
+                    emptyIdx - 4, emptyIdx + 4,
+                    (emptyIdx % 4 !== 0 ? emptyIdx - 1 : -1),
+                    (emptyIdx % 4 !== 3 ? emptyIdx + 1 : -1)
+                ].filter(x => x >= 0 && x < 16);
+                const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
+                [tiles[emptyIdx], tiles[randomMove]] = [tiles[randomMove], tiles[emptyIdx]];
+            }
+            render();
+        }
+
+        shuffle();
+    </script>
 </body>
 </html>

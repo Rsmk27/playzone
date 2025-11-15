@@ -1,28 +1,233 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Minesweeper – PlayZone</title>
-  <link rel="stylesheet" href="../../styles/global.css">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minesweeper – PlayZone</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #c0c0c0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .info {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+        .grid {
+            display: inline-grid;
+            grid-template-columns: repeat(10, 30px);
+            gap: 2px;
+            background: #7b7b7b;
+            padding: 2px;
+        }
+        .cell {
+            width: 30px;
+            height: 30px;
+            background: #bdbdbd;
+            border: 2px outset #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        .cell:hover {
+            background: #d0d0d0;
+        }
+        .cell.revealed {
+            background: #e0e0e0;
+            border-style: solid;
+            border-color: #7b7b7b;
+        }
+        .cell.mine {
+            background: #ff0000;
+        }
+        .cell.flagged::before {
+            content: '🚩';
+        }
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #4a90e2;
+            color: white;
+        }
+        button:hover {
+            background: #357abd;
+        }
+        .home-btn {
+            background: #6b7280;
+        }
+        .home-btn:hover {
+            background: #4b5563;
+        }
+    </style>
 </head>
 <body>
-  <div class="page">
-    <div class="game-header">
-      <h1 class="game-title">Minesweeper</h1>
-      <div class="actions">
-        <a class="btn" href="../../index.html">← Back to Home</a>
-        <span id="score" class="score hidden"></span>
-      </div>
+    <div class="container">
+        <h1>💣 Minesweeper</h1>
+        <div class="info">Mines: <span id="minesLeft">10</span></div>
+        <div class="grid" id="grid"></div>
+        <button onclick="newGame()">New Game</button>
+        <a href="../../index.html" style="text-decoration: none;"><button class="home-btn">← Back to Home</button></a>
     </div>
-    <div class="info" id="info">Use controls below to play.</div>
-    <div class="canvas-wrap">
-      
-    </div>
-    <div class="controls" id="controls"></div>
-    <div class="small">PlayZone · Static JS game</div>
-  </div>
-  <script src="script.js"></script>
+
+    <script>
+        const ROWS = 10, COLS = 10, MINES = 10;
+        let grid = [];
+        let revealed = [];
+        let flags = [];
+        let gameOver = false;
+
+        function newGame() {
+            grid = Array(ROWS).fill().map(() => Array(COLS).fill(0));
+            revealed = Array(ROWS).fill().map(() => Array(COLS).fill(false));
+            flags = Array(ROWS).fill().map(() => Array(COLS).fill(false));
+            gameOver = false;
+            
+            // Place mines
+            let minesPlaced = 0;
+            while (minesPlaced < MINES) {
+                const r = Math.floor(Math.random() * ROWS);
+                const c = Math.floor(Math.random() * COLS);
+                if (grid[r][c] !== 'M') {
+                    grid[r][c] = 'M';
+                    minesPlaced++;
+                }
+            }
+            
+            // Calculate numbers
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    if (grid[r][c] !== 'M') {
+                        let count = 0;
+                        for (let dr = -1; dr <= 1; dr++) {
+                            for (let dc = -1; dc <= 1; dc++) {
+                                const nr = r + dr, nc = c + dc;
+                                if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && grid[nr][nc] === 'M') {
+                                    count++;
+                                }
+                            }
+                        }
+                        grid[r][c] = count;
+                    }
+                }
+            }
+            
+            render();
+        }
+
+        function render() {
+            const gridEl = document.getElementById('grid');
+            gridEl.innerHTML = '';
+            
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    
+                    if (flags[r][c]) {
+                        cell.classList.add('flagged');
+                    } else if (revealed[r][c]) {
+                        cell.classList.add('revealed');
+                        if (grid[r][c] === 'M') {
+                            cell.textContent = '💣';
+                            cell.classList.add('mine');
+                        } else if (grid[r][c] > 0) {
+                            cell.textContent = grid[r][c];
+                        }
+                    }
+                    
+                    cell.onclick = () => reveal(r, c);
+                    cell.oncontextmenu = (e) => { e.preventDefault(); toggleFlag(r, c); };
+                    
+                    gridEl.appendChild(cell);
+                }
+            }
+            
+            const flagCount = flags.flat().filter(Boolean).length;
+            document.getElementById('minesLeft').textContent = MINES - flagCount;
+        }
+
+        function toggleFlag(r, c) {
+            if (!revealed[r][c] && !gameOver) {
+                flags[r][c] = !flags[r][c];
+                render();
+            }
+        }
+
+        function reveal(r, c) {
+            if (gameOver || revealed[r][c] || flags[r][c]) return;
+            
+            revealed[r][c] = true;
+            
+            if (grid[r][c] === 'M') {
+                gameOver = true;
+                alert('Game Over!');
+                revealAll();
+            } else {
+                if (grid[r][c] === 0) {
+                    for (let dr = -1; dr <= 1; dr++) {
+                        for (let dc = -1; dc <= 1; dc++) {
+                            const nr = r + dr, nc = c + dc;
+                            if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS) {
+                                reveal(nr, nc);
+                            }
+                        }
+                    }
+                }
+                
+                if (checkWin()) {
+                    gameOver = true;
+                    alert('You Win!');
+                }
+            }
+            
+            render();
+        }
+
+        function revealAll() {
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    revealed[r][c] = true;
+                }
+            }
+            render();
+        }
+
+        function checkWin() {
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    if (grid[r][c] !== 'M' && !revealed[r][c]) return false;
+                }
+            }
+            return true;
+        }
+
+        newGame();
+    </script>
 </body>
 </html>

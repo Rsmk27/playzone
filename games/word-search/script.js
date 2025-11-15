@@ -1,3 +1,1 @@
-
-// Placeholder template. Implement game logic here.
-document.getElementById('info').textContent = 'Coming soon…';
+// Game logic is now embedded directly in index.html
