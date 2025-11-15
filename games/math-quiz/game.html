@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Quiz – PlayZone</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        h1 {
+            color: #f5576c;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+        }
+        .stat {
+            font-size: 1.2em;
+        }
+        .stat span {
+            color: #f5576c;
+            font-weight: bold;
+            font-size: 1.5em;
+        }
+        #question {
+            font-size: 3em;
+            margin: 40px 0;
+            color: #333;
+            font-weight: bold;
+        }
+        #answer {
+            width: 200px;
+            padding: 20px;
+            font-size: 2em;
+            border: 3px solid #f5576c;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px auto;
+            display: block;
+        }
+        #answer:focus {
+            outline: none;
+            border-color: #e04659;
+        }
+        button {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background: #f5576c;
+            color: white;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #e04659;
+            transform: translateY(-2px);
+        }
+        .feedback {
+            font-size: 1.5em;
+            margin: 20px 0;
+            min-height: 40px;
+            font-weight: bold;
+        }
+        .correct { color: #27ae60; }
+        .incorrect { color: #e74c3c; }
+        .home-btn {
+            background: #6b7280;
+        }
+        .home-btn:hover {
+            background: #4b5563;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>➕ Math Quiz</h1>
+        
+        <div class="stats">
+            <div class="stat">Score: <span id="score">0</span></div>
+            <div class="stat">Streak: <span id="streak">0</span></div>
+            <div class="stat">Time: <span id="time">0</span>s</div>
+        </div>
+        
+        <div id="question">5 + 3 = ?</div>
+        
+        <input type="number" id="answer" placeholder="?" autofocus>
+        
+        <div class="feedback" id="feedback"></div>
+        
+        <button onclick="checkAnswer()">Submit</button>
+        <button onclick="newQuestion()">Skip</button>
+        <a href="../../index.html" style="text-decoration: none;"><button class="home-btn">← Back to Home</button></a>
+    </div>
+
+    <script>
+        let score = 0, streak = 0, time = 0;
+        let currentAnswer = 0;
+        let timerInterval;
+
+        function randomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function newQuestion() {
+            const ops = ['+', '-', '×', '÷'];
+            const op = ops[randomInt(0, ops.length - 1)];
+            let a, b;
+            
+            switch(op) {
+                case '+':
+                    a = randomInt(1, 50);
+                    b = randomInt(1, 50);
+                    currentAnswer = a + b;
+                    break;
+                case '-':
+                    a = randomInt(10, 50);
+                    b = randomInt(1, a);
+                    currentAnswer = a - b;
+                    break;
+                case '×':
+                    a = randomInt(1, 12);
+                    b = randomInt(1, 12);
+                    currentAnswer = a * b;
+                    break;
+                case '÷':
+                    b = randomInt(1, 12);
+                    currentAnswer = randomInt(1, 12);
+                    a = b * currentAnswer;
+                    break;
+            }
+            
+            document.getElementById('question').textContent = `${a} ${op} ${b} = ?`;
+            document.getElementById('answer').value = '';
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('answer').focus();
+        }
+
+        function checkAnswer() {
+            const userAnswer = parseInt(document.getElementById('answer').value);
+            const feedback = document.getElementById('feedback');
+            
+            if (userAnswer === currentAnswer) {
+                score++;
+                streak++;
+                feedback.textContent = '✓ Correct!';
+                feedback.className = 'feedback correct';
+            } else {
+                streak = 0;
+                feedback.textContent = `✗ Wrong! Answer: ${currentAnswer}`;
+                feedback.className = 'feedback incorrect';
+            }
+            
+            document.getElementById('score').textContent = score;
+            document.getElementById('streak').textContent = streak;
+            
+            setTimeout(newQuestion, 1000);
+        }
+
+        document.getElementById('answer').addEventListener('keypress', e => {
+            if (e.key === 'Enter') checkAnswer();
+        });
+
+        timerInterval = setInterval(() => {
+            time++;
+            document.getElementById('time').textContent = time;
+        }, 1000);
+
+        newQuestion();
+    </script>
+</body>
+</html>

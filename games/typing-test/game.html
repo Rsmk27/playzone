@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Speed Test – PlayZone</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+        .stat {
+            text-align: center;
+            padding: 20px;
+            background: #f7f7f7;
+            border-radius: 10px;
+            flex: 1;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        #textDisplay {
+            font-size: 1.5em;
+            line-height: 1.8;
+            padding: 30px;
+            background: #f7f7f7;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            min-height: 150px;
+            user-select: none;
+        }
+        .char { color: #666; }
+        .char.correct { color: #10b981; }
+        .char.incorrect { color: #ef4444; background: #fee; }
+        .char.current { background: #667eea; color: white; }
+        #input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2em;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-family: monospace;
+        }
+        #input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background: #667eea;
+            color: white;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .home-btn {
+            background: #6b7280;
+            margin-top: 20px;
+        }
+        .home-btn:hover {
+            background: #4b5563;
+        }
+        #result {
+            text-align: center;
+            padding: 20px;
+            background: #f0fdf4;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+        #result.show {
+            display: block;
+        }
+        .result-title {
+            font-size: 1.5em;
+            color: #10b981;
+            margin-bottom: 10px;
+        }
+        .accuracy-good { color: #10b981; }
+        .accuracy-medium { color: #f59e0b; }
+        .accuracy-bad { color: #ef4444; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⌨️ Typing Speed Test</h1>
+        <p class="subtitle">Test your typing speed and accuracy</p>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-label">Time</div>
+                <div class="stat-value" id="timer">60</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">WPM</div>
+                <div class="stat-value" id="wpm">0</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Accuracy</div>
+                <div class="stat-value" id="accuracy">100%</div>
+            </div>
+        </div>
+
+        <div id="textDisplay"></div>
+        
+        <input type="text" id="input" placeholder="Click 'Start Test' to begin..." disabled>
+        
+        <div class="buttons">
+            <button id="startBtn">Start Test</button>
+            <button id="resetBtn" disabled>Reset</button>
+        </div>
+
+        <div id="result">
+            <div class="result-title">Test Complete!</div>
+            <p id="resultText"></p>
+        </div>
+
+        <div class="buttons">
+            <a href="../../index.html" style="text-decoration: none;">
+                <button class="home-btn">← Back to Home</button>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const texts = [
+            "The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs. How vexingly quick daft zebras jump.",
+            "A journey of a thousand miles begins with a single step. Success is not final, failure is not fatal. It is the courage to continue that counts.",
+            "The only way to do great work is to love what you do. Innovation distinguishes between a leader and a follower. Stay hungry, stay foolish.",
+            "Life is what happens when you are busy making other plans. The future belongs to those who believe in the beauty of their dreams.",
+            "Code is like humor. When you have to explain it, it is bad. First solve the problem then write the code. Make it work make it right make it fast."
+        ];
+
+        let currentText = '';
+        let startTime = null;
+        let timerInterval = null;
+        let timeLeft = 60;
+        let totalChars = 0;
+        let correctChars = 0;
+        let incorrectChars = 0;
+
+        const textDisplay = document.getElementById('textDisplay');
+        const input = document.getElementById('input');
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const timerEl = document.getElementById('timer');
+        const wpmEl = document.getElementById('wpm');
+        const accuracyEl = document.getElementById('accuracy');
+        const resultDiv = document.getElementById('result');
+        const resultText = document.getElementById('resultText');
+
+        function initText() {
+            currentText = texts[Math.floor(Math.random() * texts.length)];
+            textDisplay.innerHTML = currentText.split('').map((char, i) => 
+                `<span class="char" data-index="${i}">${char}</span>`
+            ).join('');
+        }
+
+        function startTest() {
+            startTime = Date.now();
+            timeLeft = 60;
+            totalChars = 0;
+            correctChars = 0;
+            incorrectChars = 0;
+            
+            input.value = '';
+            input.disabled = false;
+            input.placeholder = 'Start typing...';
+            input.focus();
+            
+            startBtn.disabled = true;
+            resetBtn.disabled = false;
+            resultDiv.classList.remove('show');
+            
+            initText();
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerEl.textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    endTest();
+                }
+            }, 1000);
+        }
+
+        function endTest() {
+            clearInterval(timerInterval);
+            input.disabled = true;
+            startBtn.disabled = false;
+            resetBtn.disabled = true;
+            
+            const elapsedMinutes = (60 - timeLeft) / 60;
+            const wordsTyped = correctChars / 5; // Standard: 5 chars = 1 word
+            const wpm = Math.round(wordsTyped / elapsedMinutes);
+            const accuracy = totalChars > 0 ? Math.round((correctChars / totalChars) * 100) : 100;
+            
+            let accuracyClass = 'accuracy-good';
+            if (accuracy < 80) accuracyClass = 'accuracy-bad';
+            else if (accuracy < 95) accuracyClass = 'accuracy-medium';
+            
+            resultText.innerHTML = `
+                You typed <strong>${wpm} WPM</strong> with 
+                <strong class="${accuracyClass}">${accuracy}% accuracy</strong>!<br>
+                Correct characters: ${correctChars} | Incorrect: ${incorrectChars}
+            `;
+            resultDiv.classList.add('show');
+        }
+
+        function updateDisplay() {
+            const typed = input.value;
+            const chars = textDisplay.querySelectorAll('.char');
+            
+            totalChars = typed.length;
+            correctChars = 0;
+            incorrectChars = 0;
+            
+            chars.forEach((char, i) => {
+                char.classList.remove('correct', 'incorrect', 'current');
+                
+                if (i < typed.length) {
+                    if (typed[i] === currentText[i]) {
+                        char.classList.add('correct');
+                        correctChars++;
+                    } else {
+                        char.classList.add('incorrect');
+                        incorrectChars++;
+                    }
+                } else if (i === typed.length) {
+                    char.classList.add('current');
+                }
+            });
+            
+            // Update stats
+            const elapsedMinutes = (Date.now() - startTime) / 60000;
+            const wordsTyped = correctChars / 5;
+            const wpm = elapsedMinutes > 0 ? Math.round(wordsTyped / elapsedMinutes) : 0;
+            const accuracy = totalChars > 0 ? Math.round((correctChars / totalChars) * 100) : 100;
+            
+            wpmEl.textContent = wpm;
+            accuracyEl.textContent = accuracy + '%';
+            
+            // Check if finished
+            if (typed.length >= currentText.length && correctChars === currentText.length) {
+                endTest();
+            }
+        }
+
+        function reset() {
+            clearInterval(timerInterval);
+            input.value = '';
+            input.disabled = true;
+            input.placeholder = 'Click "Start Test" to begin...';
+            startBtn.disabled = false;
+            resetBtn.disabled = true;
+            timeLeft = 60;
+            timerEl.textContent = '60';
+            wpmEl.textContent = '0';
+            accuracyEl.textContent = '100%';
+            resultDiv.classList.remove('show');
+            initText();
+        }
+
+        startBtn.addEventListener('click', startTest);
+        resetBtn.addEventListener('click', reset);
+        input.addEventListener('input', updateDisplay);
+
+        // Prevent paste
+        input.addEventListener('paste', e => e.preventDefault());
+
+        // Initialize
+        initText();
+    </script>
+</body>
+</html>
