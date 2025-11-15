@@ -1,28 +1,6 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Maze Generator – PlayZone</title>
-  <link rel="stylesheet" href="../../styles/global.css">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="page">
-    <div class="game-header">
-      <h1 class="game-title">Maze Generator</h1>
-      <div class="actions">
-        <a class="btn" href="../../index.html">← Back to Home</a>
-        <span id="score" class="score hidden"></span>
-      </div>
-    </div>
-    <div class="info" id="info">Use controls below to play.</div>
-    <div class="canvas-wrap">
-      
-    </div>
-    <div class="controls" id="controls"></div>
-    <div class="small">PlayZone · Static JS game</div>
-  </div>
-  <script src="script.js"></script>
-</body>
-</html>
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Maze Generator – PlayZone</title><style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui;background:linear-gradient(135deg,#a8edea,#fed6e3);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}h1{margin-bottom:20px;color:#333}#gameCanvas{border:3px solid #333;background:#fff;display:block;margin-bottom:20px}.info{margin-bottom:20px;color:#666}button{padding:12px 30px;font-size:1.1em;border:none;border-radius:8px;cursor:pointer;background:#ff6b9d;color:#fff;font-weight:bold;margin:5px}button:hover{background:#ff5a8a}.home-btn{background:#6b7280}.home-btn:hover{background:#4b5563}
+</style></head><body><h1>🌀 Maze Generator</h1><div class="info">Use arrow keys to solve the maze</div><canvas id="gameCanvas" width="500" height="500"></canvas><div><button onclick="generateMaze()">New Maze</button><a href="../../index.html" style="text-decoration:none"><button class="home-btn">← Back to Home</button></a></div><script>
+const c=document.getElementById('gameCanvas'),x=c.getContext('2d');const size=25,cell=20;let maze=[],player={x:0,y:0};function generateMaze(){maze=Array(size).fill().map(()=>Array(size).fill(1));const stack=[{x:0,y:0}];maze[0][0]=0;while(stack.length){const current=stack[stack.length-1];const neighbors=[];const dirs=[[0,-2],[0,2],[-2,0],[2,0]];dirs.forEach(([dx,dy])=>{const nx=current.x+dx,ny=current.y+dy;if(nx>=0&&nx<size&&ny>=0&&ny<size&&maze[ny][nx]===1){neighbors.push({x:nx,y:ny,wx:current.x+dx/2,wy:current.y+dy/2})}});if(neighbors.length){const n=neighbors[Math.floor(Math.random()*neighbors.length)];maze[n.wy][n.wx]=0;maze[n.y][n.x]=0;stack.push({x:n.x,y:n.y})}else{stack.pop()}}maze[size-1][size-1]=0;player={x:0,y:0};drawMaze()}function drawMaze(){x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);for(let y=0;y<size;y++){for(let xx=0;xx<size;xx++){if(maze[y][xx]===1){x.fillStyle='#333';x.fillRect(xx*cell,y*cell,cell,cell)}}}x.fillStyle='#10b981';x.fillRect(player.x*cell,player.y*cell,cell,cell);x.fillStyle='#fbbf24';x.fillRect((size-1)*cell,(size-1)*cell,cell,cell);if(player.x===size-1&&player.y===size-1){setTimeout(()=>alert('You won!'),100)}}window.addEventListener('keydown',e=>{const moves={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]};if(moves[e.key]){const[dx,dy]=moves[e.key];const nx=player.x+dx,ny=player.y+dy;if(nx>=0&&nx<size&&ny>=0&&ny<size&&maze[ny][nx]===0){player.x=nx;player.y=ny;drawMaze()}}});generateMaze()
+</script></body></html>

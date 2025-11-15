@@ -1,28 +1,234 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sudoku – PlayZone</title>
-  <link rel="stylesheet" href="../../styles/global.css">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku – PlayZone</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #4facfe;
+            margin-bottom: 20px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(9, 40px);
+            gap: 0;
+            border: 3px solid #333;
+        }
+        .cell {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+        }
+        .cell input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            text-align: center;
+            font-size: 1.3em;
+            font-family: inherit;
+        }
+        .cell input:focus {
+            outline: 2px solid #4facfe;
+            background: #e3f2fd;
+        }
+        .cell.fixed {
+            background: #f0f0f0;
+            font-weight: bold;
+        }
+        .cell:nth-child(3n) {
+            border-right: 2px solid #666;
+        }
+        .cell:nth-child(n+19):nth-child(-n+27),
+        .cell:nth-child(n+46):nth-child(-n+54) {
+            border-bottom: 2px solid #666;
+        }
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background: #4facfe;
+            color: white;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #2196f3;
+            transform: translateY(-2px);
+        }
+        .home-btn {
+            background: #6b7280;
+        }
+        .home-btn:hover {
+            background: #4b5563;
+        }
+    </style>
 </head>
 <body>
-  <div class="page">
-    <div class="game-header">
-      <h1 class="game-title">Sudoku</h1>
-      <div class="actions">
-        <a class="btn" href="../../index.html">← Back to Home</a>
-        <span id="score" class="score hidden"></span>
-      </div>
+    <div class="container">
+        <h1>🔢 Sudoku</h1>
+        <div class="grid" id="grid"></div>
+        <button onclick="newGame()">New Game</button>
+        <button onclick="checkSolution()">Check Solution</button>
+        <a href="../../index.html" style="text-decoration: none;"><button class="home-btn">← Back to Home</button></a>
     </div>
-    <div class="info" id="info">Use controls below to play.</div>
-    <div class="canvas-wrap">
-      
-    </div>
-    <div class="controls" id="controls"></div>
-    <div class="small">PlayZone · Static JS game</div>
-  </div>
-  <script src="script.js"></script>
+
+    <script>
+        let solution = [];
+        let puzzle = [];
+
+        function generateSudoku() {
+            solution = Array(9).fill().map(() => Array(9).fill(0));
+            fillDiagonal();
+            fillRemaining(0, 3);
+            puzzle = solution.map(row => row.slice());
+            removeNumbers(40);
+        }
+
+        function fillDiagonal() {
+            for (let i = 0; i < 9; i += 3) {
+                fillBox(i, i);
+            }
+        }
+
+        function fillBox(row, col) {
+            let nums = [1,2,3,4,5,6,7,8,9];
+            nums.sort(() => Math.random() - 0.5);
+            let idx = 0;
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    solution[row + i][col + j] = nums[idx++];
+                }
+            }
+        }
+
+        function fillRemaining(i, j) {
+            if (j >= 9 && i < 8) {
+                i++;
+                j = 0;
+            }
+            if (i >= 9 && j >= 9) return true;
+            if (i < 3) {
+                if (j < 3) j = 3;
+            } else if (i < 6) {
+                if (j === Math.floor(i / 3) * 3) j += 3;
+            } else {
+                if (j === 6) {
+                    i++;
+                    j = 0;
+                    if (i >= 9) return true;
+                }
+            }
+
+            for (let num = 1; num <= 9; num++) {
+                if (isValid(i, j, num)) {
+                    solution[i][j] = num;
+                    if (fillRemaining(i, j + 1)) return true;
+                    solution[i][j] = 0;
+                }
+            }
+            return false;
+        }
+
+        function isValid(row, col, num) {
+            for (let x = 0; x < 9; x++) {
+                if (solution[row][x] === num || solution[x][col] === num) return false;
+            }
+            const startRow = row - row % 3, startCol = col - col % 3;
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    if (solution[i + startRow][j + startCol] === num) return false;
+                }
+            }
+            return true;
+        }
+
+        function removeNumbers(count) {
+            while (count > 0) {
+                const row = Math.floor(Math.random() * 9);
+                const col = Math.floor(Math.random() * 9);
+                if (puzzle[row][col] !== 0) {
+                    puzzle[row][col] = 0;
+                    count--;
+                }
+            }
+        }
+
+        function render() {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+            for (let i = 0; i < 9; i++) {
+                for (let j = 0; j < 9; j++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    if (puzzle[i][j] !== 0) {
+                        cell.classList.add('fixed');
+                        cell.textContent = puzzle[i][j];
+                    } else {
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.maxLength = 1;
+                        input.onkeypress = (e) => {
+                            if (!/[1-9]/.test(e.key)) e.preventDefault();
+                        };
+                        cell.appendChild(input);
+                    }
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        function checkSolution() {
+            const inputs = document.querySelectorAll('.cell input');
+            const current = puzzle.map(row => row.slice());
+            let idx = 0;
+            
+            for (let i = 0; i < 9; i++) {
+                for (let j = 0; j < 9; j++) {
+                    if (puzzle[i][j] === 0) {
+                        const val = parseInt(inputs[idx++].value) || 0;
+                        current[i][j] = val;
+                    }
+                }
+            }
+            
+            if (JSON.stringify(current) === JSON.stringify(solution)) {
+                alert('Correct! Well done!');
+            } else {
+                alert('Not quite right. Keep trying!');
+            }
+        }
+
+        function newGame() {
+            generateSudoku();
+            render();
+        }
+
+        newGame();
+    </script>
 </body>
 </html>

@@ -1,28 +1,6 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Catch Object – PlayZone</title>
-  <link rel="stylesheet" href="../../styles/global.css">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="page">
-    <div class="game-header">
-      <h1 class="game-title">Catch Object</h1>
-      <div class="actions">
-        <a class="btn" href="../../index.html">← Back to Home</a>
-        <span id="score" class="score hidden"></span>
-      </div>
-    </div>
-    <div class="info" id="info">Use controls below to play.</div>
-    <div class="canvas-wrap">
-      
-    </div>
-    <div class="controls" id="controls"></div>
-    <div class="small">PlayZone · Static JS game</div>
-  </div>
-  <script src="script.js"></script>
-</body>
-</html>
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Catch Object – PlayZone</title><style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui;background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;color:#fff}h1{margin-bottom:20px}#gameCanvas{border:3px solid #fff;background:#e0f2fe;display:block;margin-bottom:20px}.score{font-size:1.5em;margin-bottom:20px}button{padding:12px 30px;font-size:1.1em;border:none;border-radius:8px;cursor:pointer;background:#fff;color:#667eea;font-weight:bold;margin:5px}button:hover{background:#f0f0f0}.home-btn{background:#6b7280;color:#fff}.home-btn:hover{background:#4b5563}
+</style></head><body><h1>🍎 Catch Object</h1><div class="score">Score: <span id="score">0</span></div><canvas id="gameCanvas" width="400" height="500"></canvas><div><button onclick="startGame()">Start Game</button><a href="../../index.html" style="text-decoration:none"><button class="home-btn">← Back to Home</button></a></div><script>
+const c=document.getElementById('gameCanvas'),x=c.getContext('2d');let basket={x:170,y:450,w:60,h:20},objects=[],score=0,gameActive=false;function startGame(){basket={x:170,y:450,w:60,h:20};objects=[];score=0;gameActive=true;gameLoop()}function gameLoop(){if(!gameActive)return;x.fillStyle='#e0f2fe';x.fillRect(0,0,c.width,c.height);x.fillStyle='#8b5cf6';x.fillRect(basket.x,basket.y,basket.w,basket.h);if(Math.random()<0.02){objects.push({x:Math.random()*(c.width-20),y:0,size:20,speed:2+Math.random()*2})}objects.forEach((o,i)=>{o.y+=o.speed;if(o.y>c.height){objects.splice(i,1);score=Math.max(0,score-1);document.getElementById('score').textContent=score}x.fillStyle='#ef4444';x.beginPath();x.arc(o.x,o.y,o.size/2,0,Math.PI*2);x.fill();if(o.y+o.size/2>basket.y&&o.y-o.size/2<basket.y+basket.h&&o.x>basket.x&&o.x<basket.x+basket.w){objects.splice(i,1);score++;document.getElementById('score').textContent=score}});requestAnimationFrame(gameLoop)}c.addEventListener('mousemove',e=>{const rect=c.getBoundingClientRect();basket.x=e.clientX-rect.left-basket.w/2;basket.x=Math.max(0,Math.min(c.width-basket.w,basket.x))})
+</script></body></html>

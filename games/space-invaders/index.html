@@ -1,28 +1,6 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Space Invaders – PlayZone</title>
-  <link rel="stylesheet" href="../../styles/global.css">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="page">
-    <div class="game-header">
-      <h1 class="game-title">Space Invaders</h1>
-      <div class="actions">
-        <a class="btn" href="../../index.html">← Back to Home</a>
-        <span id="score" class="score hidden"></span>
-      </div>
-    </div>
-    <div class="info" id="info">Use controls below to play.</div>
-    <div class="canvas-wrap">
-      
-    </div>
-    <div class="controls" id="controls"></div>
-    <div class="small">PlayZone · Static JS game</div>
-  </div>
-  <script src="script.js"></script>
-</body>
-</html>
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Space Invaders – PlayZone</title><style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui;background:#000;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;color:#fff}h1{margin-bottom:20px;color:#4ade80}#gameCanvas{border:3px solid #4ade80;background:#0a0e27;display:block;margin-bottom:20px}.score{font-size:1.5em;margin-bottom:20px}button{padding:12px 30px;font-size:1.1em;border:none;border-radius:8px;cursor:pointer;background:#4ade80;color:#0a0e27;font-weight:bold;margin:5px}button:hover{background:#22c55e}.home-btn{background:#6b7280;color:#fff}.home-btn:hover{background:#4b5563}
+</style></head><body><h1>👾 Space Invaders</h1><div class="score">Score: <span id="score">0</span></div><canvas id="gameCanvas" width="600" height="400"></canvas><div><button onclick="startGame()">Start Game</button><a href="../../index.html" style="text-decoration:none"><button class="home-btn">← Back to Home</button></a></div><script>
+const c=document.getElementById('gameCanvas'),x=c.getContext('2d');let player={x:275,y:350,w:50,h:20},aliens=[],bullets=[],score=0,gameActive=false,keys={};function startGame(){aliens=[];bullets=[];score=0;gameActive=true;player.x=275;for(let i=0;i<5;i++)for(let j=0;j<8;j++)aliens.push({x:j*70+30,y:i*40+30,w:40,h:30});gameLoop()}function gameLoop(){if(!gameActive)return;x.fillStyle='#0a0e27';x.fillRect(0,0,c.width,c.height);x.fillStyle='#fff';x.fillRect(player.x,player.y,player.w,player.h);if(keys['ArrowLeft']&&player.x>0)player.x-=5;if(keys['ArrowRight']&&player.x<c.width-player.w)player.x+=5;bullets.forEach((b,i)=>{b.y-=7;if(b.y<0)bullets.splice(i,1);else{x.fillStyle='#4ade80';x.fillRect(b.x,b.y,3,10);aliens.forEach((a,j)=>{if(b.x>a.x&&b.x<a.x+a.w&&b.y>a.y&&b.y<a.y+a.h){aliens.splice(j,1);bullets.splice(i,1);score+=10;document.getElementById('score').textContent=score}})}});x.fillStyle='#e74c3c';aliens.forEach(a=>{x.fillRect(a.x,a.y,a.w,a.h);a.y+=0.5;if(a.y>c.height){gameActive=false;alert('Game Over! Score: '+score)}});if(aliens.length===0){alert('You Win! Score: '+score);gameActive=false}requestAnimationFrame(gameLoop)}window.addEventListener('keydown',e=>{keys[e.key]=true;if(e.key===' '&&gameActive)bullets.push({x:player.x+player.w/2,y:player.y})});window.addEventListener('keyup',e=>keys[e.key]=false)
+</script></body></html>

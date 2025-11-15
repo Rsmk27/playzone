@@ -1,28 +1,6 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Reversi / Othello – PlayZone</title>
-  <link rel="stylesheet" href="../../styles/global.css">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="page">
-    <div class="game-header">
-      <h1 class="game-title">Reversi / Othello</h1>
-      <div class="actions">
-        <a class="btn" href="../../index.html">← Back to Home</a>
-        <span id="score" class="score hidden"></span>
-      </div>
-    </div>
-    <div class="info" id="info">Use controls below to play.</div>
-    <div class="canvas-wrap">
-      
-    </div>
-    <div class="controls" id="controls"></div>
-    <div class="small">PlayZone · Static JS game</div>
-  </div>
-  <script src="script.js"></script>
-</body>
-</html>
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Reversi / Othello – PlayZone</title><style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui;background:linear-gradient(135deg,#134e5e,#71b280);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;color:#fff}h1{margin-bottom:20px}.score{font-size:1.3em;margin-bottom:20px}.board{display:inline-grid;grid-template-columns:repeat(8,60px);gap:2px;background:#000;padding:2px}.cell{width:60px;height:60px;background:#0a6;cursor:pointer;display:flex;align-items:center;justify-content:center}.cell:hover{background:#0b7}. piece{width:50px;height:50px;border-radius:50%}.piece.black{background:#000}.piece.white{background:#fff}button{padding:12px 30px;font-size:1.1em;border:none;border-radius:8px;cursor:pointer;background:#fff;color:#134e5e;font-weight:bold;margin-top:20px}button:hover{background:#f0f0f0}.home-btn{background:#6b7280;color:#fff;margin-left:10px}.home-btn:hover{background:#4b5563}
+</style></head><body><h1>⚫⚪ Reversi / Othello</h1><div class="score">Black: <span id="black">2</span> | White: <span id="white">2</span></div><div class="board" id="board"></div><div><button onclick="newGame()">New Game</button><a href="../../index.html" style="text-decoration:none"><button class="home-btn">← Back to Home</button></a></div><script>
+let board=Array(8).fill().map(()=>Array(8).fill(null)),turn='black';function newGame(){board=Array(8).fill().map(()=>Array(8).fill(null));board[3][3]='white';board[3][4]='black';board[4][3]='black';board[4][4]='white';turn='black';render()}function render(){const boardEl=document.getElementById('board');boardEl.innerHTML='';for(let r=0;r<8;r++){for(let c=0;c<8;c++){const cell=document.createElement('div');cell.className='cell';if(board[r][c]){const piece=document.createElement('div');piece.className='piece '+board[r][c];cell.appendChild(piece)}cell.onclick=()=>makeMove(r,c);boardEl.appendChild(cell)}}const counts={black:0,white:0};board.flat().forEach(p=>{if(p)counts[p]++});document.getElementById('black').textContent=counts.black;document.getElementById('white').textContent=counts.white}function makeMove(r,c){if(board[r][c])return;const flips=getFlips(r,c,turn);if(flips.length===0)return;board[r][c]=turn;flips.forEach(([fr,fc])=>{board[fr][fc]=turn});turn=turn==='black'?'white':'black';render()}function getFlips(r,c,color){const dirs=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];const allFlips=[];dirs.forEach(([dr,dc])=>{const flips=[];let nr=r+dr,nc=c+dc;while(nr>=0&&nr<8&&nc>=0&&nc<8){if(!board[nr][nc])break;if(board[nr][nc]===color){allFlips.push(...flips);break}flips.push([nr,nc]);nr+=dr;nc+=dc}});return allFlips}newGame()
+</script></body></html>
