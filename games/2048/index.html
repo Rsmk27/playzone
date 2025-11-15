@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2048 Puzzle – PlayZone</title>
+    <script src="../../scripts/mobile-controls.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -39,6 +40,27 @@
             display: grid;
             grid-template-columns: repeat(4, 100px);
             grid-gap: 10px;
+            max-width: 100%;
+            touch-action: none;
+        }
+        @media (max-width: 600px) {
+            #grid {
+                grid-template-columns: repeat(4, 70px);
+            }
+            .cell {
+                width: 70px !important;
+                height: 70px !important;
+                font-size: 1.5em !important;
+            }
+            .cell[data-value="128"],
+            .cell[data-value="256"],
+            .cell[data-value="512"] {
+                font-size: 1.3em !important;
+            }
+            .cell[data-value="1024"],
+            .cell[data-value="2048"] {
+                font-size: 1.1em !important;
+            }
         }
         .cell {
             width: 100px;
@@ -98,7 +120,7 @@
         <div class="score">Score: <span id="score">0</span></div>
         <div id="grid"></div>
         <button onclick="newGame()">New Game</button>
-        <div class="info">Use arrow keys to play</div>
+        <div class="info">Use arrow keys or swipe to play</div>
         <a href="../../index.html" style="text-decoration: none;"><button class="home-btn">← Back to Home</button></a>
     </div>
 
@@ -201,6 +223,15 @@
             if (e.key === 'ArrowRight') move('right');
             if (e.key === 'ArrowUp') move('up');
             if (e.key === 'ArrowDown') move('down');
+        });
+
+        // Add swipe support for mobile
+        const gridEl = document.getElementById('grid');
+        addSwipeGesture(gridEl, {
+            onSwipeLeft: () => move('left'),
+            onSwipeRight: () => move('right'),
+            onSwipeUp: () => move('up'),
+            onSwipeDown: () => move('down')
         });
 
         function newGame() {

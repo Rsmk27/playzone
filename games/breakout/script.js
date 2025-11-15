@@ -16,6 +16,13 @@ cv.addEventListener('mousemove', e=>{
   const rel = e.clientX - rect.left;
   px = Math.max(0, Math.min(rel - paddleW/2, cv.width-paddleW));
 });
+cv.addEventListener('touchmove', e=>{
+  e.preventDefault();
+  const rect=cv.getBoundingClientRect();
+  const touch = e.touches[0];
+  const rel = touch.clientX - rect.left;
+  px = Math.max(0, Math.min(rel - paddleW/2, cv.width-paddleW));
+}, { passive: false });
 
 function drawBall(){ ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fillStyle='#a78bfa'; ctx.fill(); ctx.closePath(); }
 function drawPaddle(){ ctx.fillStyle='#6ee7ff'; ctx.fillRect(px, cv.height-paddleH-5, paddleW, paddleH); }
@@ -48,5 +55,8 @@ function reset(){
   x= cv.width/2; y=cv.height-30; dx=2*(Math.random()>0.5?1:-1); dy=-2;
   setup();
 }
+
+// Make canvas responsive
+makeCanvasResponsive(cv, cv.width, cv.height);
 
 setup(); step();
