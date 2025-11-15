@@ -53,10 +53,17 @@ function draw(){
     x.fillRect(p.x,p.top+p.gap,60,c.height-(p.top+p.gap));
   });
   scoreEl.textContent = `Score: ${pts}`;
-  if(!alive){ info.textContent='Crashed! Auto-restarting… Press Space to flap.'; } else { info.textContent='Press Space / click to flap.'; }
+  if(!alive){ info.textContent='Crashed! Auto-restarting… Tap or press Space to flap.'; } else { info.textContent='Tap screen or press Space to flap.'; }
 }
 
 window.addEventListener('keydown', e=>{ if(e.code==='Space'){ bird.v = -7; } });
 c.addEventListener('mousedown', ()=>{ bird.v = -7; });
+c.addEventListener('touchstart', (e)=>{ 
+  e.preventDefault(); 
+  bird.v = -7; 
+}, { passive: false });
+
+// Make canvas responsive
+makeCanvasResponsive(c, 420, 560);
 
 reset(); step();

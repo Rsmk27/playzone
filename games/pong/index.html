@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pong – PlayZone</title>
+    <script src="../../scripts/mobile-controls.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -27,6 +28,15 @@
             background: #1a1f3a;
             display: block;
             margin-bottom: 20px;
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+        }
+        @media (max-width: 600px) {
+            #gameCanvas {
+                width: 100%;
+                height: auto;
+            }
         }
         .score {
             font-size: 1.5em;
@@ -59,7 +69,7 @@
     <h1>🏓 Pong</h1>
     <div class="score">Player: <span id="playerScore">0</span> | CPU: <span id="cpuScore">0</span></div>
     <canvas id="gameCanvas" width="800" height="500"></canvas>
-    <div class="controls">Use W/S or ↑/↓ arrows to move your paddle</div>
+    <div class="controls">Use W/S or ↑/↓ arrows to move, or touch/drag on mobile</div>
     <div>
         <button onclick="resetGame()">Reset Game</button>
         <a href="../../index.html" style="text-decoration: none;"><button>← Back to Home</button></a>
@@ -172,6 +182,20 @@
 
         window.addEventListener('keydown', e => keys[e.key] = true);
         window.addEventListener('keyup', e => keys[e.key] = false);
+
+        // Add touch controls for mobile
+        canvas.addEventListener('touchmove', e => {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            const relY = touch.clientY - rect.top;
+            const scaleY = canvas.height / rect.height;
+            const actualY = relY * scaleY;
+            player.y = Math.max(0, Math.min(actualY - player.height / 2, canvas.height - player.height));
+        }, { passive: false });
+
+        // Make canvas responsive
+        makeCanvasResponsive(canvas, 800, 500);
 
         gameLoop();
     </script>

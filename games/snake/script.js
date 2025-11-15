@@ -44,5 +44,19 @@ window.addEventListener('keydown', e=>{
   if(e.key==='ArrowLeft'&&dir.x!==1) dir={x:-1,y:0};
   if(e.key==='ArrowRight'&&dir.x!==-1) dir={x:1,y:0};
 });
-info.textContent='Use arrow keys to move. Eat the squares.';
+// Make canvas responsive
+makeCanvasResponsive(cvs, 400, 400);
+
+// Add touch controls
+createDirectionalPad({
+  onStart: (key) => {
+    if(key === 'up' && dir.y !== 1) dir = {x:0, y:-1};
+    if(key === 'down' && dir.y !== -1) dir = {x:0, y:1};
+    if(key === 'left' && dir.x !== 1) dir = {x:-1, y:0};
+    if(key === 'right' && dir.x !== -1) dir = {x:1, y:0};
+  },
+  onEnd: () => {}
+});
+
+info.textContent='Use arrow keys or on-screen controls to move. Eat the squares.';
 draw(); restart();
