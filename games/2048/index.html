@@ -1,38 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2048 Puzzle – PlayZone</title>
+    <link rel="stylesheet" href="../../styles/global.css">
     <script src="../../scripts/mobile-controls.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .container {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-        h1 {
+        .score-box {
+            font-size: 25px;
+            height: 100%;
+            font-weight: bold;
+            border-radius: 6px;
+            color: white;
             text-align: center;
-            color: #fdcb6e;
-            margin-bottom: 20px;
+            display: inline-block;
         }
-        .score {
-            text-align: center;
-            font-size: 1.5em;
-            margin-bottom: 20px;
-            color: #333;
+
+        .score-title {
+            font-size: 13px;
+            color: #eee4da;
+            display: block;
+            text-transform: uppercase;
         }
+
         #grid {
             background: #bbada0;
             border-radius: 10px;
@@ -40,28 +32,35 @@
             display: grid;
             grid-template-columns: repeat(4, 100px);
             grid-gap: 10px;
-            max-width: 100%;
+            width: max-content;
             touch-action: none;
         }
+
         @media (max-width: 600px) {
             #grid {
                 grid-template-columns: repeat(4, 70px);
+                padding: 5px;
+                grid-gap: 5px;
             }
+
             .cell {
                 width: 70px !important;
                 height: 70px !important;
                 font-size: 1.5em !important;
             }
+
             .cell[data-value="128"],
             .cell[data-value="256"],
             .cell[data-value="512"] {
                 font-size: 1.3em !important;
             }
+
             .cell[data-value="1024"],
             .cell[data-value="2048"] {
                 font-size: 1.1em !important;
             }
         }
+
         .cell {
             width: 100px;
             height: 100px;
@@ -74,54 +73,91 @@
             font-weight: bold;
             color: #776e65;
         }
-        .cell[data-value="2"] { background: #eee4da; }
-        .cell[data-value="4"] { background: #ede0c8; }
-        .cell[data-value="8"] { background: #f2b179; color: #f9f6f2; }
-        .cell[data-value="16"] { background: #f59563; color: #f9f6f2; }
-        .cell[data-value="32"] { background: #f67c5f; color: #f9f6f2; }
-        .cell[data-value="64"] { background: #f65e3b; color: #f9f6f2; }
-        .cell[data-value="128"] { background: #edcf72; color: #f9f6f2; font-size: 1.7em; }
-        .cell[data-value="256"] { background: #edcc61; color: #f9f6f2; font-size: 1.7em; }
-        .cell[data-value="512"] { background: #edc850; color: #f9f6f2; font-size: 1.7em; }
-        .cell[data-value="1024"] { background: #edc53f; color: #f9f6f2; font-size: 1.5em; }
-        .cell[data-value="2048"] { background: #edc22e; color: #f9f6f2; font-size: 1.5em; }
-        button {
-            width: 100%;
-            margin-top: 20px;
-            padding: 15px;
-            font-size: 1.1em;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            background: #fdcb6e;
-            color: white;
-            transition: all 0.3s;
+
+        .cell[data-value="2"] {
+            background: #eee4da;
         }
-        button:hover {
-            background: #fab1a0;
-            transform: translateY(-2px);
+
+        .cell[data-value="4"] {
+            background: #ede0c8;
         }
-        .home-btn {
-            background: #6b7280;
+
+        .cell[data-value="8"] {
+            background: #f2b179;
+            color: #f9f6f2;
         }
-        .home-btn:hover {
-            background: #4b5563;
+
+        .cell[data-value="16"] {
+            background: #f59563;
+            color: #f9f6f2;
         }
-        .info {
-            text-align: center;
-            margin-top: 15px;
-            color: #666;
+
+        .cell[data-value="32"] {
+            background: #f67c5f;
+            color: #f9f6f2;
+        }
+
+        .cell[data-value="64"] {
+            background: #f65e3b;
+            color: #f9f6f2;
+        }
+
+        .cell[data-value="128"] {
+            background: #edcf72;
+            color: #f9f6f2;
+            font-size: 1.7em;
+        }
+
+        .cell[data-value="256"] {
+            background: #edcc61;
+            color: #f9f6f2;
+            font-size: 1.7em;
+        }
+
+        .cell[data-value="512"] {
+            background: #edc53f;
+            color: #f9f6f2;
+            font-size: 1.7em;
+        }
+
+        .cell[data-value="1024"] {
+            background: #edc53f;
+            color: #f9f6f2;
+            font-size: 1.5em;
+        }
+
+        .cell[data-value="2048"] {
+            background: #edc22e;
+            color: #f9f6f2;
+            font-size: 1.5em;
         }
     </style>
 </head>
+
 <body>
-    <div class="container">
-        <h1>🟨 2048 Puzzle</h1>
-        <div class="score">Score: <span id="score">0</span></div>
-        <div id="grid"></div>
-        <button onclick="newGame()">New Game</button>
+    <div class="page">
+        <div class="game-header">
+            <h1 class="game-title">🟨 2048</h1>
+            <div class="actions">
+                <div class="score-box">
+                    <span class="score-title">Score</span>
+                    <span id="score">0</span>
+                </div>
+                <a class="btn" href="../../index.html">← Back to Home</a>
+            </div>
+        </div>
+
         <div class="info">Use arrow keys or swipe to play</div>
-        <a href="../../index.html" style="text-decoration: none;"><button class="home-btn">← Back to Home</button></a>
+
+        <div class="canvas-wrap">
+            <div id="grid"></div>
+        </div>
+
+        <div class="game-controls">
+            <button class="game-btn" onclick="newGame()">New Game</button>
+        </div>
+
+        <div class="small" style="margin-top: 20px; text-align: center;">PlayZone · Static JS game</div>
     </div>
 
     <script>
@@ -140,11 +176,11 @@
             const empty = [];
             for (let i = 0; i < 4; i++) {
                 for (let j = 0; j < 4; j++) {
-                    if (grid[i][j] === 0) empty.push({i, j});
+                    if (grid[i][j] === 0) empty.push({ i, j });
                 }
             }
             if (empty.length > 0) {
-                const {i, j} = empty[Math.floor(Math.random() * empty.length)];
+                const { i, j } = empty[Math.floor(Math.random() * empty.length)];
                 grid[i][j] = Math.random() < 0.9 ? 2 : 4;
             }
         }
@@ -170,12 +206,12 @@
         function move(dir) {
             let moved = false;
             const oldGrid = JSON.stringify(grid);
-            
+
             if (dir === 'left' || dir === 'right') {
                 for (let i = 0; i < 4; i++) {
                     let row = grid[i].filter(x => x !== 0);
                     if (dir === 'right') row.reverse();
-                    
+
                     for (let j = 0; j < row.length - 1; j++) {
                         if (row[j] === row[j + 1]) {
                             row[j] *= 2;
@@ -183,7 +219,7 @@
                             row.splice(j + 1, 1);
                         }
                     }
-                    
+
                     while (row.length < 4) row.push(0);
                     if (dir === 'right') row.reverse();
                     grid[i] = row;
@@ -195,7 +231,7 @@
                         if (grid[i][j] !== 0) col.push(grid[i][j]);
                     }
                     if (dir === 'down') col.reverse();
-                    
+
                     for (let i = 0; i < col.length - 1; i++) {
                         if (col[i] === col[i + 1]) {
                             col[i] *= 2;
@@ -203,7 +239,7 @@
                             col.splice(i + 1, 1);
                         }
                     }
-                    
+
                     while (col.length < 4) col.push(0);
                     if (dir === 'down') col.reverse();
                     for (let i = 0; i < 4; i++) {
@@ -211,7 +247,7 @@
                     }
                 }
             }
-            
+
             if (JSON.stringify(grid) !== oldGrid) {
                 addRandom();
                 render();
@@ -241,4 +277,5 @@
         initGrid();
     </script>
 </body>
+
 </html>

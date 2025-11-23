@@ -49,3 +49,80 @@ hr{border:0;border-top:1px solid rgba(255,255,255,.08);margin:16px 0}
 table{width:100%;border-collapse:collapse}
 td,th{padding:8px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left}
 .notice{padding:10px;border-radius:10px;background:#13212f;border:1px solid rgba(110,231,255,.25);color:#b3eaff}
+
+/* Responsive Game Layout */
+@media (max-width: 600px) {
+  .container { padding: 16px; }
+  .header { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .search { width: 100%; }
+  .brand h1 { font-size: 18px; }
+  .tag { display: none; }
+  
+  /* Game specific responsive overrides */
+  .canvas-wrap, .board {
+    min-height: auto;
+    padding: 0;
+    border: none;
+    background: transparent;
+  }
+  
+  canvas {
+    max-width: 100%;
+    height: auto !important;
+  }
+
+  .game-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .btn {
+    flex: 1;
+    font-size: 14px;
+    padding: 8px;
+  }
+}
+
+/* Game Container Utilities */
+.game-container {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Standard Game UI Elements */
+.game-controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.game-btn {
+  background: var(--card);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text);
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.game-btn:hover {
+  background: rgba(255,255,255,0.1);
+  transform: translateY(-2px);
+}
+
+.game-btn:active {
+  transform: translateY(0);
+}

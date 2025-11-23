@@ -1,8 +1,57 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Asteroids – PlayZone</title>
-<script src="../../scripts/mobile-controls.js"></script>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui;background:#000;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;color:#fff}h1{margin-bottom:20px;color:#6ee7ff}#gameCanvas{border:3px solid #6ee7ff;background:#0b0f1a;display:block;margin-bottom:20px;max-width:100%;height:auto;touch-action:none}.score{font-size:1.5em;margin-bottom:20px}.controls{margin-bottom:20px}button{padding:12px 30px;font-size:1.1em;border:none;border-radius:8px;cursor:pointer;background:#6ee7ff;color:#000;font-weight:bold;margin:5px}button:hover{background:#4dd0e1}.home-btn{background:#6b7280;color:#fff}.home-btn:hover{background:#4b5563}@media (max-width:600px){#gameCanvas{width:100%;height:auto}}
-</style></head><body><h1>🛸 Asteroids</h1><div class="score">Score: <span id="score">0</span></div><canvas id="gameCanvas" width="600" height="400"></canvas><div class="controls" id="controls"></div><div><button onclick="startGame()">Start Game</button><a href="../../index.html" style="text-decoration:none"><button class="home-btn">← Back to Home</button></a></div><script>
-const c=document.getElementById('gameCanvas'),x=c.getContext('2d');let ship={x:300,y:200,angle:0,vx:0,vy:0},asteroids=[],bullets=[],score=0,gameActive=false,keys={},touchKeys={};function startGame(){ship={x:300,y:200,angle:0,vx:0,vy:0};asteroids=[];bullets=[];score=0;gameActive=true;for(let i=0;i<5;i++)asteroids.push({x:Math.random()*c.width,y:Math.random()*c.height,vx:Math.random()*2-1,vy:Math.random()*2-1,size:30});gameLoop()}function gameLoop(){if(!gameActive)return;x.fillStyle='#0b0f1a';x.fillRect(0,0,c.width,c.height);if(keys['ArrowLeft']||touchKeys.left)ship.angle-=0.1;if(keys['ArrowRight']||touchKeys.right)ship.angle+=0.1;if(keys['ArrowUp']||touchKeys.up){ship.vx+=Math.cos(ship.angle)*0.3;ship.vy+=Math.sin(ship.angle)*0.3}ship.x+=ship.vx;ship.y+=ship.vy;ship.vx*=0.99;ship.vy*=0.99;if(ship.x<0)ship.x=c.width;if(ship.x>c.width)ship.x=0;if(ship.y<0)ship.y=c.height;if(ship.y>c.height)ship.y=0;x.save();x.translate(ship.x,ship.y);x.rotate(ship.angle);x.strokeStyle='#6ee7ff';x.beginPath();x.moveTo(15,0);x.lineTo(-10,-8);x.lineTo(-10,8);x.closePath();x.stroke();x.restore();bullets.forEach((b,i)=>{b.x+=b.vx;b.y+=b.vy;b.life--;if(b.life<=0)bullets.splice(i,1);else{x.fillStyle='#fff';x.fillRect(b.x-2,b.y-2,4,4)}});asteroids.forEach((a,i)=>{a.x+=a.vx;a.y+=a.vy;if(a.x<0)a.x=c.width;if(a.x>c.width)a.x=0;if(a.y<0)a.y=c.height;if(a.y>c.height)a.y=0;x.strokeStyle='#fff';x.beginPath();x.arc(a.x,a.y,a.size,0,Math.PI*2);x.stroke();const dist=Math.hypot(ship.x-a.x,ship.y-a.y);if(dist<a.size+10){gameActive=false;alert('Game Over! Score: '+score)}bullets.forEach((b,j)=>{const bdist=Math.hypot(b.x-a.x,b.y-a.y);if(bdist<a.size){asteroids.splice(i,1);bullets.splice(j,1);score+=10;document.getElementById('score').textContent=score}})});if(asteroids.length===0){alert('You Win! Score: '+score);gameActive=false}requestAnimationFrame(gameLoop)}function shoot(){if(gameActive){const vx=Math.cos(ship.angle)*8;const vy=Math.sin(ship.angle)*8;bullets.push({x:ship.x,y:ship.y,vx,vy,life:50})}}window.addEventListener('keydown',e=>{keys[e.key]=true;if(e.key===' ')shoot()});window.addEventListener('keyup',e=>keys[e.key]=false);makeCanvasResponsive(c,600,400);createDirectionalPad({onStart:k=>{if(k==='left')touchKeys.left=true;if(k==='right')touchKeys.right=true;if(k==='up')touchKeys.up=true},onEnd:k=>{touchKeys.left=false;touchKeys.right=false;touchKeys.up=false}});createActionButtons([{label:'Shoot',onPress:shoot}])
-</script></body></html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asteroids – PlayZone</title>
+    <script src="../../scripts/mobile-controls.js"></script>
+    <link rel="stylesheet" href="../../styles/global.css">
+    <style>
+        #gameCanvas {
+            background: #0b0f1a;
+            display: block;
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+            border-radius: 4px;
+        }
+
+        .score {
+            font-size: 1.5em;
+            color: #6ee7ff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <div class="game-header">
+            <h1 class="game-title">🛸 Asteroids</h1>
+            <div class="actions">
+                <div class="score">Score: <span id="score">0</span></div>
+                <a class="btn" href="../../index.html">← Back to Home</a>
+            </div>
+        </div>
+
+        <div class="canvas-wrap">
+            <canvas id="gameCanvas" width="600" height="400"></canvas>
+        </div>
+
+        <div class="game-controls" id="controls">
+            <!-- Mobile controls injected here -->
+        </div>
+
+        <div class="game-controls">
+            <button class="game-btn" onclick="startGame()">Start Game</button>
+        </div>
+
+        <div class="small" style="margin-top: 20px; text-align: center;">PlayZone · Static JS game</div>
+    </div>
+    <script>
+        const c = document.getElementById('gameCanvas'), x = c.getContext('2d'); let ship = { x: 300, y: 200, angle: 0, vx: 0, vy: 0 }, asteroids = [], bullets = [], score = 0, gameActive = false, keys = {}, touchKeys = {}; function startGame() { ship = { x: 300, y: 200, angle: 0, vx: 0, vy: 0 }; asteroids = []; bullets = []; score = 0; gameActive = true; for (let i = 0; i < 5; i++)asteroids.push({ x: Math.random() * c.width, y: Math.random() * c.height, vx: Math.random() * 2 - 1, vy: Math.random() * 2 - 1, size: 30 }); gameLoop() } function gameLoop() { if (!gameActive) return; x.fillStyle = '#0b0f1a'; x.fillRect(0, 0, c.width, c.height); if (keys['ArrowLeft'] || touchKeys.left) ship.angle -= 0.1; if (keys['ArrowRight'] || touchKeys.right) ship.angle += 0.1; if (keys['ArrowUp'] || touchKeys.up) { ship.vx += Math.cos(ship.angle) * 0.3; ship.vy += Math.sin(ship.angle) * 0.3 } ship.x += ship.vx; ship.y += ship.vy; ship.vx *= 0.99; ship.vy *= 0.99; if (ship.x < 0) ship.x = c.width; if (ship.x > c.width) ship.x = 0; if (ship.y < 0) ship.y = c.height; if (ship.y > c.height) ship.y = 0; x.save(); x.translate(ship.x, ship.y); x.rotate(ship.angle); x.strokeStyle = '#6ee7ff'; x.beginPath(); x.moveTo(15, 0); x.lineTo(-10, -8); x.lineTo(-10, 8); x.closePath(); x.stroke(); x.restore(); bullets.forEach((b, i) => { b.x += b.vx; b.y += b.vy; b.life--; if (b.life <= 0) bullets.splice(i, 1); else { x.fillStyle = '#fff'; x.fillRect(b.x - 2, b.y - 2, 4, 4) } }); asteroids.forEach((a, i) => { a.x += a.vx; a.y += a.vy; if (a.x < 0) a.x = c.width; if (a.x > c.width) a.x = 0; if (a.y < 0) a.y = c.height; if (a.y > c.height) a.y = 0; x.strokeStyle = '#fff'; x.beginPath(); x.arc(a.x, a.y, a.size, 0, Math.PI * 2); x.stroke(); const dist = Math.hypot(ship.x - a.x, ship.y - a.y); if (dist < a.size + 10) { gameActive = false; alert('Game Over! Score: ' + score) } bullets.forEach((b, j) => { const bdist = Math.hypot(b.x - a.x, b.y - a.y); if (bdist < a.size) { asteroids.splice(i, 1); bullets.splice(j, 1); score += 10; document.getElementById('score').textContent = score } }) }); if (asteroids.length === 0) { alert('You Win! Score: ' + score); gameActive = false } requestAnimationFrame(gameLoop) } function shoot() { if (gameActive) { const vx = Math.cos(ship.angle) * 8; const vy = Math.sin(ship.angle) * 8; bullets.push({ x: ship.x, y: ship.y, vx, vy, life: 50 }) } } window.addEventListener('keydown', e => { keys[e.key] = true; if (e.key === ' ') shoot() }); window.addEventListener('keyup', e => keys[e.key] = false); makeCanvasResponsive(c, 600, 400); createDirectionalPad({ onStart: k => { if (k === 'left') touchKeys.left = true; if (k === 'right') touchKeys.right = true; if (k === 'up') touchKeys.up = true }, onEnd: k => { touchKeys.left = false; touchKeys.right = false; touchKeys.up = false } }); createActionButtons([{ label: 'Shoot', onPress: shoot }])
+    </script>
+</body>
+
+</html>
