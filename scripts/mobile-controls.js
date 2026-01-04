@@ -83,58 +83,62 @@ function createDirectionalPad(callbacks) {
     .dpad {
       display: flex;
       justify-content: center;
-      margin: 10px auto;
-      max-width: 280px;
+      margin: 20px auto;
+      max-width: 300px;
     }
     .dpad-grid {
       display: grid;
       grid-template-rows: auto auto auto;
-      gap: 8px;
+      gap: 10px;
       width: 100%;
     }
     .dpad-row {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
+      gap: 10px;
     }
     .dpad-btn {
-      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 12px;
-      color: #6ee7ff;
-      font-size: 24px;
-      padding: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      user-select: none;
-      -webkit-user-select: none;
-      touch-action: none;
-      cursor: pointer;
-      min-height: 60px;
-      font-weight: bold;
+      background:linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.2));
+      border:2px solid rgba(139, 92, 246, 0.4);
+      border-radius:14px;
+      color:#6ee7ff;
+      font-size:28px;
+      padding:22px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      user-select:none;
+      -webkit-user-select:none;
+      touch-action:none;
+      cursor:pointer;
+      min-height:70px;
+      font-weight:bold;
+      transition:all 0.2s ease;
+      box-shadow:0 4px 16px rgba(139, 92, 246, 0.3);
+      backdrop-filter:blur(10px);
     }
     .dpad-btn:active {
-      background: linear-gradient(180deg, rgba(110,231,255,.2), rgba(110,231,255,.1));
-      transform: scale(0.95);
+      background:linear-gradient(135deg, rgba(139, 92, 246, 0.4), rgba(6, 182, 212, 0.4));
+      transform:scale(0.95);
+      box-shadow:0 2px 8px rgba(139, 92, 246, 0.4);
     }
     .dpad-center {
-      background: transparent;
-      border: 1px solid rgba(255,255,255,.06);
-      border-radius: 12px;
-      min-height: 60px;
+      background:transparent;
+      border:2px solid rgba(139, 92, 246, 0.2);
+      border-radius:14px;
+      min-height:70px;
     }
     @media (max-width: 600px) {
       .dpad {
-        max-width: 240px;
+        max-width: 260px;
       }
       .dpad-btn {
-        padding: 15px;
-        min-height: 50px;
-        font-size: 20px;
+        padding: 18px;
+        min-height: 60px;
+        font-size: 24px;
       }
       .dpad-center {
-        min-height: 50px;
+        min-height: 60px;
       }
     }
   `;
@@ -180,35 +184,49 @@ function createActionButtons(buttons) {
   style.textContent = `
     .action-buttons {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       justify-content: center;
       flex-wrap: wrap;
-      margin: 10px auto;
+      margin: 20px auto;
     }
     .action-btn {
-      background: linear-gradient(180deg, rgba(167,139,250,.3), rgba(167,139,250,.2));
-      border: 1px solid rgba(167,139,250,.4);
-      border-radius: 12px;
-      color: #fff;
-      font-size: 16px;
-      font-weight: 600;
-      padding: 18px 32px;
-      user-select: none;
-      -webkit-user-select: none;
-      touch-action: none;
-      cursor: pointer;
-      min-width: 120px;
-      text-align: center;
+      background:linear-gradient(135deg, #8b5cf6, #06b6d4);
+      border:2px solid transparent;
+      border-radius:14px;
+      color:#fff;
+      font-size:16px;
+      font-weight:700;
+      padding:18px 36px;
+      user-select:none;
+      -webkit-user-select:none;
+      touch-action:none;
+      cursor:pointer;
+      min-width:140px;
+      text-align:center;
+      transition:all 0.2s ease;
+      box-shadow:0 4px 16px rgba(139, 92, 246, 0.4);
+      position:relative;
+      overflow:hidden;
+    }
+    .action-btn::before{
+      content:'';
+      position:absolute;
+      inset:0;
+      background:linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+      opacity:0;
+      transition:opacity 0.2s ease;
     }
     .action-btn:active {
-      background: linear-gradient(180deg, rgba(167,139,250,.5), rgba(167,139,250,.3));
-      transform: scale(0.95);
+      background:linear-gradient(135deg, #7c3aed, #0891b2);
+      transform:scale(0.95);
+      box-shadow:0 2px 8px rgba(139, 92, 246, 0.4);
     }
+    .action-btn:active::before{opacity:1}
     @media (max-width: 600px) {
       .action-btn {
-        padding: 15px 24px;
-        min-width: 100px;
-        font-size: 14px;
+        padding: 16px 28px;
+        min-width: 120px;
+        font-size: 15px;
       }
     }
   `;
