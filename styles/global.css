@@ -19,14 +19,16 @@ html,body{
   margin:0;
   padding:0;
   background: var(--bg-solid);
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.15) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.1) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, rgba(6, 182, 212, 0.1) 0px, transparent 50%);
   color:var(--text);
   font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
   min-height:100vh;
+}
+@media (min-width: 768px) {
+  html,body{
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.15) 0px, transparent 50%);
+  }
 }
 a{color:inherit;text-decoration:none;transition:all 0.3s ease}
 .container{max-width:1200px;margin:0 auto;padding:32px 24px}
@@ -48,10 +50,14 @@ a{color:inherit;text-decoration:none;transition:all 0.3s ease}
   0%, 100%{box-shadow:0 8px 32px var(--glow), 0 0 0 4px rgba(139, 92, 246, 0.1)}
   50%{box-shadow:0 8px 40px rgba(6, 182, 212, 0.5), 0 0 0 4px rgba(6, 182, 212, 0.2)}
 }
+@media (prefers-reduced-motion: reduce) {
+  .brand .logo{animation:none}
+  *{transition:none !important;animation:none !important}
+}
 .brand h1{font-size:28px;margin:0;font-weight:800;background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .tag{font-size:13px;color:var(--muted);font-weight:500;letter-spacing:0.5px}
 .search{
-  background:rgba(30, 27, 75, 0.4);
+  background:rgba(30, 27, 75, 0.6);
   padding:12px 18px;
   border-radius:14px;
   border:2px solid var(--card-border);
@@ -60,7 +66,9 @@ a{color:inherit;text-decoration:none;transition:all 0.3s ease}
   width:320px;
   font-size:15px;
   transition:all 0.3s ease;
-  backdrop-filter:blur(10px);
+}
+@supports (backdrop-filter: blur(10px)) {
+  .search{backdrop-filter:blur(10px);background:rgba(30, 27, 75, 0.4)}
 }
 .search:focus{
   border-color:var(--accent);
@@ -79,9 +87,11 @@ a{color:inherit;text-decoration:none;transition:all 0.3s ease}
   flex-direction:column;
   gap:12px;
   transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter:blur(10px);
   position:relative;
   overflow:hidden;
+}
+@supports (backdrop-filter: blur(10px)) {
+  .card{backdrop-filter:blur(10px)}
 }
 .card::before{
   content:'';
@@ -193,11 +203,13 @@ a{color:inherit;text-decoration:none;transition:all 0.3s ease}
   border-radius:999px;
   font-size:13px;
   color:var(--text);
-  background:rgba(30, 27, 75, 0.4);
+  background:rgba(30, 27, 75, 0.6);
   font-weight:600;
   cursor:pointer;
   transition:all 0.3s ease;
-  backdrop-filter:blur(10px);
+}
+@supports (backdrop-filter: blur(10px)) {
+  .kicker .pill{backdrop-filter:blur(10px);background:rgba(30, 27, 75, 0.4)}
 }
 .kicker .pill:hover{
   border-color:var(--accent);
@@ -229,15 +241,17 @@ hr{border:0;border-top:1px solid rgba(139, 92, 246, 0.2);margin:20px 0}
 }
 .actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 .info{
-  background:rgba(30, 27, 75, 0.4);
+  background:rgba(30, 27, 75, 0.6);
   border:2px solid var(--card-border);
   padding:16px 20px;
   border-radius:14px;
   color:var(--text);
-  backdrop-filter:blur(10px);
   font-size:15px;
   font-weight:500;
   margin-bottom:16px;
+}
+@supports (backdrop-filter: blur(10px)) {
+  .info{backdrop-filter:blur(10px);background:rgba(30, 27, 75, 0.4)}
 }
 .score{
   background:rgba(139, 92, 246, 0.15);
@@ -248,7 +262,9 @@ hr{border:0;border-top:1px solid rgba(139, 92, 246, 0.2);margin:20px 0}
   font-size:16px;
   color:var(--text);
   box-shadow:0 4px 16px rgba(139, 92, 246, 0.3);
-  backdrop-filter:blur(10px);
+}
+@supports (backdrop-filter: blur(10px)) {
+  .score{backdrop-filter:blur(10px)}
 }
 .canvas-wrap, .board{
   background:rgba(10, 14, 39, 0.8);
@@ -260,8 +276,10 @@ hr{border:0;border-top:1px solid rgba(139, 92, 246, 0.2);margin:20px 0}
   justify-content:center;
   min-height:360px;
   box-shadow:inset 0 2px 20px rgba(0,0,0,0.3), 0 10px 40px rgba(139, 92, 246, 0.2);
-  backdrop-filter:blur(10px);
   margin:16px 0;
+}
+@supports (backdrop-filter: blur(10px)) {
+  .canvas-wrap, .board{backdrop-filter:blur(10px)}
 }
 .controls{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;justify-content:center}
 .small{font-size:13px;color:var(--muted);text-align:center;margin-top:20px;font-weight:500}
@@ -288,9 +306,11 @@ hr{border:0;border-top:1px solid rgba(139, 92, 246, 0.2);margin:20px 0}
 .card-min{
   padding:14px;
   border-radius:14px;
-  background:rgba(30, 27, 75, 0.4);
+  background:rgba(30, 27, 75, 0.6);
   border:2px solid var(--card-border);
-  backdrop-filter:blur(10px);
+}
+@supports (backdrop-filter: blur(10px)) {
+  .card-min{backdrop-filter:blur(10px);background:rgba(30, 27, 75, 0.4)}
 }
 table{width:100%;border-collapse:collapse}
 td,th{padding:10px;border-bottom:1px solid rgba(139, 92, 246, 0.2);text-align:left}
@@ -300,7 +320,9 @@ td,th{padding:10px;border-bottom:1px solid rgba(139, 92, 246, 0.2);text-align:le
   background:rgba(139, 92, 246, 0.1);
   border:2px solid var(--accent);
   color:var(--text);
-  backdrop-filter:blur(10px);
+}
+@supports (backdrop-filter: blur(10px)) {
+  .notice{backdrop-filter:blur(10px)}
 }
 
 /* Responsive Game Layout */

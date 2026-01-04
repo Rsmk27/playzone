@@ -115,7 +115,9 @@ function createDirectionalPad(callbacks) {
       font-weight:bold;
       transition:all 0.2s ease;
       box-shadow:0 4px 16px rgba(139, 92, 246, 0.3);
-      backdrop-filter:blur(10px);
+    }
+    @supports (backdrop-filter: blur(10px)) {
+      .dpad-btn{backdrop-filter:blur(10px)}
     }
     .dpad-btn:active {
       background:linear-gradient(135deg, rgba(139, 92, 246, 0.4), rgba(6, 182, 212, 0.4));
@@ -140,6 +142,9 @@ function createDirectionalPad(callbacks) {
       .dpad-center {
         min-height: 60px;
       }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .dpad-btn{transition:none}
     }
   `;
   document.head.appendChild(style);
@@ -228,6 +233,10 @@ function createActionButtons(buttons) {
         min-width: 120px;
         font-size: 15px;
       }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .action-btn{transition:none}
+      .action-btn::before{transition:none}
     }
   `;
   document.head.appendChild(style);
