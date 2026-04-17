@@ -1,58 +1,14 @@
 <!doctype html>
 <html lang="en">
-
-<head>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-9WWX6ZT6WN"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-9WWX6ZT6WN');
-</script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5458337028479481"
-     crossorigin="anonymous">
-  
-</script>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="google-adsense-account" content="ca-pub-5458337028479481">
-  <title>PlayZone – Browser Games Hub</title>
-  <meta name="description"
-    content="PlayZone is your hub for free, static HTML/CSS/JS browser games. Play arcade, puzzle, and strategy games instantly without downloads.">
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles/global.css">
-</head>
-
-<body>
-  <div class="container">
-    <div class="header">
-      <div class="brand">
-        <div class="logo">
-          <img src="logo_icon.svg" alt="PlayZone Logo" style="width: 100%; height: 100%; padding: 6px;">
-        </div>
-        <div>
-          <h1>PlayZone</h1>
-          <div class="tag">Play & Relax</div>
-        </div>
-      </div>
-      <input id="search" class="search" placeholder="Search games… (e.g., snake, quiz)" />
-    </div>
-
-    <div class="kicker">
-      <span class="pill">Beginner</span>
-      <span class="pill">Medium</span>
-      <span class="pill">Arcade</span>
-      <span class="pill">Advanced</span>
-      <span class="pill">Extras</span>
-    </div>
-
-    <div id="cards" class="grid"></div>
-
-    <div class="footer">© PlayZone ·built with ❤️ By RSMK</div>
-  </div>
-  <script src="scripts/main.js"></script>
-</body>
-
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PlayZone – Browser Games Hub</title>
+    <meta name="description" content="PlayZone is your hub for free browser games. Play arcade, puzzle, and strategy games instantly without downloads.">
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
