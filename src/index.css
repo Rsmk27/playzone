@@ -239,4 +239,59 @@ canvas{border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,0.4)}
   .card h3{font-size:14px}
   .thumb{font-size:32px;padding:8px}
   .game-title{font-size:24px}
-}
+  }
+
+  /* Game Container Utilities */
+  .game-container {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  }
+
+  /* Standard Game UI Elements */
+  .game-controls {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+  }
+
+  .game-btn {
+  background:var(--accent-gradient);
+  border:2px solid transparent;
+  color:#fff;
+  padding:14px 28px;
+  border-radius:12px;
+  font-weight:700;
+  font-size:15px;
+  cursor:pointer;
+  transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow:0 4px 16px rgba(139, 92, 246, 0.4);
+  position:relative;
+  overflow:hidden;
+  }
+
+  .game-btn::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+  opacity:0;
+  transition:opacity 0.3s ease;
+  }
+
+  .game-btn:hover {
+  transform:translateY(-3px);
+  box-shadow:0 8px 24px rgba(139, 92, 246, 0.6);
+  }
+
+  .game-btn:hover::before{opacity:1}
+
+  .game-btn:active {
+  transform: translateY(0);
+  box-shadow:0 2px 8px rgba(139, 92, 246, 0.4);
+  }

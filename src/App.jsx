@@ -4,6 +4,44 @@ import RockPaperScissors from './games/RockPaperScissors'
 import TicTacToe from './games/TicTacToe'
 import NumberGuessing from './games/NumberGuessing'
 import CoinToss from './games/CoinToss'
+import DiceRoller from './games/DiceRoller'
+import ColorGuessing from './games/ColorGuessing'
+import CPSCounter from './games/CPSCounter'
+import MathQuiz from './games/MathQuiz'
+import ReactionTest from './games/ReactionTest'
+import WhackAMole from './games/WhackAMole'
+import Quiz from './games/Quiz'
+import TypingTest from './games/TypingTest'
+import MemoryCards from './games/MemoryCards'
+import Hangman from './games/Hangman'
+import ConnectFour from './games/ConnectFour'
+import SimonSays from './games/SimonSays'
+import SlidingPuzzle from './games/SlidingPuzzle'
+import Minesweeper from './games/Minesweeper'
+import Sudoku from './games/Sudoku'
+import Snake from './games/Snake'
+import FlappyBird from './games/FlappyBird'
+import Breakout from './games/Breakout'
+import Pong from './games/Pong'
+import SpaceInvaders from './games/SpaceInvaders'
+import Asteroids from './games/Asteroids'
+import Shooter2D from './games/Shooter2D'
+import CarRacing from './games/CarRacing'
+import Helicopter from './games/Helicopter'
+import CatchObject from './games/CatchObject'
+import PhysicsBalls from './games/PhysicsBalls'
+import Platformer from './games/Platformer'
+import Game2048 from './games/Game2048'
+import Chess from './games/Chess'
+import Checkers from './games/Checkers'
+import Reversi from './games/Reversi'
+import RPGAdventure from './games/RPGAdventure'
+import Ludo from './games/Ludo'
+import LightsOut from './games/LightsOut'
+import Maze from './games/Maze'
+import TypingAttack from './games/TypingAttack'
+import WordSearch from './games/WordSearch'
+import TowerOfHanoi from './games/TowerOfHanoi'
 
 const GAMES = [
   { slug: 'rock-paper-scissors', title: 'Rock–Paper–Scissors', category: 'Beginner', emoji: '✊✋✌️' },
@@ -57,7 +95,46 @@ const gameComponents = {
   'tic-tac-toe': TicTacToe,
   'number-guessing': NumberGuessing,
   'coin-toss': CoinToss,
+  'dice-roller': DiceRoller,
+  'color-guessing': ColorGuessing,
+  'cps-counter': CPSCounter,
+  'math-quiz': MathQuiz,
+  'reaction-test': ReactionTest,
+  'whack-a-mole': WhackAMole,
+  'quiz': Quiz,
+  'typing-test': TypingTest,
+  'memory-cards': MemoryCards,
+  'hangman': Hangman,
+  'connect-four': ConnectFour,
+  'simon-says': SimonSays,
+  'sliding-puzzle': SlidingPuzzle,
+  'minesweeper': Minesweeper,
+  'sudoku': Sudoku,
+  'snake': Snake,
+  'flappy-bird': FlappyBird,
+  'breakout': Breakout,
+  'pong': Pong,
+  'space-invaders': SpaceInvaders,
+  'asteroids': Asteroids,
+  'shooter-2d': Shooter2D,
+  'car-racing': CarRacing,
+  'helicopter': Helicopter,
+  'catch-object': CatchObject,
+  'physics-balls': PhysicsBalls,
+  'platformer': Platformer,
+  '2048': Game2048,
+  'chess': Chess,
+  'checkers': Checkers,
+  'reversi': Reversi,
+  'rpg-adventure': RPGAdventure,
+  'ludo': Ludo,
+  'lights-out': LightsOut,
+  'maze': Maze,
+  'typing-attack': TypingAttack,
+  'word-search': WordSearch,
+  'tower-of-hanoi': TowerOfHanoi,
 }
+
 
 function Home() {
   const [search, setSearch] = useState('')
