@@ -1,187 +1,197 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react'
 
-const Game2048 = () => {
-  const [grid, setGrid] = useState(Array(4).fill().map(() => Array(4).fill(0)));
-  const [score, setScore] = useState(0);
+const TILE_COLORS = {
+  2:    { bg: '#eee4da', color: '#776e65' },
+  4:    { bg: '#ede0c8', color: '#776e65' },
+  8:    { bg: '#f2b179', color: '#fff' },
+  16:   { bg: '#f59563', color: '#fff' },
+  32:   { bg: '#f67c5f', color: '#fff' },
+  64:   { bg: '#f65e3b', color: '#fff' },
+  128:  { bg: '#edcf72', color: '#fff' },
+  256:  { bg: '#edcc61', color: '#fff' },
+  512:  { bg: '#edc850', color: '#fff' },
+  1024: { bg: '#edc53f', color: '#fff' },
+  2048: { bg: '#edc22e', color: '#fff' },
+}
 
-  const addRandom = useCallback((currentGrid) => {
-    const empty = [];
-    for (let i = 0; i < 4; i++) {
-      for (let j = 0; j < 4; j++) {
-        if (currentGrid[i][j] === 0) empty.push({ i, j });
+function addRandom(g) {
+  const empty = []
+  for(let i=0;i<4;i++) for(let j=0;j<4;j++) if(g[i][j]===0) empty.push({i,j})
+  if(!empty.length) return g
+  const {i,j} = empty[Math.floor(Math.random()*empty.length)]
+  const ng = g.map(r=>[...r])
+  ng[i][j] = Math.random()<0.9?2:4
+  return ng
+}
+
+function init() {
+  let g = Array(4).fill().map(()=>Array(4).fill(0))
+  g = addRandom(g); g = addRandom(g)
+  return g
+}
+
+function slide(row) {
+  let r = row.filter(x=>x), score = 0
+  for(let i=0;i<r.length-1;i++) {
+    if(r[i]===r[i+1]) { r[i]*=2; score+=r[i]; r.splice(i+1,1) }
+  }
+  while(r.length<4) r.push(0)
+  return { row: r, score }
+}
+
+function move(g, dir, mutate) {
+  let moved=false, totalScore=0
+  const ng = g.map(r=>[...r])
+  if(dir==='left'||dir==='right') {
+    for(let i=0;i<4;i++){
+      let row = ng[i]; if(dir==='right') row=row.slice().reverse()
+      const {row:sr,score} = slide(row)
+      if(dir==='right') sr.reverse()
+      if(JSON.stringify(ng[i])!==JSON.stringify(sr)) moved=true
+      ng[i]=sr; totalScore+=score
+    }
+  } else {
+    for(let j=0;j<4;j++){
+      let col=[]; for(let i=0;i<4;i++) col.push(ng[i][j])
+      if(dir==='down') col.reverse()
+      const {row:sc,score}=slide(col)
+      if(dir==='down') sc.reverse()
+      for(let i=0;i<4;i++){if(ng[i][j]!==sc[i])moved=true;ng[i][j]=sc[i]}
+      totalScore+=score
+    }
+  }
+  return { grid: moved?addRandom(ng):g, score: totalScore, moved }
+}
+
+export default function Game2048() {
+  const [grid, setGrid]   = useState(init)
+  const [score, setScore] = useState(0)
+  const [best, setBest]   = useState(0)
+  const [won, setWon]     = useState(false)
+
+  const doMove = (dir) => {
+    setGrid(prev => {
+      const {grid:ng,score:ds,moved} = move(prev,dir)
+      if(moved) {
+        setScore(s=>{const ns=s+ds;setBest(b=>Math.max(b,ns));return ns})
+        if(ng.flat().includes(2048)) setWon(true)
       }
-    }
-    if (empty.length > 0) {
-      const { i, j } = empty[Math.floor(Math.random() * empty.length)];
-      const newGrid = [...currentGrid.map(row => [...row])];
-      newGrid[i][j] = Math.random() < 0.9 ? 2 : 4;
-      return newGrid;
-    }
-    return currentGrid;
-  }, []);
+      return ng
+    })
+  }
 
-  const initGame = useCallback(() => {
-    let initialGrid = Array(4).fill().map(() => Array(4).fill(0));
-    initialGrid = addRandom(initialGrid);
-    initialGrid = addRandom(initialGrid);
-    setGrid(initialGrid);
-    setScore(0);
-  }, [addRandom]);
+  const newGame = () => { setGrid(init()); setScore(0); setWon(false) }
 
   useEffect(() => {
-    initGame();
-  }, [initGame]);
+    const h = (e) => {
+      if(e.key==='ArrowLeft')  doMove('left')
+      if(e.key==='ArrowRight') doMove('right')
+      if(e.key==='ArrowUp')    doMove('up')
+      if(e.key==='ArrowDown')  doMove('down')
+    }
+    window.addEventListener('keydown', h)
+    return () => window.removeEventListener('keydown', h)
+  }, [])
 
-  const move = useCallback((dir) => {
-    setGrid(prevGrid => {
-      let moved = false;
-      let newScore = score;
-      let nextGrid = prevGrid.map(row => [...row]);
-
-      if (dir === 'left' || dir === 'right') {
-        for (let i = 0; i < 4; i++) {
-          let row = nextGrid[i].filter(x => x !== 0);
-          if (dir === 'right') row.reverse();
-
-          for (let j = 0; j < row.length - 1; j++) {
-            if (row[j] === row[j + 1]) {
-              row[j] *= 2;
-              newScore += row[j];
-              row.splice(j + 1, 1);
-            }
-          }
-
-          while (row.length < 4) row.push(0);
-          if (dir === 'right') row.reverse();
-          
-          if (JSON.stringify(nextGrid[i]) !== JSON.stringify(row)) moved = true;
-          nextGrid[i] = row;
-        }
-      } else {
-        for (let j = 0; j < 4; j++) {
-          let col = [];
-          for (let i = 0; i < 4; i++) {
-            if (nextGrid[i][j] !== 0) col.push(nextGrid[i][j]);
-          }
-          if (dir === 'down') col.reverse();
-
-          for (let i = 0; i < col.length - 1; i++) {
-            if (col[i] === col[i + 1]) {
-              col[i] *= 2;
-              newScore += col[i];
-              col.splice(i + 1, 1);
-            }
-          }
-
-          while (col.length < 4) col.push(0);
-          if (dir === 'down') col.reverse();
-          
-          for (let i = 0; i < 4; i++) {
-            if (nextGrid[i][j] !== col[i]) moved = true;
-            nextGrid[i][j] = col[i];
-          }
-        }
-      }
-
-      if (moved) {
-        setScore(newScore);
-        return addRandom(nextGrid);
-      }
-      return prevGrid;
-    });
-  }, [addRandom, score]);
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'ArrowLeft') move('left');
-      if (e.key === 'ArrowRight') move('right');
-      if (e.key === 'ArrowUp') move('up');
-      if (e.key === 'ArrowDown') move('down');
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [move]);
-
-  const getCellColor = (val) => {
-    const colors = {
-      2: '#eee4da',
-      4: '#ede0c8',
-      8: '#f2b179',
-      16: '#f59563',
-      32: '#f67c5f',
-      64: '#f65e3b',
-      128: '#edcf72',
-      256: '#edcc61',
-      512: '#edc53f',
-      1024: '#edc53f',
-      2048: '#edc22e',
-    };
-    return colors[val] || '#cdc1b4';
-  };
-
-  const getTextColor = (val) => {
-    return val <= 4 ? '#776e65' : '#f9f6f2';
-  };
+  const max = Math.max(...grid.flat())
 
   return (
-    <div className="page">
-      <div className="game-header">
-        <h1 className="game-title">🟨 2048</h1>
-        <div className="actions">
-          <div className="score-box" style={{ background: '#bbada0', padding: '5px 15px', borderRadius: '5px', color: 'white' }}>
-            <span style={{ fontSize: '12px', display: 'block' }}>SCORE</span>
-            <span style={{ fontSize: '20px', fontWeight: 'bold' }}>{score}</span>
-          </div>
-          <Link to="/" className="btn">← Back to Home</Link>
-        </div>
-      </div>
+    <>
+      <style>{T48_STYLES}</style>
+      <div className="t48-root">
+        <div className="t48-orb t48-orb-1" /><div className="t48-orb t48-orb-2" />
 
-      <div className="info">Use arrow keys to play</div>
-
-      <div className="canvas-wrap">
-        <div style={{
-          background: '#bbada0',
-          borderRadius: '10px',
-          padding: '10px',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: '10px',
-          width: '100%',
-          maxWidth: '400px',
-          aspectRatio: '1'
-        }}>
-          {grid.map((row, i) => row.map((cell, j) => (
-            <div
-              key={`${i}-${j}`}
-              style={{
-                background: getCellColor(cell),
-                borderRadius: '5px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: cell >= 1024 ? '1.5rem' : cell >= 128 ? '1.8rem' : '2rem',
-                fontWeight: 'bold',
-                color: getTextColor(cell),
-                transition: 'all 0.1s ease-in-out'
-              }}
-            >
-              {cell > 0 ? cell : ''}
+        {/* header */}
+        <div className="t48-header">
+          <div className="t48-score-group">
+            <div className="t48-score-box">
+              <span className="t48-score-label">Score</span>
+              <span className="t48-score-val">{score}</span>
             </div>
-          )))}
+            <div className="t48-score-box">
+              <span className="t48-score-label">Best</span>
+              <span className="t48-score-val t48-score-best">{best}</span>
+            </div>
+          </div>
+          {max >= 128 && (
+            <div className="t48-max-badge" style={{ background: TILE_COLORS[max]?.bg||'#a78bfa', color: TILE_COLORS[max]?.color||'#fff' }}>
+              {max}
+            </div>
+          )}
         </div>
-      </div>
 
-      <div className="game-controls">
-        <button className="game-btn" onClick={initGame}>New Game</button>
-      </div>
+        {won && (
+          <div className="t48-win">🎉 You reached 2048! Keep going for a higher score.</div>
+        )}
 
-      <div className="small" style={{ marginTop: '20px', textAlign: 'center' }}>
-        PlayZone · React 2048
-      </div>
-    </div>
-  );
-};
+        {/* grid */}
+        <div className="t48-grid">
+          {grid.map((row,i)=>row.map((cell,j) => {
+            const tc = TILE_COLORS[cell]
+            return (
+              <div
+                key={`${i}-${j}`}
+                className={`t48-tile ${cell?'t48-tile--filled':''}`}
+                style={tc ? {
+                  background: tc.bg,
+                  color: tc.color,
+                  boxShadow: cell>=128 ? `0 0 18px ${tc.bg}99` : undefined,
+                  fontSize: cell>=1024?'1.6rem':cell>=128?'2rem':'2.4rem',
+                } : {}}
+              >
+                {cell || ''}
+              </div>
+            )
+          }))}
+        </div>
 
-export default Game2048;
+        {/* arrow controls */}
+        <div className="t48-arrows">
+          <button className="t48-arrow" onClick={()=>doMove('up')}>↑</button>
+          <div style={{display:'flex',gap:'6px'}}>
+            <button className="t48-arrow" onClick={()=>doMove('left')}>←</button>
+            <button className="t48-arrow" onClick={()=>doMove('down')}>↓</button>
+            <button className="t48-arrow" onClick={()=>doMove('right')}>→</button>
+          </div>
+        </div>
+
+        <button className="t48-btn" onClick={newGame}>🔄 New Game</button>
+        <span className="t48-hint">Use arrow keys or buttons to play</span>
+      </div>
+    </>
+  )
+}
+
+const T48_STYLES = `
+  @keyframes t48-orb { 0%,100%{transform:translate(0,0)} 40%{transform:translate(20px,-15px)} 70%{transform:translate(-12px,8px)} }
+  @keyframes t48-in { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes t48-tile-in { from{transform:scale(0.5);opacity:0} to{transform:scale(1);opacity:1} }
+
+  .t48-root { position:relative;display:flex;flex-direction:column;align-items:center;gap:12px;padding:24px 16px 32px;overflow:hidden; }
+  .t48-orb { position:absolute;border-radius:50%;filter:blur(70px);pointer-events:none;z-index:0;animation:t48-orb 9s ease-in-out infinite; }
+  .t48-orb-1 { width:240px;height:240px;background:rgba(237,204,97,0.12);top:-50px;left:-40px; }
+  .t48-orb-2 { width:200px;height:200px;background:rgba(139,92,246,0.1);bottom:-40px;right:-40px;animation-delay:-4s; }
+
+  .t48-header { position:relative;z-index:1;display:flex;align-items:center;gap:12px;width:100%;max-width:360px;animation:t48-in 0.4s ease; }
+  .t48-score-group { display:flex;gap:8px;flex:1; }
+  .t48-score-box { padding:8px 16px;border-radius:12px;background:rgba(15,23,42,0.65);border:1px solid rgba(139,92,246,0.22);backdrop-filter:blur(10px);display:flex;flex-direction:column;align-items:center;gap:2px;flex:1; }
+  .t48-score-label { font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:#64748b; }
+  .t48-score-val { font-size:20px;font-weight:800;color:#a78bfa; }
+  .t48-score-best { color:#fbbf24; }
+  .t48-max-badge { padding:6px 14px;border-radius:12px;font-size:18px;font-weight:900; }
+
+  .t48-win { position:relative;z-index:1;padding:10px 20px;border-radius:16px;background:rgba(237,204,97,0.15);border:1.5px solid rgba(237,204,97,0.4);font-size:13px;font-weight:700;color:#edc561;max-width:360px;text-align:center; }
+
+  .t48-grid { position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:12px;border-radius:18px;background:rgba(15,23,42,0.85);border:2px solid rgba(139,92,246,0.22);backdrop-filter:blur(14px);width:100%;max-width:360px;box-shadow:0 12px 40px rgba(0,0,0,0.5); }
+  .t48-tile { aspect-ratio:1;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;background:rgba(255,255,255,0.05);transition:all 0.1s ease; }
+  .t48-tile--filled { animation:t48-tile-in 0.15s ease; }
+
+  .t48-arrows { position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:6px; }
+  .t48-arrow { width:44px;height:44px;border-radius:12px;background:rgba(139,92,246,0.25);border:1.5px solid rgba(139,92,246,0.4);color:#a78bfa;font-size:18px;cursor:pointer;transition:all 0.15s ease;font-weight:700; }
+  .t48-arrow:hover { background:rgba(139,92,246,0.45);transform:scale(1.1); }
+  .t48-arrow:active { transform:scale(0.92); }
+
+  .t48-btn { position:relative;z-index:1;padding:12px 28px;border-radius:14px;background:linear-gradient(135deg,#8b5cf6,#06b6d4);border:none;color:#fff;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 6px 18px rgba(139,92,246,0.4);transition:all 0.25s ease; }
+  .t48-btn:hover { transform:translateY(-3px);box-shadow:0 10px 26px rgba(139,92,246,0.55); }
+  .t48-hint { position:relative;z-index:1;font-size:11px;color:#475569; }
+`
