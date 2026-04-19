@@ -1,0 +1,27 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /leaderboard/{docId} {
+      // Anyone can fetch the leaderboard
+      allow read: if true;
+      
+      // Only authenticated users can submit a score
+      allow create: if request.auth != null && 
+                       // Ensure the structure of the incoming data
+                       request.resource.data.keys().hasAll(['name', 'score', 'createdAt', 'userId']) &&
+                       // Validate the score logic (adjust max score dependent on your game limits)
+                       request.resource.data.score is number && 
+                       request.resource.data.score >= 0 && 
+                       request.resource.data.score <= 100000 &&
+                       // Validate name size constraints
+                       request.resource.data.name is string &&
+                       request.resource.data.name.size() > 0 &&
+                       request.resource.data.name.size() <= 20 &&
+                       // Validate user's claimed ID matches active auth ID
+                       request.resource.data.userId == request.auth.uid;
+      
+      // Reject updates or deletes (scores are append-only forever)
+      allow update, delete: if false; 
+    }
+  }
+}
