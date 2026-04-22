@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Link, useNavigate, useParams } from 'react-router-dom'
 import RockPaperScissors from './games/RockPaperScissors'
 import TicTacToe from './games/TicTacToe'
@@ -42,7 +42,7 @@ import Maze from './games/Maze'
 import TypingAttack from './games/TypingAttack'
 import WordSearch from './games/WordSearch'
 import TowerOfHanoi from './games/TowerOfHanoi'
-
+import MobileControls from './components/MobileControls'
 const GAMES = [
   { slug: 'rock-paper-scissors', title: 'Rock–Paper–Scissors', category: 'Beginner', emoji: '✊✋✌️' },
   { slug: 'tic-tac-toe', title: 'Tic‑Tac‑Toe', category: 'Beginner', emoji: '❌⭕' },
@@ -192,7 +192,9 @@ function Home() {
         ))}
       </div>
 
-      <div className="footer">© PlayZone · built with ❤️ By RSMK</div>
+      <div className="footer">
+        © PlayZone · built with ❤️ By <a href="https://rsmk.me" target="_blank" rel="noopener noreferrer" style={{color: 'var(--accent)', textDecoration: 'none', fontWeight: 600}}>RSMK</a>
+      </div>
     </div>
   )
 }
@@ -201,6 +203,19 @@ function GamePage() {
   const { slug } = useParams()
   const game = GAMES.find(g => g.slug === slug)
   const GameComponent = gameComponents[slug]
+  
+  const [showControls, setShowControls] = useState(() => {
+    return window.innerWidth <= 768 && (game?.category === 'Arcade' || game?.category === 'Advanced')
+  })
+
+  // Listen to window resizes to auto-hide or show if appropriate
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) setShowControls(false)
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   if (!game) {
     return (
@@ -216,6 +231,15 @@ function GamePage() {
       <div className="game-header">
         <h1 className="game-title">{game.emoji} {game.title}</h1>
         <div className="actions">
+          {window.innerWidth <= 768 && (
+            <button 
+              className="btn" 
+              style={{ background: showControls ? 'var(--danger)' : 'var(--accent)', padding: '10px 14px' }}
+              onClick={() => setShowControls(c => !c)}
+            >
+              {showControls ? '🎮 Off' : '🎮 On'}
+            </button>
+          )}
           <Link className="btn" to="/">← Back to Home</Link>
         </div>
       </div>
@@ -253,8 +277,11 @@ function GamePage() {
           </div>
         </>
       )}
+      <div className="footer" style={{ marginTop: '40px', borderTop: '1px solid rgba(139, 92, 246, 0.1)', paddingTop: '20px' }}>
+        © PlayZone · built with ❤️ By <a href="https://rsmk.me" target="_blank" rel="noopener noreferrer" style={{color: 'var(--accent)', textDecoration: 'none', fontWeight: 600}}>RSMK</a>
+      </div>
       
-      <div className="small">PlayZone · {game.category} Game</div>
+      {showControls && <MobileControls />}
     </div>
   )
 }

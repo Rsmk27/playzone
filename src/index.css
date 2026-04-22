@@ -239,7 +239,30 @@ canvas{border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,0.4)}
   .card h3{font-size:14px}
   .thumb{font-size:32px;padding:8px}
   .game-title{font-size:24px}
+  
+  .game-container, .page > div {
+    max-width: 100% !important;
+    overflow-x: hidden;
   }
+  
+  canvas, [class*="board"], [class*="grid"], [class*="wrap"] {
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: contain;
+  }
+}
+
+@media (max-width: 768px) {
+  .game-controls {
+    flex-wrap: wrap;
+  }
+  [class*="ttt-board"] {
+    width: auto !important;
+    height: auto !important;
+    aspect-ratio: 1;
+    max-width: 100%;
+  }
+}
 
   /* Game Container Utilities */
   .game-container {
@@ -294,4 +317,62 @@ canvas{border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,0.4)}
   .game-btn:active {
   transform: translateY(0);
   box-shadow:0 2px 8px rgba(139, 92, 246, 0.4);
+  }
+
+  /* Mobile Controls Overlay */
+  .mobile-controls-overlay {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    padding: 0 20px;
+    z-index: 1000;
+    pointer-events: none;
+  }
+  .mobile-controls-overlay button {
+    pointer-events: auto;
+    user-select: none;
+    background: rgba(30, 27, 75, 0.6);
+    border: 2px solid rgba(139, 92, 246, 0.6);
+    color: #fff;
+    border-radius: 50%;
+    width: 55px;
+    height: 55px;
+    font-size: 24px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    touch-action: manipulation;
+  }
+  .mobile-controls-overlay button:active {
+    background: rgba(139, 92, 246, 0.8);
+    transform: scale(0.9);
+  }
+  .dpad {
+    display: grid;
+    grid-template-columns: 55px 55px 55px;
+    grid-template-rows: 55px 55px 55px;
+    gap: 8px;
+  }
+  .dpad-btn.up { grid-column: 2; grid-row: 1; }
+  .dpad-btn.left { grid-column: 1; grid-row: 2; }
+  .dpad-btn.right { grid-column: 3; grid-row: 2; }
+  .dpad-btn.down { grid-column: 2; grid-row: 3; }
+  .action-buttons {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+    padding-bottom: 55px;
+  }
+  .action-btn {
+    width: 65px !important;
+    height: 65px !important;
+    font-size: 14px !important;
+    white-space: nowrap;
   }
