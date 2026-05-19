@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from 'react'
+import { useState, useEffect, lazy, Suspense, useMemo } from 'react'
 import { BrowserRouter, Routes, Route, Link, useNavigate, useParams } from 'react-router-dom'
 // ⚡ Bolt Optimization: Lazy load game components to reduce initial bundle size from ~429KB to ~175KB.
 const RockPaperScissors = lazy(() => import('./games/RockPaperScissors'))
@@ -142,11 +142,15 @@ function Home() {
   const [category, setCategory] = useState('All')
   const navigate = useNavigate()
 
-  const filtered = GAMES.filter(g => {
-    const matchesSearch = g.title.toLowerCase().includes(search.toLowerCase()) || g.slug.includes(search.toLowerCase())
-    const matchesCategory = category === 'All' || g.category === category
-    return matchesSearch && matchesCategory
-  })
+  // ⚡ Bolt Optimization: Memoize filtered games and extract toLowerCase() to prevent unnecessary re-computations on every render.
+  const filtered = useMemo(() => {
+    const searchLower = search.toLowerCase()
+    return GAMES.filter(g => {
+      const matchesSearch = g.title.toLowerCase().includes(searchLower) || g.slug.includes(searchLower)
+      const matchesCategory = category === 'All' || g.category === category
+      return matchesSearch && matchesCategory
+    })
+  }, [search, category])
 
   return (
     <div className="container">
