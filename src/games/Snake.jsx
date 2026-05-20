@@ -42,7 +42,17 @@ export default function Snake() {
     // grid
     ctx.strokeStyle = 'rgba(139,92,246,0.06)'
     ctx.lineWidth = 0.5
-    for(let x=0;x<W;x++){for(let y=0;y<H;y++){ctx.strokeRect(x*CELL_SZ,y*CELL_SZ,CELL_SZ,CELL_SZ)}}
+    // ⚡ Bolt Optimization: Batch grid drawing into a single path instead of calling strokeRect 400 times
+    ctx.beginPath()
+    for(let x=0;x<=W;x++){
+      ctx.moveTo(x*CELL_SZ, 0)
+      ctx.lineTo(x*CELL_SZ, H*CELL_SZ)
+    }
+    for(let y=0;y<=H;y++){
+      ctx.moveTo(0, y*CELL_SZ)
+      ctx.lineTo(W*CELL_SZ, y*CELL_SZ)
+    }
+    ctx.stroke()
 
     // food
     const f = s.food
