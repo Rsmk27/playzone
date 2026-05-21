@@ -159,11 +159,14 @@ function Asteroids() {
     ctx.stroke()
     ctx.restore()
 
+    // ⚡ Bolt Optimization: Batch bullet drawing operations to reduce the number of draw calls per frame
     // Bullets
     ctx.fillStyle = '#fff'
+    ctx.beginPath()
     g.bullets.forEach(b => {
-      ctx.fillRect(b.x - 2, b.y - 2, 4, 4)
+      ctx.rect(b.x - 2, b.y - 2, 4, 4)
     })
+    ctx.fill()
 
     // Asteroids
     ctx.strokeStyle = '#fff'
