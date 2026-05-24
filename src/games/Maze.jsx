@@ -52,14 +52,17 @@ const Maze = () => {
     ctx.fillStyle = '#fff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    // ⚡ Bolt Optimization: Batch grid drawing into a single path to prevent unnecessary draw calls
+    ctx.fillStyle = '#1e293b';
+    ctx.beginPath();
     for (let y = 0; y < size; y++) {
       for (let x = 0; x < size; x++) {
         if (maze[y][x] === 1) {
-          ctx.fillStyle = '#1e293b';
-          ctx.fillRect(x * cell, y * cell, cell, cell);
+          ctx.rect(x * cell, y * cell, cell, cell);
         }
       }
     }
+    ctx.fill();
 
     // Goal
     ctx.fillStyle = '#fbbf24';
