@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef } from 'react'
 
 const PADS = [
   { id: 0, label: 'Red',    color: '#f87171', glow: 'rgba(248,113,113,0.7)', dark: '#7f1d1d' },
