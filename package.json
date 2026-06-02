@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run"
   },
   "dependencies": {
     "firebase": "^12.12.0",
@@ -15,9 +16,13 @@
     "react-router-dom": "^6.26.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
-    "vite": "^5.4.1"
+    "jsdom": "^29.1.1",
+    "vite": "^5.4.1",
+    "vitest": "^4.1.8"
   }
 }
