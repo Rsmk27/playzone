@@ -36,7 +36,15 @@ export default function Reversi() {
   const [lastFlipped, setFlipped] = useState([])
   const [lastPlaced, setPlaced]   = useState(null)
 
-  const count = (p) => board.flat().filter(x=>x===p).length
+  const count = (p, b = board) => {
+    let c = 0;
+    for (let r = 0; r < 8; r++) {
+      for (let c_idx = 0; c_idx < 8; c_idx++) {
+        if (b[r][c_idx] === p) c++;
+      }
+    }
+    return c;
+  }
 
   const place = (r, c) => {
     if (winner || board[r][c]) return
@@ -57,8 +65,8 @@ export default function Reversi() {
     } else {
       const curLegal = getLegal(nb, turn)
       if (curLegal.length === 0) {
-        const p1 = nb.flat().filter(x=>x===P1).length
-        const p2 = nb.flat().filter(x=>x===P2).length
+        const p1 = count(P1, nb)
+        const p2 = count(P2, nb)
         setWinner(p1>p2 ? P1 : p2>p1 ? P2 : 0)
       }
     }
