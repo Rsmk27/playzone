@@ -4,3 +4,4 @@
 ## 2026-05-19 - Batching Canvas Path Operations
 **Learning:** Calling `ctx.strokeRect` in a tight loop for a grid is highly inefficient (e.g. 400 calls per frame for a 20x20 grid) and causes performance drops on the frontend.
 **Action:** Always batch grid drawing or repeated lines into a single path using `ctx.beginPath()`, `ctx.moveTo()`, `ctx.lineTo()`, and finally `ctx.stroke()`.
+## 2026-06-02 - Unroll small inner loops | **Learning:** Unrolling small, hot loops (like checking 8 neighboring cells in a grid) can improve performance by ~20%. | **Action:** Use explicit function calls instead of nested loops inside frequently-called recursive functions.

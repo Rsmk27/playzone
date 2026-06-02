@@ -66,7 +66,16 @@ export default function Minesweeper() {
     const flood = (rr, cc) => {
       if (rr<0||rr>=ROWS||cc<0||cc>=COLS||newRev[rr][cc]||flags[rr][cc]) return
       newRev[rr][cc] = true
-      if (grid[rr][cc] === 0) for (let dr=-1;dr<=1;dr++) for (let dc=-1;dc<=1;dc++) flood(rr+dr,cc+dc)
+      if (grid[rr][cc] === 0) {
+        flood(rr - 1, cc - 1)
+        flood(rr - 1, cc)
+        flood(rr - 1, cc + 1)
+        flood(rr, cc - 1)
+        flood(rr, cc + 1)
+        flood(rr + 1, cc - 1)
+        flood(rr + 1, cc)
+        flood(rr + 1, cc + 1)
+      }
     }
     flood(r, c)
     setRev(newRev)
