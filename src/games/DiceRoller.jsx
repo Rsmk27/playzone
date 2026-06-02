@@ -40,6 +40,14 @@ export default function DiceRoller() {
       }
     : null
 
+  // Generates a cryptographically secure random number between 1 and 6
+  const getSecureRandom = () => {
+    const array = new Uint32Array(1)
+    window.crypto.getRandomValues(array)
+    // Map to 1-6
+    return (array[0] % 6) + 1
+  }
+
   const roll = () => {
     if (rolling) return
     setRolling(true)
@@ -48,10 +56,10 @@ export default function DiceRoller() {
     const total = 16
     intervalRef.current = setInterval(() => {
       ticks++
-      setDisplay(Math.floor(Math.random() * 6) + 1)
+      setDisplay(getSecureRandom())
       if (ticks >= total) {
         clearInterval(intervalRef.current)
-        const result = Math.floor(Math.random() * 6) + 1
+        const result = getSecureRandom()
         setCurrent(result)
         setDisplay(result)
         setHistory(h => [...h, result])
