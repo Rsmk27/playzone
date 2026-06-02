@@ -11,14 +11,18 @@ function initGrid() {
     const c = Math.floor(Math.random() * COLS)
     if (g[r][c] !== 'M') { g[r][c] = 'M'; placed++ }
   }
-  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
-    if (g[r][c] === 'M') continue
-    let n = 0
-    for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
-      const nr = r+dr, nc = c+dc
-      if (nr>=0&&nr<ROWS&&nc>=0&&nc<COLS&&g[nr][nc]==='M') n++
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      if (g[r][c] === 'M') continue
+      let n = 0
+      for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+          const nr = r+dr, nc = c+dc
+          if (nr>=0&&nr<ROWS&&nc>=0&&nc<COLS&&g[nr][nc]==='M') n++
+        }
+      }
+      g[r][c] = n
     }
-    g[r][c] = n
   }
   return g
 }
