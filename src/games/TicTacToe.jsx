@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback } from 'react'
 
 // ── Win combinations + their SVG line coords ─────────────────────────────────
 const WIN_LINES = [
