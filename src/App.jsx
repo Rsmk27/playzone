@@ -271,6 +271,7 @@ function GamePage() {
           }}>
             <iframe 
               src={`/games/${slug}/index.html`} 
+              sandbox="allow-scripts allow-same-origin"
               style={{ 
                 width: '100%', 
                 height: '100%', 
