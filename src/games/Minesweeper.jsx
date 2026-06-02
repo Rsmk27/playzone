@@ -6,20 +6,33 @@ const MINES = 10
 function initGrid() {
   const g = Array(ROWS).fill().map(() => Array(COLS).fill(0))
   let placed = 0
+  const mines = []
   while (placed < MINES) {
     const r = Math.floor(Math.random() * ROWS)
     const c = Math.floor(Math.random() * COLS)
-    if (g[r][c] !== 'M') { g[r][c] = 'M'; placed++ }
-  }
-  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
-    if (g[r][c] === 'M') continue
-    let n = 0
-    for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
-      const nr = r+dr, nc = c+dc
-      if (nr>=0&&nr<ROWS&&nc>=0&&nc<COLS&&g[nr][nc]==='M') n++
+    if (g[r][c] !== 'M') {
+      g[r][c] = 'M'
+      mines.push([r, c])
+      placed++
     }
-    g[r][c] = n
   }
+
+  // Optimization: Instead of checking every cell (O(ROWS * COLS * 9)),
+  // we only iterate over the placed mines to increment their neighbors (O(MINES * 9)).
+  for (let i = 0; i < mines.length; i++) {
+    const r = mines[i][0]
+    const c = mines[i][1]
+    for (let dr = -1; dr <= 1; dr++) {
+      for (let dc = -1; dc <= 1; dc++) {
+        const nr = r + dr
+        const nc = c + dc
+        if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && g[nr][nc] !== 'M') {
+          g[nr][nc]++
+        }
+      }
+    }
+  }
+
   return g
 }
 
