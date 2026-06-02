@@ -70,7 +70,19 @@ export default function Minesweeper() {
     }
     flood(r, c)
     setRev(newRev)
-    const remaining = newRev.flat().filter((v,i) => !v && grid.flat()[i] !== 'M').length
+
+    // Performance Optimization: Using nested loops instead of array flat().filter()
+    // to count remaining non-mine tiles avoids creating intermediate arrays on every click,
+    // reducing memory allocation and improving execution speed.
+    let remaining = 0;
+    for (let rr = 0; rr < ROWS; rr++) {
+      for (let cc = 0; cc < COLS; cc++) {
+        if (!newRev[rr][cc] && grid[rr][cc] !== 'M') {
+          remaining++;
+        }
+      }
+    }
+
     if (remaining === 0) {
       setWin(true)
       setOver(true)
