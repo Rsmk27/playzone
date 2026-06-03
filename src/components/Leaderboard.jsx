@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { signInGlobally } from '../firebase/config';
-import { fetchTopScores, submitScore } from '../firebase/leaderboardService';
+import Link from 'next/link';
+import { useAuth } from '@clerk/nextjs';
+import { fetchTopScores, submitScore } from '../../lib/actions/leaderboard.actions';
 
 const Leaderboard = ({ currentScore = null, onBack }) => {
+  const { userId } = useAuth();
   const [scores, setScores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -14,11 +16,10 @@ const Leaderboard = ({ currentScore = null, onBack }) => {
     let mounted = true;
     const init = async () => {
       try {
-        await signInGlobally();
         await loadLeaderboard(mounted);
       } catch (err) {
         if (mounted) {
-          setError('Failed to connect to Firebase. Check config settings.');
+          setError('Failed to fetch global scores.');
           setLoading(false);
         }
       }
@@ -36,7 +37,7 @@ const Leaderboard = ({ currentScore = null, onBack }) => {
       const topScores = await fetchTopScores(10);
       if (mounted) setScores(topScores);
     } catch (err) {
-      if (mounted) setError('Failed to load scores. Did you add the Firestore Rules?');
+      if (mounted) setError('Failed to load scores.');
     } finally {
       if (mounted) setLoading(false);
     }
@@ -44,12 +45,12 @@ const Leaderboard = ({ currentScore = null, onBack }) => {
 
   const handleScoreSubmit = async (e) => {
     e.preventDefault();
-    if (!name.trim()) return;
+    if (!name.trim() || !userId) return;
 
     try {
       setSubmitting(true);
       setError(null);
-      await submitScore(name, currentScore);
+      await submitScore(name, currentScore, userId);
 
       const updatedScores = await fetchTopScores(10);
       setScores(updatedScores);
@@ -70,25 +71,39 @@ const Leaderboard = ({ currentScore = null, onBack }) => {
       </h2>
       
       {currentScore !== null && !submittedRank && (
-        <form className="score-form" onSubmit={handleScoreSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
-          <div style={{ textAlign: 'center', fontSize: '18px' }}>
-            You scored: <strong style={{ color: 'var(--accent-2)' }}>{currentScore}</strong>
+        userId ? (
+          <form className="score-form" onSubmit={handleScoreSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
+            <div style={{ textAlign: 'center', fontSize: '18px' }}>
+              You scored: <strong style={{ color: 'var(--accent-2)' }}>{currentScore}</strong>
+            </div>
+            <input
+              type="text"
+              className="search"
+              placeholder="Enter your name..."
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              maxLength={20}
+              required
+              disabled={submitting}
+              style={{ width: '100%', padding: '12px', fontSize: '16px' }}
+            />
+            <button type="submit" className="btn game-btn" disabled={submitting} style={{ width: '100%' }}>
+              {submitting ? 'Submitting Score...' : 'Save Score'}
+            </button>
+          </form>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px', textAlign: 'center' }}>
+            <div style={{ fontSize: '18px' }}>
+              You scored: <strong style={{ color: 'var(--accent-2)' }}>{currentScore}</strong>
+            </div>
+            <div style={{ color: 'var(--muted)', fontSize: '14px' }}>
+              You must be signed in to submit your score to the global leaderboard.
+            </div>
+            <Link href="/sign-in" className="btn game-btn" style={{ textDecoration: 'none', display: 'block', textAlign: 'center' }}>
+              Sign In to Save Score
+            </Link>
           </div>
-          <input
-            type="text"
-            className="search"
-            placeholder="Enter your name..."
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            maxLength={20}
-            required
-            disabled={submitting}
-            style={{ width: '100%', padding: '12px', fontSize: '16px' }}
-          />
-          <button type="submit" className="btn game-btn" disabled={submitting} style={{ width: '100%' }}>
-            {submitting ? 'Submitting Score...' : 'Save Score'}
-          </button>
-        </form>
+        )
       )}
 
       {submittedRank && (

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 const PhysicsBalls = () => {
   const canvasRef = useRef(null);
@@ -112,7 +112,7 @@ const PhysicsBalls = () => {
       <div className="game-header">
         <h1 className="game-title">⚖️ Physics Sandbox</h1>
         <div className="actions">
-          <Link to="/" className="btn">← Back to Home</Link>
+          <Link href="/" className="btn">← Back to Home</Link>
         </div>
       </div>
 

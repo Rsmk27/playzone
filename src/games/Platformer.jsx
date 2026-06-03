@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 const Platformer = () => {
   const canvasRef = useRef(null);
@@ -201,7 +201,7 @@ const Platformer = () => {
           <div className="score-box" style={{ background: '#fbbf24', color: '#000', padding: '5px 15px', borderRadius: '5px' }}>
             <span>Coins: {score} | Level: {level}</span>
           </div>
-          <Link to="/" className="btn">← Back to Home</Link>
+          <Link href="/" className="btn">← Back to Home</Link>
         </div>
       </div>
 
