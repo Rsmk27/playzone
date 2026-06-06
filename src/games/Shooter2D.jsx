@@ -130,16 +130,22 @@ function Shooter2D() {
     ctx.fillRect(g.player.x - g.player.size / 2, g.player.y - g.player.size / 2, g.player.size, g.player.size)
 
     // Bullets
+    // ⚡ Bolt Optimization: Batch bullet rendering into a single path using beginPath/rect/fill to minimize draw calls per frame
     ctx.fillStyle = '#fbbf24'
+    ctx.beginPath()
     g.bullets.forEach(b => {
-      ctx.fillRect(b.x - 2, b.y - 5, 4, 10)
+      ctx.rect(b.x - 2, b.y - 5, 4, 10)
     })
+    ctx.fill()
 
     // Enemies
+    // ⚡ Bolt Optimization: Batch enemy rendering into a single path using beginPath/rect/fill to minimize draw calls per frame
     ctx.fillStyle = '#ef4444'
+    ctx.beginPath()
     g.enemies.forEach(e => {
-      ctx.fillRect(e.x - e.size / 2, e.y - e.size / 2, e.size, e.size)
+      ctx.rect(e.x - e.size / 2, e.y - e.size / 2, e.size, e.size)
     })
+    ctx.fill()
   }
 
   useEffect(() => {

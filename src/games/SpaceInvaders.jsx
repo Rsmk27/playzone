@@ -142,16 +142,25 @@ function SpaceInvaders() {
     ctx.fillRect(g.player.x, g.player.y, g.player.w, g.player.h)
 
     // Player bullets
+    // ⚡ Bolt Optimization: Batch bullet rendering into a single path using beginPath/rect/fill to minimize draw calls per frame
     ctx.fillStyle = '#4ade80'
-    g.bullets.forEach(b => ctx.fillRect(b.x, b.y, 3, 10))
+    ctx.beginPath()
+    g.bullets.forEach(b => ctx.rect(b.x, b.y, 3, 10))
+    ctx.fill()
 
     // Alien bullets
+    // ⚡ Bolt Optimization: Batch alien bullet rendering into a single path using beginPath/rect/fill to minimize draw calls per frame
     ctx.fillStyle = '#f87171'
-    g.alienBullets.forEach(b => ctx.fillRect(b.x, b.y, 3, 10))
+    ctx.beginPath()
+    g.alienBullets.forEach(b => ctx.rect(b.x, b.y, 3, 10))
+    ctx.fill()
 
     // Aliens
+    // ⚡ Bolt Optimization: Batch alien rendering into a single path using beginPath/rect/fill to minimize draw calls per frame
     ctx.fillStyle = '#e74c3c'
-    g.aliens.forEach(a => ctx.fillRect(a.x, a.y, a.w, a.h))
+    ctx.beginPath()
+    g.aliens.forEach(a => ctx.rect(a.x, a.y, a.w, a.h))
+    ctx.fill()
   }
 
   useEffect(() => {
