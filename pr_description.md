@@ -1,8 +1,10 @@
-🎯 **What:**
-Replaced `Math.random()` with `window.crypto.getRandomValues()` in `src/games/DiceRoller.jsx` for dice roll generation.
+🎯 **What:** The testing gap in `lib/mongodb.ts` addressed. The `connectToDatabase` function previously lacked unit tests for MongoDB connection handling, caching, and error scenarios.
 
-⚠️ **Risk:**
-`Math.random()` is not cryptographically secure, meaning its output can be predictable if the internal state of the PRNG is deduced. In the context of a game, predictability allows a malicious user or script to anticipate future dice rolls and potentially exploit the game logic.
+📊 **Coverage:** The test suite now covers:
+- Missing `MONGODB_URI` environment variable error
+- Successful database connection initialization
+- Connection caching (returning existing connection without reconnecting)
+- Connection failure handling and promise resetting
+- Reusing in-flight connection promise for concurrent requests
 
-🛡️ **Solution:**
-Created a `getSecureRandom` helper function that leverages the Web Crypto API (`window.crypto.getRandomValues()`) to generate a cryptographically secure random 32-bit unsigned integer, which is then mapped securely to the 1-6 range. This ensures that dice rolls are truly random and not susceptible to PRNG state attacks. Both the animation loop and the final result calculation have been updated to use this secure method.
+✨ **Result:** Increased test coverage and reliability for the critical database connection logic, ensuring that caching and error handling work as expected.
