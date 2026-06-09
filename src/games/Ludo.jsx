@@ -118,14 +118,14 @@ const Ludo = () => {
 
       if (!isSafe) {
         newTokens.forEach(ot => {
-          if (ot.player !== targetToken.player && ot.state === 'active' && ot.pos <= 50) {
-            const opCoords = getCoordinates(ot);
-            if (opCoords && opCoords[0] === coords[0] && opCoords[1] === coords[1]) {
-              ot.state = 'home';
-              ot.pos = -1;
-              setMessage(`Captured ${ot.player}!`);
-            }
-          }
+          if (ot.player === targetToken.player || ot.state !== 'active' || ot.pos > 50) return;
+
+          const opCoords = getCoordinates(ot);
+          if (!opCoords || opCoords[0] !== coords[0] || opCoords[1] !== coords[1]) return;
+
+          ot.state = 'home';
+          ot.pos = -1;
+          setMessage(`Captured ${ot.player}!`);
         });
       }
     }

@@ -1,8 +1,12 @@
 🎯 **What:**
-Replaced `Math.random()` with `window.crypto.getRandomValues()` in `src/games/DiceRoller.jsx` for dice roll generation.
+Refactored the deep nesting in `handleTokenClick` of `src/games/Ludo.jsx` by implementing early returns inside the `newTokens.forEach` block.
 
-⚠️ **Risk:**
-`Math.random()` is not cryptographically secure, meaning its output can be predictable if the internal state of the PRNG is deduced. In the context of a game, predictability allows a malicious user or script to anticipate future dice rolls and potentially exploit the game logic.
+💡 **Why:**
+Deeply nested `if` statements make the code harder to read, maintain, and debug. By inverting the conditions and returning early, the main logic path is flattened and becomes immediately obvious, improving the overall readability and health of the codebase.
 
-🛡️ **Solution:**
-Created a `getSecureRandom` helper function that leverages the Web Crypto API (`window.crypto.getRandomValues()`) to generate a cryptographically secure random 32-bit unsigned integer, which is then mapped securely to the 1-6 range. This ensures that dice rolls are truly random and not susceptible to PRNG state attacks. Both the animation loop and the final result calculation have been updated to use this secure method.
+✅ **Verification:**
+1. Confirmed logically equivalent functionality using De Morgan's laws when inverting the nested conditions.
+2. The project has successfully compiled using `npm run build`. Note: no unit tests were found for this file.
+
+✨ **Result:**
+Reduced nesting by 2 levels within the capture logic block. Code flow is flatter and cleaner.
