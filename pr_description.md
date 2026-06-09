@@ -1,8 +1,10 @@
-🎯 **What:**
-Replaced `Math.random()` with `window.crypto.getRandomValues()` in `src/games/DiceRoller.jsx` for dice roll generation.
+## 🧪 [testing improvement] Add test for Leaderboard error state
 
-⚠️ **Risk:**
-`Math.random()` is not cryptographically secure, meaning its output can be predictable if the internal state of the PRNG is deduced. In the context of a game, predictability allows a malicious user or script to anticipate future dice rolls and potentially exploit the game logic.
+### 🎯 What
+Added missing component test coverage for the error state of the `Leaderboard` component.
 
-🛡️ **Solution:**
-Created a `getSecureRandom` helper function that leverages the Web Crypto API (`window.crypto.getRandomValues()`) to generate a cryptographically secure random 32-bit unsigned integer, which is then mapped securely to the 1-6 range. This ensures that dice rolls are truly random and not susceptible to PRNG state attacks. Both the animation loop and the final result calculation have been updated to use this secure method.
+### 📊 Coverage
+The test correctly mocks the `fetchTopScores` import to reject and verifies that the error text "Failed to load scores." is displayed in the component.
+
+### ✨ Result
+Improved test coverage for edge cases inside the `Leaderboard` component, leading to more confidence and reliability in our application's behavior when fetching data from the database fails.
