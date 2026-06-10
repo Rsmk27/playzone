@@ -1,12 +1,10 @@
-🎯 **What:**
-Refactored the deep nesting in `handleTokenClick` of `src/games/Ludo.jsx` by implementing early returns inside the `newTokens.forEach` block.
+🎯 **What:** The testing gap in `lib/mongodb.ts` addressed. The `connectToDatabase` function previously lacked unit tests for MongoDB connection handling, caching, and error scenarios.
 
-💡 **Why:**
-Deeply nested `if` statements make the code harder to read, maintain, and debug. By inverting the conditions and returning early, the main logic path is flattened and becomes immediately obvious, improving the overall readability and health of the codebase.
+📊 **Coverage:** The test suite now covers:
+- Missing `MONGODB_URI` environment variable error
+- Successful database connection initialization
+- Connection caching (returning existing connection without reconnecting)
+- Connection failure handling and promise resetting
+- Reusing in-flight connection promise for concurrent requests
 
-✅ **Verification:**
-1. Confirmed logically equivalent functionality using De Morgan's laws when inverting the nested conditions.
-2. The project has successfully compiled using `npm run build`. Note: no unit tests were found for this file.
-
-✨ **Result:**
-Reduced nesting by 2 levels within the capture logic block. Code flow is flatter and cleaner.
+✨ **Result:** Increased test coverage and reliability for the critical database connection logic, ensuring that caching and error handling work as expected.
