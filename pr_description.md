@@ -1,10 +1,5 @@
-🎯 **What:** The testing gap in `lib/mongodb.ts` addressed. The `connectToDatabase` function previously lacked unit tests for MongoDB connection handling, caching, and error scenarios.
+🎯 **What:** The vulnerability fixed was a potential DOM-based Cross-Site Scripting (DOM XSS) vulnerability in the Typing Speed Test game, caused by dynamically setting HTML content via `innerHTML` using string interpolation with variables (`wpm`, `accuracyClass`, `accuracy`, `correctChars`, `incorrectChars`).
 
-📊 **Coverage:** The test suite now covers:
-- Missing `MONGODB_URI` environment variable error
-- Successful database connection initialization
-- Connection caching (returning existing connection without reconnecting)
-- Connection failure handling and promise resetting
-- Reusing in-flight connection promise for concurrent requests
+⚠️ **Risk:** Although the variables injected into the `innerHTML` currently hold numbers or strings controlled by logic (such as `wpm`, `accuracy`, and `correctChars`), the use of `innerHTML` is inherently dangerous and considered a bad practice. If any input were to become user-controlled or if the data types changed, an attacker could inject malicious scripts that execute in the context of the application, leading to unauthorized actions or data theft.
 
-✨ **Result:** Increased test coverage and reliability for the critical database connection logic, ensuring that caching and error handling work as expected.
+🛡️ **Solution:** The fix replaces the use of `innerHTML` with safe DOM manipulation methods. The results content is now constructed using `document.createElement()` and `document.createTextNode()`, and the elements are appended to the `resultText` div using `appendChild()`. This ensures that any variables injected into the document are correctly escaped and treated as text, entirely removing the DOM XSS vulnerability.
