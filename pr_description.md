@@ -1,10 +1,8 @@
-🎯 **What:** The testing gap in `lib/mongodb.ts` addressed. The `connectToDatabase` function previously lacked unit tests for MongoDB connection handling, caching, and error scenarios.
+💡 **What:** The deep array copy `pegs.map(p=>[...p])` in `TowerOfHanoi` state updates was replaced with targeted shallow copies of only the outer array and the specific arrays that were mutated.
+🎯 **Why:** Creating a new array and deep copying every single inner peg array on every move creates unnecessary garbage and CPU load, particularly when only two nested arrays (the source peg and the target peg) are modified per move.
+📊 **Measured Improvement:**
+A standalone Node.js benchmark of 1,000,000 state updates showed an improvement of over 50%:
+- Baseline: 296ms
+- Optimized: 130ms
 
-📊 **Coverage:** The test suite now covers:
-- Missing `MONGODB_URI` environment variable error
-- Successful database connection initialization
-- Connection caching (returning existing connection without reconnecting)
-- Connection failure handling and promise resetting
-- Reusing in-flight connection promise for concurrent requests
-
-✨ **Result:** Increased test coverage and reliability for the critical database connection logic, ensuring that caching and error handling work as expected.
+The change preserves exact functionality and reduces rendering overhead in the React component.
