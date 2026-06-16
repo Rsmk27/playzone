@@ -1,3 +1,4 @@
+import ParticleBurst from '../components/ParticleBurst'
 import { useState, useRef, useCallback } from 'react'
 
 // ── Win combinations + their SVG line coords ─────────────────────────────────
@@ -16,41 +17,6 @@ const X_COLOR  = '#f472b6'   // pink
 const O_COLOR  = '#38bdf8'   // sky
 const X_GLOW   = 'rgba(244,114,182,0.55)'
 const O_GLOW   = 'rgba(56,189,248,0.55)'
-
-// ── Particle burst ────────────────────────────────────────────────────────────
-function ParticleBurst({ x, y, color }) {
-  const CHARS = ['✦','★','◆','●','▲','♥','✸']
-  const items = Array.from({ length: 18 }, (_, i) => ({
-    id: i,
-    char:  CHARS[i % CHARS.length],
-    angle: (360 / 18) * i + Math.random() * 20,
-    dist:  50 + Math.random() * 60,
-    size:  8 + Math.random() * 8,
-  }))
-  return (
-    <>
-      {items.map(p => {
-        const rad = (p.angle * Math.PI) / 180
-        return (
-          <span
-            key={p.id}
-            style={{
-              position: 'fixed',
-              left: x, top: y,
-              fontSize: p.size,
-              color,
-              pointerEvents: 'none',
-              zIndex: 9999,
-              '--tx': `${Math.cos(rad) * p.dist}px`,
-              '--ty': `${Math.sin(rad) * p.dist}px`,
-              animation: 'ttt-particle 0.8s ease-out forwards',
-            }}
-          >{p.char}</span>
-        )
-      })}
-    </>
-  )
-}
 
 // ── X symbol drawn with SVG paths ─────────────────────────────────────────────
 function XMark({ animated }) {
@@ -290,10 +256,6 @@ function ScoreCol({ label, value, color, pct }) {
 
 // ── Scoped styles ─────────────────────────────────────────────────────────────
 const TTT_STYLES = `
-  @keyframes ttt-particle {
-    0%   { transform: translate(0,0) scale(1); opacity: 1; }
-    100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
-  }
   @keyframes ttt-orb-drift {
     0%,100% { transform: translate(0,0); }
     40%     { transform: translate(25px,-18px); }
