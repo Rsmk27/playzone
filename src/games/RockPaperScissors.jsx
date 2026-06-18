@@ -1,4 +1,6 @@
+import ParticleBurst from '../components/ParticleBurst'
 import { useState, useEffect, useRef, useCallback } from 'react'
+import ParticleBurst from '../components/ParticleBurst'
 
 const OPTIONS = [
   { id: 'Rock',     emoji: '✊', label: 'Rock',     color: '#f87171', glow: 'rgba(248,113,113,0.5)' },
@@ -14,48 +16,6 @@ const RESULT_CONFIG = {
   Draw:   { label: "🤝 It's a Draw!", gradient: 'linear-gradient(135deg, #8b5cf6, #06b6d4)', particleColor: '#a78bfa' },
 }
 
-// ── Particle burst ──────────────────────────────────────────────────────────
-function Particle({ x, y, color, onDone }) {
-  const angle  = Math.random() * 360
-  const speed  = 60 + Math.random() * 80
-  const dx     = Math.cos((angle * Math.PI) / 180) * speed
-  const dy     = Math.sin((angle * Math.PI) / 180) * speed
-  const size   = 6 + Math.random() * 8
-  const shapes = ['●', '★', '◆', '▲', '♥']
-  const shape  = shapes[Math.floor(Math.random() * shapes.length)]
-
-  return (
-    <span
-      style={{
-        position: 'fixed',
-        left: x,
-        top: y,
-        fontSize: size,
-        color,
-        pointerEvents: 'none',
-        zIndex: 9999,
-        animation: `rps-particle 0.9s ease-out forwards`,
-        '--dx': `${dx}px`,
-        '--dy': `${dy}px`,
-      }}
-    >
-      {shape}
-    </span>
-  )
-}
-
-function ParticleBurst({ origin, color, id }) {
-  const [particles] = useState(() =>
-    Array.from({ length: 22 }, (_, i) => i)
-  )
-  return (
-    <>
-      {particles.map(i => (
-        <Particle key={`${id}-${i}`} x={origin.x} y={origin.y} color={color} />
-      ))}
-    </>
-  )
-}
 
 // ── Choice card ─────────────────────────────────────────────────────────────
 function ChoiceCard({ opt, onClick, disabled }) {
@@ -223,7 +183,7 @@ export default function RockPaperScissors() {
       <style>{RPS_STYLES}</style>
 
       {/* Particle bursts */}
-      {bursts.map(b => <ParticleBurst key={b.id} id={b.id} origin={{ x: b.x, y: b.y }} color={b.color} />)}
+      {bursts.map(b => <ParticleBurst key={b.id} x={b.x} y={b.y} color={b.color} />)}
 
       <div className="rps-root">
         {/* Animated background orbs */}
@@ -319,10 +279,6 @@ function ScoreBox({ label, value, color }) {
 
 // ── Scoped styles ────────────────────────────────────────────────────────────
 const RPS_STYLES = `
-  @keyframes rps-particle {
-    0%   { transform: translate(0, 0) scale(1); opacity: 1; }
-    100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
-  }
   @keyframes rps-bounce {
     0%, 100% { transform: translateY(0) scale(1); }
     40%       { transform: translateY(-18px) scale(1.15); }

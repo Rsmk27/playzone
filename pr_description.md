@@ -1,3 +1,9 @@
-🎯 **What:** The testing gap in `updateUser` within `lib/actions/user.actions.ts` has been addressed. The error path where `User.findOneAndUpdate` returns `null` was previously untested.
-📊 **Coverage:** The test suite now covers both the happy path (successfully updating and returning a user) and the error condition (throwing a "User update failed" error when `findOneAndUpdate` returns `null`).
-✨ **Result:** Test coverage for `user.actions.ts` is significantly improved, ensuring that database update failures are correctly handled and logged.
+🎯 **What:**
+Implemented a comprehensive Vitest test file for the `lib/actions/leaderboard.actions.ts` functions (`fetchTopScores` and `submitScore`), filling the missing test coverage for these core actions. During the test implementation, a bug was identified where `submitScore` did not correctly filter out `NaN` scores; this bug was corrected as part of this testing improvement.
+
+📊 **Coverage:**
+- **`fetchTopScores`:** Covered successful top score fetching (including formatting validation), handling pre-formatted dates, database connection errors, and find operation errors.
+- **`submitScore`:** Covered successful valid score submissions, name truncation for long strings, rejection of missing authenticated user ID (`clerkId`), invalid score types (including `NaN`), negative scores, excessively high scores, database connection failures, and creation failures.
+
+✨ **Result:**
+Significant improvement in test coverage for the leaderboard functionalities. The robust testing also served as a reliable safety net that successfully identified and resolved a latent `NaN` validation bug, strengthening the overall data integrity of the leaderboard component.

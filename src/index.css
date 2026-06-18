@@ -376,3 +376,7 @@ canvas{border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,0.4)}
     font-size: 14px !important;
     white-space: nowrap;
   }
+@keyframes shared-particle-burst {
+  0%   { transform: translate(0,0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+}
