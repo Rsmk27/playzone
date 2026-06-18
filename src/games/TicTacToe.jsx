@@ -1,3 +1,4 @@
+import ParticleBurst from '../components/ParticleBurst'
 import { useState, useRef, useCallback } from 'react'
 import ParticleBurst from '../components/ParticleBurst'
 
