@@ -208,9 +208,14 @@
 
         function initText() {
             currentText = texts[Math.floor(Math.random() * texts.length)];
-            textDisplay.innerHTML = currentText.split('').map((char, i) => 
-                `<span class="char" data-index="${i}">${char}</span>`
-            ).join('');
+            textDisplay.textContent = '';
+            currentText.split('').forEach((char, i) => {
+                const span = document.createElement('span');
+                span.className = 'char';
+                span.setAttribute('data-index', i);
+                span.textContent = char;
+                textDisplay.appendChild(span);
+            });
         }
 
         function startTest() {
