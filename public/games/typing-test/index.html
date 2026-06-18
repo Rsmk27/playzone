@@ -256,11 +256,24 @@
             if (accuracy < 80) accuracyClass = 'accuracy-bad';
             else if (accuracy < 95) accuracyClass = 'accuracy-medium';
             
-            resultText.innerHTML = `
-                You typed <strong>${wpm} WPM</strong> with 
-                <strong class="${accuracyClass}">${accuracy}% accuracy</strong>!<br>
-                Correct characters: ${correctChars} | Incorrect: ${incorrectChars}
-            `;
+            resultText.innerHTML = '';
+            resultText.appendChild(document.createTextNode('You typed '));
+
+            const wpmStrong = document.createElement('strong');
+            wpmStrong.textContent = `${wpm} WPM`;
+            resultText.appendChild(wpmStrong);
+
+            resultText.appendChild(document.createTextNode(' with '));
+
+            const accStrong = document.createElement('strong');
+            accStrong.className = accuracyClass;
+            accStrong.textContent = `${accuracy}% accuracy`;
+            resultText.appendChild(accStrong);
+
+            resultText.appendChild(document.createTextNode('!'));
+            resultText.appendChild(document.createElement('br'));
+
+            resultText.appendChild(document.createTextNode(`Correct characters: ${correctChars} | Incorrect: ${incorrectChars}`));
             resultDiv.classList.add('show');
         }
 
