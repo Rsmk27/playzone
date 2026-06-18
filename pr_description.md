@@ -1,5 +1,9 @@
-🎯 **What:** The vulnerability fixed was a potential DOM-based Cross-Site Scripting (DOM XSS) vulnerability in the Typing Speed Test game, caused by dynamically setting HTML content via `innerHTML` using string interpolation with variables (`wpm`, `accuracyClass`, `accuracy`, `correctChars`, `incorrectChars`).
+🎯 **What:**
+Implemented a comprehensive Vitest test file for the `lib/actions/leaderboard.actions.ts` functions (`fetchTopScores` and `submitScore`), filling the missing test coverage for these core actions. During the test implementation, a bug was identified where `submitScore` did not correctly filter out `NaN` scores; this bug was corrected as part of this testing improvement.
 
-⚠️ **Risk:** Although the variables injected into the `innerHTML` currently hold numbers or strings controlled by logic (such as `wpm`, `accuracy`, and `correctChars`), the use of `innerHTML` is inherently dangerous and considered a bad practice. If any input were to become user-controlled or if the data types changed, an attacker could inject malicious scripts that execute in the context of the application, leading to unauthorized actions or data theft.
+📊 **Coverage:**
+- **`fetchTopScores`:** Covered successful top score fetching (including formatting validation), handling pre-formatted dates, database connection errors, and find operation errors.
+- **`submitScore`:** Covered successful valid score submissions, name truncation for long strings, rejection of missing authenticated user ID (`clerkId`), invalid score types (including `NaN`), negative scores, excessively high scores, database connection failures, and creation failures.
 
-🛡️ **Solution:** The fix replaces the use of `innerHTML` with safe DOM manipulation methods. The results content is now constructed using `document.createElement()` and `document.createTextNode()`, and the elements are appended to the `resultText` div using `appendChild()`. This ensures that any variables injected into the document are correctly escaped and treated as text, entirely removing the DOM XSS vulnerability.
+✨ **Result:**
+Significant improvement in test coverage for the leaderboard functionalities. The robust testing also served as a reliable safety net that successfully identified and resolved a latent `NaN` validation bug, strengthening the overall data integrity of the leaderboard component.
