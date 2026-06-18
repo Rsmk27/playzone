@@ -1,5 +1,6 @@
 import ParticleBurst from '../components/ParticleBurst'
 import { useState, useEffect, useRef, useCallback } from 'react'
+import ParticleBurst from '../components/ParticleBurst'
 
 const OPTIONS = [
   { id: 'Rock',     emoji: '✊', label: 'Rock',     color: '#f87171', glow: 'rgba(248,113,113,0.5)' },
@@ -14,6 +15,7 @@ const RESULT_CONFIG = {
   CPU:    { label: '💀 CPU Wins!',  gradient: 'linear-gradient(135deg, #f87171, #f59e0b)', particleColor: '#f87171' },
   Draw:   { label: "🤝 It's a Draw!", gradient: 'linear-gradient(135deg, #8b5cf6, #06b6d4)', particleColor: '#a78bfa' },
 }
+
 
 // ── Choice card ─────────────────────────────────────────────────────────────
 function ChoiceCard({ opt, onClick, disabled }) {
@@ -181,7 +183,7 @@ export default function RockPaperScissors() {
       <style>{RPS_STYLES}</style>
 
       {/* Particle bursts */}
-      {bursts.map(b => <ParticleBurst key={b.id} id={b.id} x={b.x} y={b.y} color={b.color} />)}
+      {bursts.map(b => <ParticleBurst key={b.id} x={b.x} y={b.y} color={b.color} />)}
 
       <div className="rps-root">
         {/* Animated background orbs */}

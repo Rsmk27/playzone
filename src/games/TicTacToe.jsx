@@ -1,5 +1,6 @@
 import ParticleBurst from '../components/ParticleBurst'
 import { useState, useRef, useCallback } from 'react'
+import ParticleBurst from '../components/ParticleBurst'
 
 // ── Win combinations + their SVG line coords ─────────────────────────────────
 const WIN_LINES = [
@@ -17,6 +18,7 @@ const X_COLOR  = '#f472b6'   // pink
 const O_COLOR  = '#38bdf8'   // sky
 const X_GLOW   = 'rgba(244,114,182,0.55)'
 const O_GLOW   = 'rgba(56,189,248,0.55)'
+
 
 // ── X symbol drawn with SVG paths ─────────────────────────────────────────────
 function XMark({ animated }) {

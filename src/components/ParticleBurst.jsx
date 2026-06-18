@@ -1,51 +1,44 @@
 import { useState } from 'react'
 
-function Particle({ x, y, color }) {
-  const angle  = Math.random() * 360
-  const speed  = 60 + Math.random() * 80
-  const dx     = Math.cos((angle * Math.PI) / 180) * speed
-  const dy     = Math.sin((angle * Math.PI) / 180) * speed
-  const size   = 6 + Math.random() * 8
-  const shapes = ['●', '★', '◆', '▲', '♥', '✦', '✸']
-  const shape  = shapes[Math.floor(Math.random() * shapes.length)]
+const CHARS = ['✦', '★', '◆', '●', '▲', '♥', '✸']
 
-  return (
-    <span
-      style={{
-        position: 'fixed',
-        left: x,
-        top: y,
-        fontSize: size,
-        color,
-        pointerEvents: 'none',
-        zIndex: 9999,
-        animation: `shared-particle 0.9s ease-out forwards`,
-        '--dx': `${dx}px`,
-        '--dy': `${dy}px`,
-      }}
-    >
-      {shape}
-    </span>
+export default function ParticleBurst({ x, y, color, count = 18 }) {
+  const [items] = useState(() =>
+    Array.from({ length: count }, (_, i) => {
+      const angle = (360 / count) * i + Math.random() * 20
+      const dist = 50 + Math.random() * 60
+      const rad = (angle * Math.PI) / 180
+      return {
+        id: i,
+        char: CHARS[i % CHARS.length],
+        tx: Math.cos(rad) * dist,
+        ty: Math.sin(rad) * dist,
+        size: 8 + Math.random() * 8,
+      }
+    })
   )
-}
 
-export function ParticleBurst({ x, y, color, id }) {
-  const [particles] = useState(() =>
-    Array.from({ length: 22 }, (_, i) => i)
-  )
   return (
     <>
-      <style>{`
-        @keyframes shared-particle {
-          0%   { transform: translate(0, 0) scale(1); opacity: 1; }
-          100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
-        }
-      `}</style>
-      {particles.map(i => (
-        <Particle key={`${id || ''}-${i}`} x={x} y={y} color={color} />
+      {items.map(p => (
+        <span
+          key={p.id}
+          style={{
+            position: 'fixed',
+            left: x,
+            top: y,
+            fontSize: p.size,
+            color,
+            pointerEvents: 'none',
+            zIndex: 9999,
+            '--tx': `${p.tx}px`,
+            '--ty': `${p.ty}px`,
+            animation: 'shared-particle-burst 0.8s ease-out forwards',
+          }}
+        >
+          {p.char}
+        </span>
       ))}
     </>
   )
 }
-
-export default ParticleBurst;
