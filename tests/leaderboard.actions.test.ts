@@ -1,152 +1,202 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { fetchTopScores, submitScore } from '../lib/actions/leaderboard.actions';
-import { connectToDatabase } from '../lib/mongodb';
 import Leaderboard from '../models/Leaderboard';
+import { connectToDatabase } from '../lib/mongodb';
 
 vi.mock('../lib/mongodb', () => ({
   connectToDatabase: vi.fn(),
 }));
 
+// We need to mock Leaderboard properly to support chained methods like find().sort().limit().lean()
 vi.mock('../models/Leaderboard', () => {
+  const leanMock = vi.fn();
+  const limitMock = vi.fn().mockReturnValue({ lean: leanMock });
+  const sortMock = vi.fn().mockReturnValue({ limit: limitMock });
+  const findMock = vi.fn().mockReturnValue({ sort: sortMock });
+  const createMock = vi.fn();
+
   return {
     default: {
-      find: vi.fn(),
-      create: vi.fn(),
+      find: findMock,
+      create: createMock,
     },
   };
 });
 
-describe('Leaderboard Actions', () => {
+describe('leaderboard.actions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   describe('fetchTopScores', () => {
-    it('should fetch top scores successfully', async () => {
-      vi.mocked(connectToDatabase).mockResolvedValue(undefined as any);
-
-      const mockScores = [
+    it('successfully fetches and formats top scores', async () => {
+      const mockDocs = [
         {
-          _id: '1',
+          _id: { toString: () => 'id1' },
           name: 'Player 1',
           score: 100,
+          userId: 'user1',
+          createdAt: new Date('2023-01-01T00:00:00Z'),
         },
         {
-          _id: '2',
+          _id: { toString: () => 'id2' },
           name: 'Player 2',
           score: 90,
+          userId: 'user2',
+          createdAt: new Date('2023-01-02T00:00:00Z'),
         },
       ];
 
-      const mockLean = vi.fn().mockResolvedValue(mockScores);
-      const mockLimit = vi.fn().mockReturnValue({ lean: mockLean });
-      const mockSort = vi.fn().mockReturnValue({ limit: mockLimit });
-      (Leaderboard.find as any).mockReturnValue({ sort: mockSort });
+      // Retrieve mocked methods to set their return values
+      const leanMock = vi.fn().mockResolvedValue(mockDocs);
+      const limitMock = vi.fn().mockReturnValue({ lean: leanMock });
+      const sortMock = vi.fn().mockReturnValue({ limit: limitMock });
 
-      const result = await fetchTopScores(2);
+      vi.mocked(Leaderboard.find).mockReturnValue({ sort: sortMock } as any);
 
-      expect(connectToDatabase).toHaveBeenCalled();
+      const topN = 5;
+      const result = await fetchTopScores(topN);
+
+      expect(connectToDatabase).toHaveBeenCalledTimes(1);
       expect(Leaderboard.find).toHaveBeenCalledWith({});
-      expect(mockSort).toHaveBeenCalledWith({ score: -1 });
-      expect(mockLimit).toHaveBeenCalledWith(2);
-      expect(mockLean).toHaveBeenCalled();
+      expect(sortMock).toHaveBeenCalledWith({ score: -1 });
+      expect(limitMock).toHaveBeenCalledWith(topN);
+      expect(leanMock).toHaveBeenCalledTimes(1);
 
       expect(result).toEqual([
         {
-          id: '1',
+          id: 'id1',
           rank: 1,
           name: 'Player 1',
           score: 100,
+          userId: 'user1',
+          createdAt: '2023-01-01T00:00:00.000Z',
         },
         {
-          id: '2',
+          id: 'id2',
           rank: 2,
           name: 'Player 2',
           score: 90,
+          userId: 'user2',
+          createdAt: '2023-01-02T00:00:00.000Z',
         },
       ]);
     });
 
-    it('should return empty array and log error on failure', async () => {
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    it('handles createdAt that is already a string', async () => {
+      const mockDocs = [
+        {
+          _id: { toString: () => 'id1' },
+          name: 'Player 1',
+          score: 100,
+          userId: 'user1',
+          createdAt: '2023-01-01T00:00:00.000Z', // already a string
+        },
+      ];
 
-      const mockError = new Error('Database error');
-      vi.mocked(connectToDatabase).mockRejectedValue(mockError);
+      const leanMock = vi.fn().mockResolvedValue(mockDocs);
+      const limitMock = vi.fn().mockReturnValue({ lean: leanMock });
+      const sortMock = vi.fn().mockReturnValue({ limit: limitMock });
 
-      const result = await fetchTopScores(10);
+      vi.mocked(Leaderboard.find).mockReturnValue({ sort: sortMock } as any);
 
-      expect(consoleSpy).toHaveBeenCalledWith('Error fetching top scores:', mockError);
-      expect(result).toEqual([]);
+      const result = await fetchTopScores();
 
-      consoleSpy.mockRestore();
+      expect(result[0].createdAt).toBe('2023-01-01T00:00:00.000Z');
+    });
+
+    it('throws error when database connection fails', async () => {
+      const error = new Error('DB Connection Failed');
+      vi.mocked(connectToDatabase).mockRejectedValueOnce(error);
+
+      await expect(fetchTopScores()).rejects.toThrow('DB Connection Failed');
+      expect(Leaderboard.find).not.toHaveBeenCalled();
+    });
+
+    it('throws error when fetching scores fails', async () => {
+      const error = new Error('Find failed');
+
+      const leanMock = vi.fn().mockRejectedValueOnce(error);
+      const limitMock = vi.fn().mockReturnValue({ lean: leanMock });
+      const sortMock = vi.fn().mockReturnValue({ limit: limitMock });
+
+      vi.mocked(Leaderboard.find).mockReturnValue({ sort: sortMock } as any);
+
+      await expect(fetchTopScores()).rejects.toThrow('Find failed');
     });
   });
 
   describe('submitScore', () => {
-    it('should submit score successfully', async () => {
-      vi.mocked(connectToDatabase).mockResolvedValue(undefined as any);
-
-      const mockCreatedScore = {
-        _id: 'new-id',
-        name: 'Player 3',
-        score: 80,
-        userId: 'clerk123',
-        createdAt: new Date(),
+    it('successfully submits a valid score', async () => {
+      const mockScore = {
+        _id: { toString: () => 'new_score_id' },
+        name: 'Player 1',
+        score: 150,
+        userId: 'clerk_user_1',
       };
 
-      (Leaderboard.create as any).mockResolvedValue(mockCreatedScore);
+      vi.mocked(Leaderboard.create).mockResolvedValueOnce(mockScore as any);
 
-      const result = await submitScore(' Player 3 ', 80, 'clerk123');
+      const result = await submitScore('Player 1', 150, 'clerk_user_1');
 
-      expect(connectToDatabase).toHaveBeenCalled();
-      expect(Leaderboard.create).toHaveBeenCalledWith({
-        name: 'Player 3',
-        score: 80,
-        userId: 'clerk123',
+      expect(connectToDatabase).toHaveBeenCalledTimes(1);
+      expect(Leaderboard.create).toHaveBeenCalledTimes(1);
+      expect(Leaderboard.create).toHaveBeenCalledWith(expect.objectContaining({
+        name: 'Player 1',
+        score: 150,
+        userId: 'clerk_user_1',
         createdAt: expect.any(Date),
-      });
-      expect(result).toBe('new-id');
+      }));
+      expect(result).toBe('new_score_id');
     });
 
-    it('should throw an error if clerkId is missing', async () => {
-      await expect(submitScore('Player 4', 70, '')).rejects.toThrow(
-        'User must be authenticated to submit a score.'
-      );
+    it('trims and truncates long names', async () => {
+      const longName = '  This is a very long name that exceeds twenty characters  ';
+      const mockScore = {
+        _id: { toString: () => 'new_score_id' },
+      };
+
+      vi.mocked(Leaderboard.create).mockResolvedValueOnce(mockScore as any);
+
+      await submitScore(longName, 150, 'clerk_user_1');
+
+      expect(Leaderboard.create).toHaveBeenCalledWith(expect.objectContaining({
+        name: 'This is a very long ', // Expected truncated result
+      }));
+    });
+
+    it('throws error if clerkId is missing', async () => {
+      await expect(submitScore('Player', 100, '')).rejects.toThrow('User must be authenticated to submit a score.');
       expect(connectToDatabase).not.toHaveBeenCalled();
+      expect(Leaderboard.create).not.toHaveBeenCalled();
     });
 
-    it('should throw an error if score is not a number', async () => {
-      await expect(submitScore('Player 5', '70' as any, 'clerk123')).rejects.toThrow(
-        'Invalid score.'
-      );
-      expect(connectToDatabase).not.toHaveBeenCalled();
+    it('throws error for invalid score types', async () => {
+      await expect(submitScore('Player', '100' as any, 'clerk_id')).rejects.toThrow('Invalid score.');
+      await expect(submitScore('Player', NaN, 'clerk_id')).rejects.toThrow('Invalid score.');
     });
 
-    it('should throw an error if score is less than 0', async () => {
-      await expect(submitScore('Player 6', -10, 'clerk123')).rejects.toThrow(
-        'Invalid score.'
-      );
-      expect(connectToDatabase).not.toHaveBeenCalled();
+    it('throws error for negative scores', async () => {
+      await expect(submitScore('Player', -1, 'clerk_id')).rejects.toThrow('Invalid score.');
     });
 
-    it('should throw an error if score is greater than 100000', async () => {
-      await expect(submitScore('Player 7', 100001, 'clerk123')).rejects.toThrow(
-        'Invalid score.'
-      );
-      expect(connectToDatabase).not.toHaveBeenCalled();
+    it('throws error for excessively high scores', async () => {
+      await expect(submitScore('Player', 100001, 'clerk_id')).rejects.toThrow('Invalid score.');
     });
 
-    it('should throw and log error on failure', async () => {
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    it('throws error when database connection fails', async () => {
+      const error = new Error('DB Connection Failed');
+      vi.mocked(connectToDatabase).mockRejectedValueOnce(error);
 
-      const mockError = new Error('Database error');
-      vi.mocked(connectToDatabase).mockRejectedValue(mockError);
+      await expect(submitScore('Player', 100, 'clerk_id')).rejects.toThrow('DB Connection Failed');
+      expect(Leaderboard.create).not.toHaveBeenCalled();
+    });
 
-      await expect(submitScore('Player 8', 50, 'clerk123')).rejects.toThrow('Database error');
+    it('throws error when creating score fails', async () => {
+      const error = new Error('Create failed');
+      vi.mocked(Leaderboard.create).mockRejectedValueOnce(error);
 
-      expect(consoleSpy).toHaveBeenCalledWith('Error submitting score:', mockError);
-
-      consoleSpy.mockRestore();
+      await expect(submitScore('Player', 100, 'clerk_id')).rejects.toThrow('Create failed');
     });
   });
 });

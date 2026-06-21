@@ -28,7 +28,7 @@ export async function submitScore(name: string, score: number, clerkId: string) 
     throw new Error('User must be authenticated to submit a score.');
   }
 
-  if (typeof score !== 'number' || score < 0 || score > 100000) {
+  if (typeof score !== 'number' || Number.isNaN(score) || score < 0 || score > 100000) {
     throw new Error('Invalid score.');
   }
 

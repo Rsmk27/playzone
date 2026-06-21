@@ -35,8 +35,12 @@ export default function TowerOfHanoi() {
       const top = pegs[selected][pegs[selected].length-1]
       const target = pegs[pegIdx]
       if (target.length > 0 && target[target.length-1] < top) { setSel(null); return }
-      const np = pegs.map(p=>[...p])
-      np[pegIdx].push(np[selected].pop())
+      const np = [...pegs]
+      const sourcePeg = [...np[selected]]
+      const disk = sourcePeg.pop()
+      const targetPeg = [...np[pegIdx], disk]
+      np[selected] = sourcePeg
+      np[pegIdx] = targetPeg
       setPegs(np)
       setMoves(m=>m+1)
       setLast(pegIdx)
