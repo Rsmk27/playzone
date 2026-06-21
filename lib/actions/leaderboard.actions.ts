@@ -15,13 +15,11 @@ export async function fetchTopScores(topN = 10) {
       id: doc._id.toString(),
       rank: index + 1,
       name: doc.name,
-      score: doc.score,
-      userId: doc.userId,
-      createdAt: doc.createdAt instanceof Date ? doc.createdAt.toISOString() : doc.createdAt
+      score: doc.score
     }));
   } catch (error) {
-    console.error('Error fetching leaderboard:', error);
-    throw error;
+    console.error('Error fetching top scores:', error);
+    return [];
   }
 }
 
