@@ -5,13 +5,20 @@ const P1 = 'red', P2 = 'yellow'
 const P1_COLOR = '#f87171', P2_COLOR = '#fbbf24'
 const P1_GLOW  = 'rgba(248,113,113,0.5)', P2_GLOW = 'rgba(251,191,36,0.5)'
 
-function checkWin(board, row, col, player) {
-  const dirs = [[0,1],[1,0],[1,1],[1,-1]]
-  for (const [dr,dc] of dirs) {
+export function checkWin(board, row, col, player) {
+  const dirs = [
+    [[0,1],[0,-1]],
+    [[1,0],[-1,0]],
+    [[1,1],[-1,-1]],
+    [[1,-1],[-1,1]]
+  ]
+  for (let d of dirs) {
     let count = 1
-    for (const s of [1,-1]) {
-      let r = row+dr*s, c = col+dc*s
-      while (r>=0&&r<ROWS&&c>=0&&c<COLS&&board[r][c]===player) { count++; r+=dr*s; c+=dc*s }
+    for (let [dr, dc] of d) {
+      let r = row + dr, c = col + dc
+      while (r >= 0 && r < ROWS && c >= 0 && c < COLS && board[r][c] === player) {
+        count++; r += dr; c += dc
+      }
     }
     if (count >= 4) return true
   }
