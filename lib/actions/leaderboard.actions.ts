@@ -15,13 +15,11 @@ export async function fetchTopScores(topN = 10) {
       id: doc._id.toString(),
       rank: index + 1,
       name: doc.name,
-      score: doc.score,
-      userId: doc.userId,
-      createdAt: doc.createdAt instanceof Date ? doc.createdAt.toISOString() : doc.createdAt
+      score: doc.score
     }));
   } catch (error) {
-    console.error('Error fetching leaderboard:', error);
-    throw error;
+    console.error('Error fetching top scores:', error);
+    return [];
   }
 }
 
@@ -30,7 +28,7 @@ export async function submitScore(name: string, score: number, clerkId: string) 
     throw new Error('User must be authenticated to submit a score.');
   }
 
-  if (typeof score !== 'number' || score < 0 || score > 100000) {
+  if (typeof score !== 'number' || Number.isNaN(score) || score < 0 || score > 100000) {
     throw new Error('Invalid score.');
   }
 
