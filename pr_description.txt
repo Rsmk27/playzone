@@ -1,0 +1,11 @@
+🎯 **What:** The vulnerability fixed
+
+Replaced the use of `innerHTML` with safe DOM element creation (`document.createElement` and `textContent`) in `public/games/rock-paper-scissors/script.js` to prevent DOM Cross-Site Scripting (XSS).
+
+⚠️ **Risk:** The potential impact if left unfixed
+
+The previous implementation used template literals inside `innerHTML` with unescaped variables. This allowed malicious input to be executed as code in the user's browser, leading to a DOM XSS vulnerability. If exploited, attackers could execute arbitrary JavaScript within the application.
+
+🛡️ **Solution:** How the fix addresses the vulnerability
+
+The unsafe `innerHTML` assignment has been substituted with safely constructed DOM nodes. We create the `<b>` elements dynamically, set their text using `textContent` (which automatically encodes HTML entities, ensuring the inputs are treated as literal strings), and append them using `info.append()`. This preserves the intended UI without the security risks associated with parsing arbitrary input as HTML markup.

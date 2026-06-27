@@ -32,7 +32,14 @@ function play(player){
   const w = winner(player,cpu);
   s.rounds++;
   if(w==='Player') s.player++; else if(w==='CPU') s.cpu++;
-  info.innerHTML = `You chose <b>${player}</b>. CPU chose <b>${cpu}</b>. <b>${w}</b> wins.`;
+  const bPlayer = document.createElement('b');
+  bPlayer.textContent = player;
+  const bCpu = document.createElement('b');
+  bCpu.textContent = cpu;
+  const bW = document.createElement('b');
+  bW.textContent = w;
+  info.textContent = '';
+  info.append('You chose ', bPlayer, '. CPU chose ', bCpu, '. ', bW, ' wins.');
   scoreEl.textContent = `Score • You ${s.player} : ${s.cpu} CPU • Rounds ${s.rounds}`;
 }
 
