@@ -23,7 +23,11 @@ describe('user.actions', () => {
 
   describe('createUser', () => {
     it('should connect to database and create user', async () => {
-      const mockUser = { name: 'Test User' };
+      const mockUser = {
+        clerkId: 'test_clerk_id',
+        email: 'test@example.com',
+        username: 'testuser',
+      };
       const createdUser = { ...mockUser, _id: '123' };
       (User.create as any).mockResolvedValue(createdUser);
 
@@ -41,7 +45,7 @@ describe('user.actions', () => {
       // Need to suppress console.error for this test to keep output clean
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-      await expect(createUser({})).rejects.toThrow('Creation failed');
+      await expect(createUser({ clerkId: 'test_clerk_id', email: 'test@example.com', username: 'testuser' })).rejects.toThrow('Creation failed');
 
       consoleSpy.mockRestore();
     });
@@ -49,8 +53,8 @@ describe('user.actions', () => {
 
   describe('updateUser', () => {
     it('should connect to database and update user', async () => {
-      const mockUserUpdate = { name: 'Updated Name' };
-      const updatedUser = { clerkId: 'clerk123', name: 'Updated Name' };
+      const mockUserUpdate = { username: 'Updated Name' };
+      const updatedUser = { clerkId: 'clerk123', username: 'Updated Name' };
       (User.findOneAndUpdate as any).mockResolvedValue(updatedUser);
 
       const result = await updateUser('clerk123', mockUserUpdate);

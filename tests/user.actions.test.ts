@@ -40,7 +40,7 @@ describe('user.actions', () => {
     });
 
     it('should throw an error if creating a user fails', async () => {
-      const mockUser = { clerkId: 'test_clerk_id' };
+      const mockUser = { clerkId: 'test_clerk_id', email: 'test@example.com', username: 'testuser' };
       const error = new Error('Database error');
 
       vi.mocked(User.create).mockRejectedValueOnce(error);

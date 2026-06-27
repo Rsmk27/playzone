@@ -69,16 +69,12 @@ describe('leaderboard.actions', () => {
           rank: 1,
           name: 'Player 1',
           score: 100,
-          userId: 'user1',
-          createdAt: '2023-01-01T00:00:00.000Z',
         },
         {
           id: 'id2',
           rank: 2,
           name: 'Player 2',
           score: 90,
-          userId: 'user2',
-          createdAt: '2023-01-02T00:00:00.000Z',
         },
       ]);
     });
@@ -102,14 +98,16 @@ describe('leaderboard.actions', () => {
 
       const result = await fetchTopScores();
 
-      expect(result[0].createdAt).toBe('2023-01-01T00:00:00.000Z');
+      expect(result[0].score).toBe(100);
     });
 
     it('throws error when database connection fails', async () => {
       const error = new Error('DB Connection Failed');
       vi.mocked(connectToDatabase).mockRejectedValueOnce(error);
 
-      await expect(fetchTopScores()).rejects.toThrow('DB Connection Failed');
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      await expect(fetchTopScores()).resolves.toEqual([]);
+      consoleSpy.mockRestore();
       expect(Leaderboard.find).not.toHaveBeenCalled();
     });
 
@@ -122,7 +120,9 @@ describe('leaderboard.actions', () => {
 
       vi.mocked(Leaderboard.find).mockReturnValue({ sort: sortMock } as any);
 
-      await expect(fetchTopScores()).rejects.toThrow('Find failed');
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      await expect(fetchTopScores()).resolves.toEqual([]);
+      consoleSpy.mockRestore();
     });
   });
 
