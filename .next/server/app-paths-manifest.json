@@ -1,1 +1,9 @@
-{}
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/(auth)/sign-in/[[...sign-in]]/page": "app/(auth)/sign-in/[[...sign-in]]/page.js",
+  "/(auth)/sign-up/[[...sign-up]]/page": "app/(auth)/sign-up/[[...sign-up]]/page.js",
+  "/api/webhooks/clerk/route": "app/api/webhooks/clerk/route.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/game/[slug]/page": "app/game/[slug]/page.js",
+  "/page": "app/page.js"
+}

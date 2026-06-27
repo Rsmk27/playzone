@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { updateUser } from '../../../lib/actions/user.actions';
+import { updateUser, createUser } from '../../../lib/actions/user.actions';
 import User from '../../../models/User';
 import * as mongodb from '../../../lib/mongodb';
 
@@ -11,6 +11,7 @@ vi.mock('../../../models/User', () => {
   return {
     default: {
       findOneAndUpdate: vi.fn(),
+      create: vi.fn(),
     },
   };
 });
@@ -56,5 +57,42 @@ describe('updateUser', () => {
       { name: 'New Name' },
       { new: true }
     );
+  });
+});
+
+
+describe('createUser', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should successfully create and return a user', async () => {
+    const mockUser = {
+      _id: 'new-id',
+      clerkId: 'new-clerk-id',
+      name: 'New User',
+    };
+    (User.create as any).mockResolvedValue(mockUser);
+
+    const result = await createUser(mockUser);
+
+    expect(result).toEqual(mockUser);
+    expect(mongodb.connectToDatabase).toHaveBeenCalled();
+    expect(User.create).toHaveBeenCalledWith(mockUser);
+  });
+
+  it('should throw an error and log it when user creation fails', async () => {
+    const error = new Error('User creation failed');
+    (User.create as any).mockRejectedValue(error);
+
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    await expect(createUser({ name: 'Failed User' })).rejects.toThrow('User creation failed');
+
+    expect(mongodb.connectToDatabase).toHaveBeenCalled();
+    expect(User.create).toHaveBeenCalledWith({ name: 'Failed User' });
+    expect(consoleSpy).toHaveBeenCalledWith('Error creating user:', error);
+
+    consoleSpy.mockRestore();
   });
 });

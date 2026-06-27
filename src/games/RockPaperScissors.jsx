@@ -1,6 +1,5 @@
 import ParticleBurst from '../components/ParticleBurst'
 import { useState, useEffect, useRef, useCallback } from 'react'
-import ParticleBurst from '../components/ParticleBurst'
 
 const OPTIONS = [
   { id: 'Rock',     emoji: '✊', label: 'Rock',     color: '#f87171', glow: 'rgba(248,113,113,0.5)' },

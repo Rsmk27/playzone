@@ -1,9 +1,12 @@
 🎯 **What:**
-Implemented a comprehensive Vitest test file for the `lib/actions/leaderboard.actions.ts` functions (`fetchTopScores` and `submitScore`), filling the missing test coverage for these core actions. During the test implementation, a bug was identified where `submitScore` did not correctly filter out `NaN` scores; this bug was corrected as part of this testing improvement.
+- Added missing tests for the `createUser` function in `lib/actions/user.actions.ts`.
+- Fixed existing failing tests in `tests/leaderboard.actions.test.ts` to accurately align with the behavior of `lib/actions/leaderboard.actions.ts`.
 
 📊 **Coverage:**
-- **`fetchTopScores`:** Covered successful top score fetching (including formatting validation), handling pre-formatted dates, database connection errors, and find operation errors.
-- **`submitScore`:** Covered successful valid score submissions, name truncation for long strings, rejection of missing authenticated user ID (`clerkId`), invalid score types (including `NaN`), negative scores, excessively high scores, database connection failures, and creation failures.
+- Added a test to verify the happy path for successfully creating a user via `createUser`.
+- Added an error handling test to ensure exceptions thrown by `User.create` are correctly caught, logged via `console.error`, and re-thrown.
+- Ensured test coverage for leaderboard correctly simulates error handling where an empty array is returned instead of an error being thrown.
 
 ✨ **Result:**
-Significant improvement in test coverage for the leaderboard functionalities. The robust testing also served as a reliable safety net that successfully identified and resolved a latent `NaN` validation bug, strengthening the overall data integrity of the leaderboard component.
+- Improved test coverage for user creation functionality.
+- An all-green test suite ensuring no existing code is broken and testing regressions are patched up.
