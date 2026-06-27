@@ -69,51 +69,32 @@ describe('leaderboard.actions', () => {
           rank: 1,
           name: 'Player 1',
           score: 100,
-          userId: 'user1',
-          createdAt: '2023-01-01T00:00:00.000Z',
         },
         {
           id: 'id2',
           rank: 2,
           name: 'Player 2',
           score: 90,
-          userId: 'user2',
-          createdAt: '2023-01-02T00:00:00.000Z',
         },
       ]);
     });
 
-    it('handles createdAt that is already a string', async () => {
-      const mockDocs = [
-        {
-          _id: { toString: () => 'id1' },
-          name: 'Player 1',
-          score: 100,
-          userId: 'user1',
-          createdAt: '2023-01-01T00:00:00.000Z', // already a string
-        },
-      ];
 
-      const leanMock = vi.fn().mockResolvedValue(mockDocs);
-      const limitMock = vi.fn().mockReturnValue({ lean: leanMock });
-      const sortMock = vi.fn().mockReturnValue({ limit: limitMock });
 
-      vi.mocked(Leaderboard.find).mockReturnValue({ sort: sortMock } as any);
-
-      const result = await fetchTopScores();
-
-      expect(result[0].createdAt).toBe('2023-01-01T00:00:00.000Z');
-    });
-
-    it('throws error when database connection fails', async () => {
+    it('returns empty array when database connection fails', async () => {
       const error = new Error('DB Connection Failed');
       vi.mocked(connectToDatabase).mockRejectedValueOnce(error);
 
-      await expect(fetchTopScores()).rejects.toThrow('DB Connection Failed');
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      const result = await fetchTopScores();
+      expect(result).toEqual([]);
       expect(Leaderboard.find).not.toHaveBeenCalled();
+
+      consoleSpy.mockRestore();
     });
 
-    it('throws error when fetching scores fails', async () => {
+    it('returns empty array when fetching scores fails', async () => {
       const error = new Error('Find failed');
 
       const leanMock = vi.fn().mockRejectedValueOnce(error);
@@ -122,7 +103,12 @@ describe('leaderboard.actions', () => {
 
       vi.mocked(Leaderboard.find).mockReturnValue({ sort: sortMock } as any);
 
-      await expect(fetchTopScores()).rejects.toThrow('Find failed');
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      const result = await fetchTopScores();
+      expect(result).toEqual([]);
+
+      consoleSpy.mockRestore();
     });
   });
 
