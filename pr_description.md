@@ -1,9 +1,14 @@
 🎯 **What:**
-Implemented a comprehensive Vitest test file for the `lib/actions/leaderboard.actions.ts` functions (`fetchTopScores` and `submitScore`), filling the missing test coverage for these core actions. During the test implementation, a bug was identified where `submitScore` did not correctly filter out `NaN` scores; this bug was corrected as part of this testing improvement.
+Added a comprehensive test suite for the `Minesweeper.jsx` component using Vitest and React Testing Library. This addresses the testing gap for the game logic, ensuring that interactions and state changes are properly verified.
 
 📊 **Coverage:**
-- **`fetchTopScores`:** Covered successful top score fetching (including formatting validation), handling pre-formatted dates, database connection errors, and find operation errors.
-- **`submitScore`:** Covered successful valid score submissions, name truncation for long strings, rejection of missing authenticated user ID (`clerkId`), invalid score types (including `NaN`), negative scores, excessively high scores, database connection failures, and creation failures.
+The new test suite covers the following scenarios:
+- Initial board rendering and status checks.
+- Flagging and unflagging cells (via simulated right-clicks).
+- Revealing safe cells correctly.
+- Flood-fill revealing for empty cell clicks.
+- Game Over condition (clicking a mine).
+- Win condition (revealing all non-mine cells).
 
 ✨ **Result:**
-Significant improvement in test coverage for the leaderboard functionalities. The robust testing also served as a reliable safety net that successfully identified and resolved a latent `NaN` validation bug, strengthening the overall data integrity of the leaderboard component.
+Significant testing improvement with robust, deterministic tests (via `Math.random` mocking). These tests provide a safety net for the Minesweeper component, preventing regressions and validating core gameplay functionality.
