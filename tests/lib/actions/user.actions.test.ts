@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { updateUser } from '../../../lib/actions/user.actions';
+import { updateUser, deleteUser } from '../../../lib/actions/user.actions';
 import User from '../../../models/User';
 import * as mongodb from '../../../lib/mongodb';
 
@@ -11,6 +11,7 @@ vi.mock('../../../models/User', () => {
   return {
     default: {
       findOneAndUpdate: vi.fn(),
+      findOneAndDelete: vi.fn(),
     },
   };
 });
@@ -56,5 +57,54 @@ describe('updateUser', () => {
       { name: 'New Name' },
       { new: true }
     );
+  });
+});
+
+describe('deleteUser', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should throw an error when user deletion fails (findOneAndDelete returns null)', async () => {
+    (User.findOneAndDelete as any).mockResolvedValue(null);
+
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    await expect(deleteUser('test-id')).rejects.toThrow('User not found');
+
+    expect(mongodb.connectToDatabase).toHaveBeenCalled();
+    expect(User.findOneAndDelete).toHaveBeenCalledWith({ clerkId: 'test-id' });
+    expect(consoleSpy).toHaveBeenCalledWith('Error deleting user:', expect.any(Error));
+
+    consoleSpy.mockRestore();
+  });
+
+  it('should throw an error when user deletion fails (findOneAndDelete rejects)', async () => {
+    const error = new Error('Database deletion error');
+    (User.findOneAndDelete as any).mockRejectedValue(error);
+
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    await expect(deleteUser('test-id')).rejects.toThrow('Database deletion error');
+
+    expect(mongodb.connectToDatabase).toHaveBeenCalled();
+    expect(User.findOneAndDelete).toHaveBeenCalledWith({ clerkId: 'test-id' });
+    expect(consoleSpy).toHaveBeenCalledWith('Error deleting user:', error);
+
+    consoleSpy.mockRestore();
+  });
+
+  it('should successfully delete and return a user', async () => {
+    const mockUser = {
+      _id: 'some-id',
+      clerkId: 'test-id',
+      name: 'Deleted User',
+    };
+    (User.findOneAndDelete as any).mockResolvedValue(mockUser);
+
+    const result = await deleteUser('test-id');
+
+    expect(result).toEqual(mockUser);
+    expect(User.findOneAndDelete).toHaveBeenCalledWith({ clerkId: 'test-id' });
   });
 });
