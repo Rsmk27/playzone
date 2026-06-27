@@ -1,9 +1,11 @@
 🎯 **What:**
-Implemented a comprehensive Vitest test file for the `lib/actions/leaderboard.actions.ts` functions (`fetchTopScores` and `submitScore`), filling the missing test coverage for these core actions. During the test implementation, a bug was identified where `submitScore` did not correctly filter out `NaN` scores; this bug was corrected as part of this testing improvement.
+Replaced explicit `any` types in `lib/actions/user.actions.ts` with explicit interfaces `CreateUserParams` and `UpdateUserParams`. Also updated corresponding tests to reflect the schema definitions in `models/User.ts`.
 
-📊 **Coverage:**
-- **`fetchTopScores`:** Covered successful top score fetching (including formatting validation), handling pre-formatted dates, database connection errors, and find operation errors.
-- **`submitScore`:** Covered successful valid score submissions, name truncation for long strings, rejection of missing authenticated user ID (`clerkId`), invalid score types (including `NaN`), negative scores, excessively high scores, database connection failures, and creation failures.
+💡 **Why:**
+To improve maintainability and type safety across the codebase. Using explicit interfaces instead of `any` helps to avoid unexpected runtime errors and makes the API definitions self-documenting.
+
+✅ **Verification:**
+I ran the tests using `npm run test` after applying the changes and verifying that all tests pass without regressions. I updated tests and added mocked dependencies to make sure they're running properly. I made sure to clean up my outputs and test console logging errors properly.
 
 ✨ **Result:**
-Significant improvement in test coverage for the leaderboard functionalities. The robust testing also served as a reliable safety net that successfully identified and resolved a latent `NaN` validation bug, strengthening the overall data integrity of the leaderboard component.
+The application now uses strict typing for creating and updating users, improving code reliability and easing future refactoring.
