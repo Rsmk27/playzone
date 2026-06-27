@@ -1,14 +1,14 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { fetchTopScores, submitScore } from '../lib/actions/leaderboard.actions';
-import Leaderboard from '../models/Leaderboard';
-import { connectToDatabase } from '../lib/mongodb';
+import { fetchTopScores, submitScore } from '../../../lib/actions/leaderboard.actions';
+import Leaderboard from '../../../models/Leaderboard';
+import { connectToDatabase } from '../../../lib/mongodb';
 
-vi.mock('../lib/mongodb', () => ({
+vi.mock('../../../lib/mongodb', () => ({
   connectToDatabase: vi.fn(),
 }));
 
 // We need to mock Leaderboard properly to support chained methods like find().sort().limit().lean()
-vi.mock('../models/Leaderboard', () => {
+vi.mock('../../../models/Leaderboard', () => {
   const leanMock = vi.fn();
   const limitMock = vi.fn().mockReturnValue({ lean: leanMock });
   const sortMock = vi.fn().mockReturnValue({ limit: limitMock });
@@ -36,14 +36,12 @@ describe('leaderboard.actions', () => {
           name: 'Player 1',
           score: 100,
           userId: 'user1',
-          createdAt: new Date('2023-01-01T00:00:00Z'),
         },
         {
           _id: { toString: () => 'id2' },
           name: 'Player 2',
           score: 90,
           userId: 'user2',
-          createdAt: new Date('2023-01-02T00:00:00Z'),
         },
       ];
 
@@ -69,51 +67,31 @@ describe('leaderboard.actions', () => {
           rank: 1,
           name: 'Player 1',
           score: 100,
-          userId: 'user1',
-          createdAt: '2023-01-01T00:00:00.000Z',
         },
         {
           id: 'id2',
           rank: 2,
           name: 'Player 2',
           score: 90,
-          userId: 'user2',
-          createdAt: '2023-01-02T00:00:00.000Z',
         },
       ]);
     });
 
-    it('handles createdAt that is already a string', async () => {
-      const mockDocs = [
-        {
-          _id: { toString: () => 'id1' },
-          name: 'Player 1',
-          score: 100,
-          userId: 'user1',
-          createdAt: '2023-01-01T00:00:00.000Z', // already a string
-        },
-      ];
-
-      const leanMock = vi.fn().mockResolvedValue(mockDocs);
-      const limitMock = vi.fn().mockReturnValue({ lean: leanMock });
-      const sortMock = vi.fn().mockReturnValue({ limit: limitMock });
-
-      vi.mocked(Leaderboard.find).mockReturnValue({ sort: sortMock } as any);
-
-      const result = await fetchTopScores();
-
-      expect(result[0].createdAt).toBe('2023-01-01T00:00:00.000Z');
-    });
-
-    it('throws error when database connection fails', async () => {
+    it('returns empty array when database connection fails', async () => {
       const error = new Error('DB Connection Failed');
       vi.mocked(connectToDatabase).mockRejectedValueOnce(error);
 
-      await expect(fetchTopScores()).rejects.toThrow('DB Connection Failed');
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      const result = await fetchTopScores();
+      expect(result).toEqual([]);
       expect(Leaderboard.find).not.toHaveBeenCalled();
+      expect(consoleSpy).toHaveBeenCalledWith('Error fetching top scores:', error);
+
+      consoleSpy.mockRestore();
     });
 
-    it('throws error when fetching scores fails', async () => {
+    it('returns empty array when fetching scores fails', async () => {
       const error = new Error('Find failed');
 
       const leanMock = vi.fn().mockRejectedValueOnce(error);
@@ -122,7 +100,13 @@ describe('leaderboard.actions', () => {
 
       vi.mocked(Leaderboard.find).mockReturnValue({ sort: sortMock } as any);
 
-      await expect(fetchTopScores()).rejects.toThrow('Find failed');
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      const result = await fetchTopScores();
+      expect(result).toEqual([]);
+      expect(consoleSpy).toHaveBeenCalledWith('Error fetching top scores:', error);
+
+      consoleSpy.mockRestore();
     });
   });
 
@@ -188,15 +172,61 @@ describe('leaderboard.actions', () => {
       const error = new Error('DB Connection Failed');
       vi.mocked(connectToDatabase).mockRejectedValueOnce(error);
 
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
       await expect(submitScore('Player', 100, 'clerk_id')).rejects.toThrow('DB Connection Failed');
       expect(Leaderboard.create).not.toHaveBeenCalled();
+      expect(consoleSpy).toHaveBeenCalledWith('Error submitting score:', error);
+
+      consoleSpy.mockRestore();
     });
 
     it('throws error when creating score fails', async () => {
       const error = new Error('Create failed');
       vi.mocked(Leaderboard.create).mockRejectedValueOnce(error);
 
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
       await expect(submitScore('Player', 100, 'clerk_id')).rejects.toThrow('Create failed');
+      expect(consoleSpy).toHaveBeenCalledWith('Error submitting score:', error);
+
+      consoleSpy.mockRestore();
+    });
+
+    it('should truncate a name longer than 20 characters', async () => {
+      const longName = 'This is a very long name that exceeds twenty characters';
+      const score = 100;
+      const clerkId = 'user_123';
+      (Leaderboard.create as any).mockResolvedValue({ _id: { toString: () => 'new_id_123' } });
+
+      const result = await submitScore(longName, score, clerkId);
+
+      expect(result).toBe('new_id_123');
+      expect(Leaderboard.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: 'This is a very long ',
+        })
+      );
+    });
+
+    it('should trim the name before truncating', async () => {
+      const nameWithSpaces = '   This is a very long name that needs trimming   ';
+      (Leaderboard.create as any).mockResolvedValue({ _id: { toString: () => 'new_id_123' } });
+
+      await submitScore(nameWithSpaces, 100, 'user_123');
+
+      expect(Leaderboard.create).toHaveBeenCalledWith(
+        expect.objectContaining({ name: 'This is a very long ' })
+      );
+    });
+
+    it('should not truncate a name shorter than 20 characters', async () => {
+      const shortName = 'Short Name';
+      (Leaderboard.create as any).mockResolvedValue({ _id: { toString: () => 'new_id_123' } });
+
+      await submitScore(shortName, 100, 'user_123');
+
+      expect(Leaderboard.create).toHaveBeenCalledWith(expect.objectContaining({ name: 'Short Name' }));
     });
   });
 });
