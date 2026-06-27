@@ -3,7 +3,29 @@
 import { connectToDatabase } from '../mongodb';
 import User from '../../models/User';
 
-export async function createUser(user: any) {
+export interface CreateUserParams {
+  clerkId: string;
+  email: string;
+  username: string;
+  photo?: string;
+  firstName?: string;
+  lastName?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface UpdateUserParams {
+  email?: string;
+  username?: string;
+  photo?: string;
+  firstName?: string;
+  lastName?: string;
+  updatedAt?: Date;
+}
+
+
+
+export async function createUser(user: CreateUserParams) {
   try {
     await connectToDatabase();
     const newUser = await User.create(user);
@@ -14,7 +36,7 @@ export async function createUser(user: any) {
   }
 }
 
-export async function updateUser(clerkId: string, user: any) {
+export async function updateUser(clerkId: string, user: UpdateUserParams) {
   try {
     await connectToDatabase();
     const updatedUser = await User.findOneAndUpdate({ clerkId }, user, { new: true });
