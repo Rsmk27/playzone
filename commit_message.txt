@@ -1,0 +1,11 @@
+🧪 [testing improvement] Add testing for fetchTopScores error handling and mapping
+
+🎯 **What:** The testing gap addressed
+Fixed `tests/leaderboard.actions.test.ts` to properly handle and assert `fetchTopScores` tests. Removed the assertions for `createdAt` and `userId` that are not mapped in `fetchTopScores`. Also fixed error handling tests so they expect an empty array rather than a rejection, since `fetchTopScores` catches exceptions and returns an empty array `[]`.
+
+📊 **Coverage:** What scenarios are now tested
+1. Happy path: Map correctly handles properties without throwing mapping errors on nonexistent fields.
+2. Error handling: Connection failures and score fetching failures now correctly test for empty arrays instead of testing for thrown errors.
+
+✨ **Result:** The improvement in test coverage
+Tests pass and properly check error suppression behavior of `fetchTopScores`.
