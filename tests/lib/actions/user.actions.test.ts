@@ -27,12 +27,12 @@ describe('updateUser', () => {
     // Suppress console.error during this test
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    await expect(updateUser('test-id', { name: 'New Name' })).rejects.toThrow('User update failed');
+    await expect(updateUser('test-id', { username: 'New Name' })).rejects.toThrow('User update failed');
 
     expect(mongodb.connectToDatabase).toHaveBeenCalled();
     expect(User.findOneAndUpdate).toHaveBeenCalledWith(
       { clerkId: 'test-id' },
-      { name: 'New Name' },
+      { username: 'New Name' },
       { new: true }
     );
     expect(consoleSpy).toHaveBeenCalledWith('Error updating user:', expect.any(Error));
@@ -44,16 +44,16 @@ describe('updateUser', () => {
     const mockUser = {
       _id: 'some-id',
       clerkId: 'test-id',
-      name: 'New Name',
+      username: 'New Name',
     };
     (User.findOneAndUpdate as any).mockResolvedValue(mockUser);
 
-    const result = await updateUser('test-id', { name: 'New Name' });
+    const result = await updateUser('test-id', { username: 'New Name' });
 
     expect(result).toEqual(mockUser);
     expect(User.findOneAndUpdate).toHaveBeenCalledWith(
       { clerkId: 'test-id' },
-      { name: 'New Name' },
+      { username: 'New Name' },
       { new: true }
     );
   });
