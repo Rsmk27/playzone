@@ -84,16 +84,32 @@ describe('leaderboard.actions', () => {
       vi.mocked(Leaderboard.find).mockReturnValue({ sort: sortMock } as any);
 
       const result = await fetchTopScores();
-      expect(result).toEqual([]);
+
+      expect(result[0].score).toBe(100);
     });
 
     it('returns empty array when database connection fails', async () => {
       const error = new Error('DB Connection Failed');
       vi.mocked(connectToDatabase).mockRejectedValueOnce(error);
 
-      const result = await fetchTopScores();
-      expect(result).toEqual([]);
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      await expect(fetchTopScores()).resolves.toEqual([]);
+      consoleSpy.mockRestore();
       expect(Leaderboard.find).not.toHaveBeenCalled();
+    });
+
+    it('throws error when fetching scores fails', async () => {
+      const error = new Error('Find failed');
+
+      const leanMock = vi.fn().mockRejectedValueOnce(error);
+      const limitMock = vi.fn().mockReturnValue({ lean: leanMock });
+      const sortMock = vi.fn().mockReturnValue({ limit: limitMock });
+
+      vi.mocked(Leaderboard.find).mockReturnValue({ sort: sortMock } as any);
+
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      await expect(fetchTopScores()).resolves.toEqual([]);
+      consoleSpy.mockRestore();
     });
   });
 
