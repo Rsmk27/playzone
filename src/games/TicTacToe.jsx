@@ -1,6 +1,5 @@
 import ParticleBurst from '../components/ParticleBurst'
 import { useState, useRef, useCallback } from 'react'
-import ParticleBurst from '../components/ParticleBurst'
 
 // ── Win combinations + their SVG line coords ─────────────────────────────────
 const WIN_LINES = [
