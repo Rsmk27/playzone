@@ -18,12 +18,17 @@
     "svix": "^1.24.0"
   },
   "devDependencies": {
+    "@babel/preset-env": "^8.0.2",
+    "@babel/preset-react": "^8.0.1",
+    "@swc/core": "^1.15.43",
+    "@swc/jest": "^0.2.39",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/node": "^20.12.12",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
+    "@vitejs/plugin-react-swc": "^4.3.1",
     "jsdom": "^29.1.1",
     "typescript": "^5.4.5",
     "vite": "^5.4.1",
