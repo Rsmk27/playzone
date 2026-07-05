@@ -25,9 +25,6 @@ describe('updateUser', () => {
     // Mock the findOneAndUpdate to return null
     (User.findOneAndUpdate as any).mockResolvedValue(null);
 
-    // Suppress console.error during this test
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
     await expect(updateUser('test-id', { username: 'New Name' })).rejects.toThrow('User update failed');
 
     expect(mongodb.connectToDatabase).toHaveBeenCalled();
@@ -36,9 +33,6 @@ describe('updateUser', () => {
       { username: 'New Name' },
       { new: true }
     );
-    expect(consoleSpy).toHaveBeenCalledWith('Error updating user:', expect.any(Error));
-
-    consoleSpy.mockRestore();
   });
 
   it('should successfully update and return a user', async () => {
@@ -68,30 +62,20 @@ describe('deleteUser', () => {
   it('should throw an error when user deletion fails (findOneAndDelete returns null)', async () => {
     (User.findOneAndDelete as any).mockResolvedValue(null);
 
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
     await expect(deleteUser('test-id')).rejects.toThrow('User not found');
 
     expect(mongodb.connectToDatabase).toHaveBeenCalled();
     expect(User.findOneAndDelete).toHaveBeenCalledWith({ clerkId: 'test-id' });
-    expect(consoleSpy).toHaveBeenCalledWith('Error deleting user:', expect.any(Error));
-
-    consoleSpy.mockRestore();
   });
 
   it('should throw an error when user deletion fails (findOneAndDelete rejects)', async () => {
     const error = new Error('Database deletion error');
     (User.findOneAndDelete as any).mockRejectedValue(error);
 
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
     await expect(deleteUser('test-id')).rejects.toThrow('Database deletion error');
 
     expect(mongodb.connectToDatabase).toHaveBeenCalled();
     expect(User.findOneAndDelete).toHaveBeenCalledWith({ clerkId: 'test-id' });
-    expect(consoleSpy).toHaveBeenCalledWith('Error deleting user:', error);
-
-    consoleSpy.mockRestore();
   });
 
   it('should successfully delete and return a user', async () => {

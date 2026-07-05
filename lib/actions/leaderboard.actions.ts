@@ -20,7 +20,6 @@ export async function fetchTopScores(topN = 10) {
       createdAt: doc.createdAt instanceof Date ? doc.createdAt.toISOString() : doc.createdAt
     }));
   } catch (error) {
-    console.error('Error fetching top scores:', error);
     throw error;
   }
 }
@@ -44,7 +43,6 @@ export async function submitScore(name: string, score: number, clerkId: string) 
     });
     return newScore._id.toString();
   } catch (error) {
-    console.error('Error submitting score:', error);
     throw error;
   }
 }
