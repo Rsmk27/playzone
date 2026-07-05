@@ -42,12 +42,7 @@ describe('user.actions', () => {
       const error = new Error('Creation failed');
       (User.create as any).mockRejectedValue(error);
 
-      // Need to suppress console.error for this test to keep output clean
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
       await expect(createUser({ clerkId: 'test_clerk_id', email: 'test@example.com', username: 'testuser' })).rejects.toThrow('Creation failed');
-
-      consoleSpy.mockRestore();
     });
   });
 
@@ -71,11 +66,7 @@ describe('user.actions', () => {
     it('should throw error if user not found for update', async () => {
       (User.findOneAndUpdate as any).mockResolvedValue(null);
 
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
       await expect(updateUser('clerk123', {})).rejects.toThrow('User update failed');
-
-      consoleSpy.mockRestore();
     });
   });
 
@@ -94,11 +85,7 @@ describe('user.actions', () => {
     it('should throw error if user not found for delete', async () => {
       (User.findOneAndDelete as any).mockResolvedValue(null);
 
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
       await expect(deleteUser('clerk123')).rejects.toThrow('User not found');
-
-      consoleSpy.mockRestore();
     });
   });
 
