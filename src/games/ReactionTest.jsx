@@ -1,5 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
 
+const RATING_THRESHOLDS = {
+  ELITE: 180,
+  GREAT: 230,
+  GOOD: 300,
+}
+
 export default function ReactionTest() {
   const [phase, setPhase]    = useState('idle')   // idle | ready | go | result | tooEarly
   const [reactionTime, setRT] = useState(null)
@@ -47,9 +53,9 @@ export default function ReactionTest() {
 
   const rating = () => {
     if (!best) return null
-    if (best < 180) return { text: 'Elite Reflexes ⚡', color: '#4ade80' }
-    if (best < 230) return { text: 'Great Reflexes 🦅', color: '#a78bfa' }
-    if (best < 300) return { text: 'Good Reflexes 👍', color: '#fbbf24' }
+    if (best < RATING_THRESHOLDS.ELITE) return { text: 'Elite Reflexes ⚡', color: '#4ade80' }
+    if (best < RATING_THRESHOLDS.GREAT) return { text: 'Great Reflexes 🦅', color: '#a78bfa' }
+    if (best < RATING_THRESHOLDS.GOOD) return { text: 'Good Reflexes 👍', color: '#fbbf24' }
     return { text: 'Keep Practicing 🎯', color: '#f87171' }
   }
 
