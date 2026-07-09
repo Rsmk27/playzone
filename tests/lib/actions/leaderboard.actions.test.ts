@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { fetchTopScores, submitScore } from '../lib/actions/leaderboard.actions';
-import Leaderboard from '../models/Leaderboard';
-import { connectToDatabase } from '../lib/mongodb';
+import { fetchTopScores, submitScore } from '../../../lib/actions/leaderboard.actions';
+import Leaderboard from '../../../models/Leaderboard';
+import { connectToDatabase } from '../../../lib/mongodb';
 
-vi.mock('../lib/mongodb', () => ({
+vi.mock('../../../lib/mongodb', () => ({
   connectToDatabase: vi.fn(),
 }));
 
@@ -14,7 +14,7 @@ const sortMock = vi.fn().mockReturnValue({ limit: limitMock });
 const findMock = vi.fn().mockReturnValue({ sort: sortMock });
 const createMock = vi.fn();
 
-vi.mock('../models/Leaderboard', () => {
+vi.mock('../../../models/Leaderboard', () => {
   return {
     default: {
       find: vi.fn(),
@@ -67,14 +67,28 @@ describe('leaderboard.actions', () => {
           rank: 1,
           name: 'Player 1',
           score: 100,
+          userId: 'user1',
+          createdAt: '2023-01-01T00:00:00.000Z',
         },
         {
           id: 'id2',
           rank: 2,
           name: 'Player 2',
           score: 90,
+          userId: 'user2',
+          createdAt: '2023-01-02T00:00:00.000Z',
         },
       ]);
+    });
+
+    it('throws error when database connection fails', async () => {
+      const error = new Error('DB Connection Failed');
+      vi.mocked(connectToDatabase).mockRejectedValueOnce(error);
+
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      await expect(fetchTopScores()).rejects.toThrow('DB Connection Failed');
+      consoleSpy.mockRestore();
+      expect(Leaderboard.find).not.toHaveBeenCalled();
     });
 
     it('throws error when fetching scores fails', async () => {
@@ -83,32 +97,8 @@ describe('leaderboard.actions', () => {
       leanMock.mockRejectedValueOnce(error);
       vi.mocked(Leaderboard.find).mockReturnValue({ sort: sortMock } as any);
 
-      const result = await fetchTopScores();
-
-      expect(result[0].score).toBe(100);
-    });
-
-    it('returns empty array when database connection fails', async () => {
-      const error = new Error('DB Connection Failed');
-      vi.mocked(connectToDatabase).mockRejectedValueOnce(error);
-
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-      await expect(fetchTopScores()).resolves.toEqual([]);
-      consoleSpy.mockRestore();
-      expect(Leaderboard.find).not.toHaveBeenCalled();
-    });
-
-    it('throws error when fetching scores fails', async () => {
-      const error = new Error('Find failed');
-
-      const leanMock = vi.fn().mockRejectedValueOnce(error);
-      const limitMock = vi.fn().mockReturnValue({ lean: leanMock });
-      const sortMock = vi.fn().mockReturnValue({ limit: limitMock });
-
-      vi.mocked(Leaderboard.find).mockReturnValue({ sort: sortMock } as any);
-
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-      await expect(fetchTopScores()).resolves.toEqual([]);
+      await expect(fetchTopScores()).rejects.toThrow('Find failed');
       consoleSpy.mockRestore();
     });
   });
@@ -135,6 +125,26 @@ describe('leaderboard.actions', () => {
         createdAt: expect.any(Date),
       }));
       expect(result).toBe('new_score_id');
+    });
+
+    it('successfully submits a score of 0 (lower bound)', async () => {
+      const mockScore = { _id: { toString: () => 'new_score_id_0' } };
+      vi.mocked(Leaderboard.create).mockResolvedValueOnce(mockScore as any);
+
+      const result = await submitScore('Player 0', 0, 'clerk_user_0');
+
+      expect(result).toBe('new_score_id_0');
+      expect(Leaderboard.create).toHaveBeenCalledWith(expect.objectContaining({ score: 0 }));
+    });
+
+    it('successfully submits a score of 100000 (upper bound)', async () => {
+      const mockScore = { _id: { toString: () => 'new_score_id_max' } };
+      vi.mocked(Leaderboard.create).mockResolvedValueOnce(mockScore as any);
+
+      const result = await submitScore('Player Max', 100000, 'clerk_user_max');
+
+      expect(result).toBe('new_score_id_max');
+      expect(Leaderboard.create).toHaveBeenCalledWith(expect.objectContaining({ score: 100000 }));
     });
 
     it('trims and truncates long names', async () => {
@@ -175,7 +185,9 @@ describe('leaderboard.actions', () => {
       const error = new Error('DB Connection Failed');
       vi.mocked(connectToDatabase).mockRejectedValueOnce(error);
 
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       await expect(submitScore('Player', 100, 'clerk_id')).rejects.toThrow('DB Connection Failed');
+      consoleSpy.mockRestore();
       expect(Leaderboard.create).not.toHaveBeenCalled();
     });
 
@@ -183,7 +195,9 @@ describe('leaderboard.actions', () => {
       const error = new Error('Create failed');
       vi.mocked(Leaderboard.create).mockRejectedValueOnce(error);
 
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       await expect(submitScore('Player', 100, 'clerk_id')).rejects.toThrow('Create failed');
+      consoleSpy.mockRestore();
     });
   });
 });
