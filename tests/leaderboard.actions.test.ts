@@ -67,12 +67,16 @@ describe('leaderboard.actions', () => {
           rank: 1,
           name: 'Player 1',
           score: 100,
+          userId: 'user1',
+          createdAt: '2023-01-01T00:00:00.000Z',
         },
         {
           id: 'id2',
           rank: 2,
           name: 'Player 2',
           score: 90,
+          userId: 'user2',
+          createdAt: '2023-01-02T00:00:00.000Z',
         },
       ]);
     });
@@ -83,34 +87,22 @@ describe('leaderboard.actions', () => {
       leanMock.mockRejectedValueOnce(error);
       vi.mocked(Leaderboard.find).mockReturnValue({ sort: sortMock } as any);
 
-      const result = await fetchTopScores();
-
-      expect(result[0].score).toBe(100);
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      await expect(fetchTopScores()).rejects.toThrow('Find failed');
+      consoleSpy.mockRestore();
     });
 
-    it('returns empty array when database connection fails', async () => {
+    it('throws error when database connection fails', async () => {
       const error = new Error('DB Connection Failed');
       vi.mocked(connectToDatabase).mockRejectedValueOnce(error);
 
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-      await expect(fetchTopScores()).resolves.toEqual([]);
+      await expect(fetchTopScores()).rejects.toThrow('DB Connection Failed');
       consoleSpy.mockRestore();
       expect(Leaderboard.find).not.toHaveBeenCalled();
     });
 
-    it('throws error when fetching scores fails', async () => {
-      const error = new Error('Find failed');
 
-      const leanMock = vi.fn().mockRejectedValueOnce(error);
-      const limitMock = vi.fn().mockReturnValue({ lean: leanMock });
-      const sortMock = vi.fn().mockReturnValue({ limit: limitMock });
-
-      vi.mocked(Leaderboard.find).mockReturnValue({ sort: sortMock } as any);
-
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-      await expect(fetchTopScores()).resolves.toEqual([]);
-      consoleSpy.mockRestore();
-    });
   });
 
   describe('submitScore', () => {
@@ -175,7 +167,9 @@ describe('leaderboard.actions', () => {
       const error = new Error('DB Connection Failed');
       vi.mocked(connectToDatabase).mockRejectedValueOnce(error);
 
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       await expect(submitScore('Player', 100, 'clerk_id')).rejects.toThrow('DB Connection Failed');
+      consoleSpy.mockRestore();
       expect(Leaderboard.create).not.toHaveBeenCalled();
     });
 
@@ -183,7 +177,9 @@ describe('leaderboard.actions', () => {
       const error = new Error('Create failed');
       vi.mocked(Leaderboard.create).mockRejectedValueOnce(error);
 
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       await expect(submitScore('Player', 100, 'clerk_id')).rejects.toThrow('Create failed');
+      consoleSpy.mockRestore();
     });
   });
 });
