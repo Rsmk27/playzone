@@ -3,14 +3,16 @@ import { useState } from 'react'
 const P1 = 1, P2 = 2, P1K = 3, P2K = 4
 
 function initBoard() {
-  const b = Array(8).fill(null).map(() => Array(8).fill(0))
-  for (let r = 0; r < 3; r++)
-    for (let c = 0; c < 8; c++)
-      if ((r + c) % 2 === 1) b[r][c] = P2
-  for (let r = 5; r < 8; r++)
-    for (let c = 0; c < 8; c++)
-      if ((r + c) % 2 === 1) b[r][c] = P1
-  return b
+  return [
+    [0, P2, 0, P2, 0, P2, 0, P2],
+    [P2, 0, P2, 0, P2, 0, P2, 0],
+    [0, P2, 0, P2, 0, P2, 0, P2],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [P1, 0, P1, 0, P1, 0, P1, 0],
+    [0, P1, 0, P1, 0, P1, 0, P1],
+    [P1, 0, P1, 0, P1, 0, P1, 0]
+  ];
 }
 
 function getJumps(board, r, c) {
