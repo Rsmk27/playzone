@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { updateUser, deleteUser } from '../../../lib/actions/user.actions';
-import User from '../../../models/User';
+import { createUser, updateUser, deleteUser, getUserByClerkId } from '../../../lib/actions/user.actions';
 import * as mongodb from '../../../lib/mongodb';
+import User from '../../../models/User';
 
 vi.mock('../../../lib/mongodb', () => ({
   connectToDatabase: vi.fn(),
@@ -10,101 +10,183 @@ vi.mock('../../../lib/mongodb', () => ({
 vi.mock('../../../models/User', () => {
   return {
     default: {
+      create: vi.fn(),
       findOneAndUpdate: vi.fn(),
       findOneAndDelete: vi.fn(),
+      findOne: vi.fn(),
     },
   };
 });
 
-describe('updateUser', () => {
+describe('user.actions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('should throw an error when user update fails (findOneAndUpdate returns null)', async () => {
-    // Mock the findOneAndUpdate to return null
-    (User.findOneAndUpdate as any).mockResolvedValue(null);
+  describe('createUser', () => {
+    it('should successfully create a user', async () => {
+      const mockUser = {
+        clerkId: 'test_clerk_id',
+        email: 'test@example.com',
+        username: 'testuser',
+      };
 
-    // Suppress console.error during this test
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const createdUser = { ...mockUser, _id: 'mock_db_id' };
+      vi.mocked(User.create).mockResolvedValueOnce(createdUser as any);
 
-    await expect(updateUser('test-id', { username: 'New Name' })).rejects.toThrow('User update failed');
+      const result = await createUser(mockUser);
 
-    expect(mongodb.connectToDatabase).toHaveBeenCalled();
-    expect(User.findOneAndUpdate).toHaveBeenCalledWith(
-      { clerkId: 'test-id' },
-      { username: 'New Name' },
-      { new: true }
-    );
-    expect(consoleSpy).toHaveBeenCalledWith('Error updating user:', expect.any(Error));
+      expect(mongodb.connectToDatabase).toHaveBeenCalledTimes(1);
+      expect(User.create).toHaveBeenCalledWith(mockUser);
+      expect(result).toEqual(createdUser);
+    });
 
-    consoleSpy.mockRestore();
+    it('should throw an error if creating a user fails', async () => {
+      const mockUser = { clerkId: 'test_clerk_id', email: 'test@example.com', username: 'testuser' };
+      const error = new Error('Database error');
+
+      vi.mocked(User.create).mockRejectedValueOnce(error);
+
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      await expect(createUser(mockUser)).rejects.toThrow('Database error');
+      expect(mongodb.connectToDatabase).toHaveBeenCalledTimes(1);
+      expect(consoleSpy).toHaveBeenCalledWith('Error creating user:', error);
+
+      consoleSpy.mockRestore();
+    });
   });
 
-  it('should successfully update and return a user', async () => {
-    const mockUser = {
-      _id: 'some-id',
-      clerkId: 'test-id',
-      username: 'New Name',
-    };
-    (User.findOneAndUpdate as any).mockResolvedValue(mockUser);
+  describe('updateUser', () => {
+    it('should successfully update a user', async () => {
+      const clerkId = 'test_clerk_id';
+      const updateData = { username: 'newusername' };
+      const updatedUser = { clerkId, ...updateData, _id: 'mock_db_id' };
 
-    const result = await updateUser('test-id', { username: 'New Name' });
+      vi.mocked(User.findOneAndUpdate).mockResolvedValueOnce(updatedUser as any);
 
-    expect(result).toEqual(mockUser);
-    expect(User.findOneAndUpdate).toHaveBeenCalledWith(
-      { clerkId: 'test-id' },
-      { username: 'New Name' },
-      { new: true }
-    );
-  });
-});
+      const result = await updateUser(clerkId, updateData);
 
-describe('deleteUser', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+      expect(mongodb.connectToDatabase).toHaveBeenCalledTimes(1);
+      expect(User.findOneAndUpdate).toHaveBeenCalledWith({ clerkId }, updateData, { new: true });
+      expect(result).toEqual(updatedUser);
+    });
 
-  it('should throw an error when user deletion fails (findOneAndDelete returns null)', async () => {
-    (User.findOneAndDelete as any).mockResolvedValue(null);
+    it('should throw an error if the user is not found during update', async () => {
+      const clerkId = 'non_existent_id';
+      const updateData = { username: 'newusername' };
 
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      vi.mocked(User.findOneAndUpdate).mockResolvedValueOnce(null as any);
 
-    await expect(deleteUser('test-id')).rejects.toThrow('User not found');
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    expect(mongodb.connectToDatabase).toHaveBeenCalled();
-    expect(User.findOneAndDelete).toHaveBeenCalledWith({ clerkId: 'test-id' });
-    expect(consoleSpy).toHaveBeenCalledWith('Error deleting user:', expect.any(Error));
+      await expect(updateUser(clerkId, updateData)).rejects.toThrow('User update failed');
+      expect(mongodb.connectToDatabase).toHaveBeenCalledTimes(1);
+      expect(consoleSpy).toHaveBeenCalledWith('Error updating user:', expect.any(Error));
 
-    consoleSpy.mockRestore();
-  });
+      consoleSpy.mockRestore();
+    });
 
-  it('should throw an error when user deletion fails (findOneAndDelete rejects)', async () => {
-    const error = new Error('Database deletion error');
-    (User.findOneAndDelete as any).mockRejectedValue(error);
+    it('should throw an error if updating a user fails', async () => {
+      const clerkId = 'test_clerk_id';
+      const updateData = { username: 'newusername' };
+      const error = new Error('Database error');
 
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      vi.mocked(User.findOneAndUpdate).mockRejectedValueOnce(error);
 
-    await expect(deleteUser('test-id')).rejects.toThrow('Database deletion error');
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    expect(mongodb.connectToDatabase).toHaveBeenCalled();
-    expect(User.findOneAndDelete).toHaveBeenCalledWith({ clerkId: 'test-id' });
-    expect(consoleSpy).toHaveBeenCalledWith('Error deleting user:', error);
+      await expect(updateUser(clerkId, updateData)).rejects.toThrow('Database error');
+      expect(mongodb.connectToDatabase).toHaveBeenCalledTimes(1);
+      expect(consoleSpy).toHaveBeenCalledWith('Error updating user:', error);
 
-    consoleSpy.mockRestore();
+      consoleSpy.mockRestore();
+    });
   });
 
-  it('should successfully delete and return a user', async () => {
-    const mockUser = {
-      _id: 'some-id',
-      clerkId: 'test-id',
-      name: 'Deleted User',
-    };
-    (User.findOneAndDelete as any).mockResolvedValue(mockUser);
+  describe('deleteUser', () => {
+    it('should successfully delete a user', async () => {
+      const clerkId = 'test_clerk_id';
+      const deletedUser = { clerkId, _id: 'mock_db_id' };
 
-    const result = await deleteUser('test-id');
+      vi.mocked(User.findOneAndDelete).mockResolvedValueOnce(deletedUser as any);
 
-    expect(result).toEqual(mockUser);
-    expect(User.findOneAndDelete).toHaveBeenCalledWith({ clerkId: 'test-id' });
+      const result = await deleteUser(clerkId);
+
+      expect(mongodb.connectToDatabase).toHaveBeenCalledTimes(1);
+      expect(User.findOneAndDelete).toHaveBeenCalledWith({ clerkId });
+      expect(result).toEqual(deletedUser);
+    });
+
+    it('should throw an error if the user is not found during deletion', async () => {
+      const clerkId = 'non_existent_id';
+
+      vi.mocked(User.findOneAndDelete).mockResolvedValueOnce(null as any);
+
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      await expect(deleteUser(clerkId)).rejects.toThrow('User not found');
+      expect(mongodb.connectToDatabase).toHaveBeenCalledTimes(1);
+      expect(consoleSpy).toHaveBeenCalledWith('Error deleting user:', expect.any(Error));
+
+      consoleSpy.mockRestore();
+    });
+
+    it('should throw an error if deleting a user fails', async () => {
+      const clerkId = 'test_clerk_id';
+      const error = new Error('Database error');
+
+      vi.mocked(User.findOneAndDelete).mockRejectedValueOnce(error);
+
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      await expect(deleteUser(clerkId)).rejects.toThrow('Database error');
+      expect(mongodb.connectToDatabase).toHaveBeenCalledTimes(1);
+      expect(consoleSpy).toHaveBeenCalledWith('Error deleting user:', error);
+
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe('getUserByClerkId', () => {
+    it('should successfully fetch a user by clerkId', async () => {
+      const clerkId = 'test_clerk_id';
+      const user = { clerkId, username: 'testuser', _id: 'mock_db_id' };
+
+      vi.mocked(User.findOne).mockResolvedValueOnce(user as any);
+
+      const result = await getUserByClerkId(clerkId);
+
+      expect(mongodb.connectToDatabase).toHaveBeenCalledTimes(1);
+      expect(User.findOne).toHaveBeenCalledWith({ clerkId });
+      expect(result).toEqual(user);
+    });
+
+    it('should return null if the user is not found', async () => {
+      const clerkId = 'non_existent_id';
+
+      vi.mocked(User.findOne).mockResolvedValueOnce(null as any);
+
+      const result = await getUserByClerkId(clerkId);
+
+      expect(mongodb.connectToDatabase).toHaveBeenCalledTimes(1);
+      expect(User.findOne).toHaveBeenCalledWith({ clerkId });
+      expect(result).toBeNull();
+    });
+
+    it('should throw an error if fetching a user fails', async () => {
+      const clerkId = 'test_clerk_id';
+      const error = new Error('Database error');
+
+      vi.mocked(User.findOne).mockRejectedValueOnce(error);
+
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      await expect(getUserByClerkId(clerkId)).rejects.toThrow('Database error');
+      expect(mongodb.connectToDatabase).toHaveBeenCalledTimes(1);
+      expect(consoleSpy).toHaveBeenCalledWith('Error fetching user:', error);
+
+      consoleSpy.mockRestore();
+    });
   });
 });
