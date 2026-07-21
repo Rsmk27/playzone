@@ -10,9 +10,9 @@ vi.mock('../mongodb', () => ({
 vi.mock('../../models/User', () => ({
   default: {
     create: vi.fn(),
-    findOneAndUpdate: vi.fn(),
-    findOneAndDelete: vi.fn(),
-    findOne: vi.fn(),
+    findOneAndUpdate: vi.fn().mockReturnValue({ lean: vi.fn() }),
+    findOneAndDelete: vi.fn().mockReturnValue({ lean: vi.fn() }),
+    findOne: vi.fn().mockReturnValue({ lean: vi.fn() }),
   },
 }));
 
@@ -55,7 +55,7 @@ describe('user.actions', () => {
     it('should connect to database and update user', async () => {
       const mockUserUpdate = { username: 'Updated Name' };
       const updatedUser = { clerkId: 'clerk123', username: 'Updated Name' };
-      (User.findOneAndUpdate as any).mockResolvedValue(updatedUser);
+      (User.findOneAndUpdate as any).mockReturnValue({ lean: vi.fn().mockResolvedValue(updatedUser) });
 
       const result = await updateUser('clerk123', mockUserUpdate);
 
@@ -69,7 +69,7 @@ describe('user.actions', () => {
     });
 
     it('should throw error if user not found for update', async () => {
-      (User.findOneAndUpdate as any).mockResolvedValue(null);
+      (User.findOneAndUpdate as any).mockReturnValue({ lean: vi.fn().mockResolvedValue(null) });
 
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -82,7 +82,7 @@ describe('user.actions', () => {
   describe('deleteUser', () => {
     it('should connect to database and delete user', async () => {
       const deletedUser = { clerkId: 'clerk123', name: 'Deleted User' };
-      (User.findOneAndDelete as any).mockResolvedValue(deletedUser);
+      (User.findOneAndDelete as any).mockReturnValue({ lean: vi.fn().mockResolvedValue(deletedUser) });
 
       const result = await deleteUser('clerk123');
 
@@ -92,7 +92,7 @@ describe('user.actions', () => {
     });
 
     it('should throw error if user not found for delete', async () => {
-      (User.findOneAndDelete as any).mockResolvedValue(null);
+      (User.findOneAndDelete as any).mockReturnValue({ lean: vi.fn().mockResolvedValue(null) });
 
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -105,7 +105,7 @@ describe('user.actions', () => {
   describe('getUserByClerkId', () => {
     it('should connect to database and get user', async () => {
       const user = { clerkId: 'clerk123', name: 'Test User' };
-      (User.findOne as any).mockResolvedValue(user);
+      (User.findOne as any).mockReturnValue({ lean: vi.fn().mockResolvedValue(user) });
 
       const result = await getUserByClerkId('clerk123');
 
@@ -115,7 +115,7 @@ describe('user.actions', () => {
     });
 
     it('should return null if user not found', async () => {
-      (User.findOne as any).mockResolvedValue(null);
+      (User.findOne as any).mockReturnValue({ lean: vi.fn().mockResolvedValue(null) });
 
       const result = await getUserByClerkId('clerk123');
 

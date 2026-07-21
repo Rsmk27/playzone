@@ -10,8 +10,8 @@ vi.mock('../../../lib/mongodb', () => ({
 vi.mock('../../../models/User', () => {
   return {
     default: {
-      findOneAndUpdate: vi.fn(),
-      findOneAndDelete: vi.fn(),
+      findOneAndUpdate: vi.fn().mockReturnValue({ lean: vi.fn() }),
+      findOneAndDelete: vi.fn().mockReturnValue({ lean: vi.fn() }),
     },
   };
 });
@@ -23,7 +23,7 @@ describe('updateUser', () => {
 
   it('should throw an error when user update fails (findOneAndUpdate returns null)', async () => {
     // Mock the findOneAndUpdate to return null
-    (User.findOneAndUpdate as any).mockResolvedValue(null);
+    (User.findOneAndUpdate as any).mockReturnValue({ lean: vi.fn().mockResolvedValue(null) });
 
     // Suppress console.error during this test
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -47,7 +47,7 @@ describe('updateUser', () => {
       clerkId: 'test-id',
       username: 'New Name',
     };
-    (User.findOneAndUpdate as any).mockResolvedValue(mockUser);
+    (User.findOneAndUpdate as any).mockReturnValue({ lean: vi.fn().mockResolvedValue(mockUser) });
 
     const result = await updateUser('test-id', { username: 'New Name' });
 
@@ -66,7 +66,7 @@ describe('deleteUser', () => {
   });
 
   it('should throw an error when user deletion fails (findOneAndDelete returns null)', async () => {
-    (User.findOneAndDelete as any).mockResolvedValue(null);
+    (User.findOneAndDelete as any).mockReturnValue({ lean: vi.fn().mockResolvedValue(null) });
 
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -81,7 +81,7 @@ describe('deleteUser', () => {
 
   it('should throw an error when user deletion fails (findOneAndDelete rejects)', async () => {
     const error = new Error('Database deletion error');
-    (User.findOneAndDelete as any).mockRejectedValue(error);
+    (User.findOneAndDelete as any).mockReturnValue({ lean: vi.fn().mockRejectedValue(error) });
 
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -100,7 +100,7 @@ describe('deleteUser', () => {
       clerkId: 'test-id',
       name: 'Deleted User',
     };
-    (User.findOneAndDelete as any).mockResolvedValue(mockUser);
+    (User.findOneAndDelete as any).mockReturnValue({ lean: vi.fn().mockResolvedValue(mockUser) });
 
     const result = await deleteUser('test-id');
 
