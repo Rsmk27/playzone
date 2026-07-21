@@ -4,7 +4,7 @@ const ROWS = 6, COLS = 7
 const MINES = 10
 
 function initGrid() {
-  const g = Array(ROWS).fill().map(() => Array(COLS).fill(0))
+  const g = Array.from({ length: ROWS }, () => Array(COLS).fill(0))
   let placed = 0
   while (placed < MINES) {
     const r = Math.floor(Math.random() * ROWS)
@@ -42,8 +42,8 @@ export default function Minesweeper() {
   const init = () => {
     const g = initGrid()
     setGrid(g)
-    setRev(Array(ROWS).fill().map(() => Array(COLS).fill(false)))
-    setFlags(Array(ROWS).fill().map(() => Array(COLS).fill(false)))
+    setRev(Array.from({ length: ROWS }, () => Array(COLS).fill(false)))
+    setFlags(Array.from({ length: ROWS }, () => Array(COLS).fill(false)))
     setOver(false)
     setWin(false)
     setTime(0)
