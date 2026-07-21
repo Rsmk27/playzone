@@ -89,6 +89,7 @@ describe('leaderboard.actions', () => {
 
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       await expect(fetchTopScores()).rejects.toThrow('Find failed');
+      expect(consoleSpy).toHaveBeenCalledWith('Error fetching top scores:', error);
       consoleSpy.mockRestore();
     });
 
@@ -98,6 +99,7 @@ describe('leaderboard.actions', () => {
 
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       await expect(fetchTopScores()).rejects.toThrow('DB Connection Failed');
+      expect(consoleSpy).toHaveBeenCalledWith('Error fetching top scores:', error);
       consoleSpy.mockRestore();
       expect(Leaderboard.find).not.toHaveBeenCalled();
     });
@@ -169,6 +171,7 @@ describe('leaderboard.actions', () => {
 
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       await expect(submitScore('Player', 100, 'clerk_id')).rejects.toThrow('DB Connection Failed');
+      expect(consoleSpy).toHaveBeenCalledWith('Error submitting score:', error);
       consoleSpy.mockRestore();
       expect(Leaderboard.create).not.toHaveBeenCalled();
     });
@@ -179,6 +182,7 @@ describe('leaderboard.actions', () => {
 
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       await expect(submitScore('Player', 100, 'clerk_id')).rejects.toThrow('Create failed');
+      expect(consoleSpy).toHaveBeenCalledWith('Error submitting score:', error);
       consoleSpy.mockRestore();
     });
   });
