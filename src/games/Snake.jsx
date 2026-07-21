@@ -25,9 +25,24 @@ export default function Snake() {
   })
 
   function randFood(snake) {
+    const grid = new Uint8Array(W * H)
+    for (let i = 0; i < snake.length; i++) {
+      grid[snake[i].y * W + snake[i].x] = 1
+    }
+
+    if (snake.length > 300) {
+      const emptySpots = []
+      for (let i = 0; i < W * H; i++) {
+        if (grid[i] === 0) emptySpots.push(i)
+      }
+      if (emptySpots.length === 0) return { x: 0, y: 0 }
+      const rand = emptySpots[Math.floor(Math.random() * emptySpots.length)]
+      return { x: rand % W, y: Math.floor(rand / W) }
+    }
+
     let f
     do { f = {x:Math.floor(Math.random()*W),y:Math.floor(Math.random()*H)} }
-    while (snake.some(s=>s.x===f.x&&s.y===f.y))
+    while (grid[f.y * W + f.x])
     return f
   }
 
