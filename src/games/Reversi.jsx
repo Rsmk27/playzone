@@ -3,7 +3,8 @@ import { useState } from 'react'
 const P1 = 1, P2 = 2
 
 function initBoard() {
-  const b = Array(8).fill(null).map(() => Array(8).fill(0))
+  const b = []
+  for (let i = 0; i < 8; i++) b.push([0, 0, 0, 0, 0, 0, 0, 0])
   b[3][3]=P2; b[3][4]=P1; b[4][3]=P1; b[4][4]=P2
   return b
 }
