@@ -81,6 +81,35 @@ describe('leaderboard.actions', () => {
       ]);
     });
 
+        it('successfully fetches and formats top scores with default parameter', async () => {
+      const mockDocs = [
+        {
+          _id: { toString: () => 'id1' },
+          name: 'Player 1',
+          score: 100,
+          userId: 'user1',
+          createdAt: '2023-01-01T00:00:00.000Z', // string instead of Date
+        },
+      ];
+
+      leanMock.mockResolvedValueOnce(mockDocs);
+      vi.mocked(Leaderboard.find).mockReturnValue({ sort: sortMock } as any);
+
+      const result = await fetchTopScores();
+
+      expect(connectToDatabase).toHaveBeenCalledTimes(1);
+      expect(limitMock).toHaveBeenCalledWith(10);
+      expect(result[0].createdAt).toBe('2023-01-01T00:00:00.000Z');
+    });
+
+    it('returns empty array if no scores', async () => {
+      leanMock.mockResolvedValueOnce([]);
+      vi.mocked(Leaderboard.find).mockReturnValue({ sort: sortMock } as any);
+
+      const result = await fetchTopScores();
+      expect(result).toEqual([]);
+    });
+
     it('throws error when fetching scores fails', async () => {
       const error = new Error('Find failed');
 
@@ -142,6 +171,20 @@ describe('leaderboard.actions', () => {
       expect(Leaderboard.create).toHaveBeenCalledWith(expect.objectContaining({
         name: 'This is a very long ', // Expected truncated result
       }));
+    });
+
+        it('successfully submits edge case scores (0 and 100000)', async () => {
+      const mockScore = {
+        _id: { toString: () => 'new_score_id' },
+      };
+
+      vi.mocked(Leaderboard.create).mockResolvedValue(mockScore as any);
+
+      await submitScore('Player', 0, 'clerk_id');
+      expect(Leaderboard.create).toHaveBeenCalledWith(expect.objectContaining({ score: 0 }));
+
+      await submitScore('Player', 100000, 'clerk_id');
+      expect(Leaderboard.create).toHaveBeenCalledWith(expect.objectContaining({ score: 100000 }));
     });
 
     it('throws error if clerkId is missing', async () => {
