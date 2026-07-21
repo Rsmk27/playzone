@@ -3,6 +3,15 @@
 import { connectToDatabase } from '../mongodb';
 import Leaderboard from '../../models/Leaderboard';
 
+interface LeaderboardDoc {
+  _id: any;
+  name: string;
+  score: number;
+  userId: string;
+  createdAt: Date | string;
+}
+
+
 export async function fetchTopScores(topN = 10) {
   try {
     await connectToDatabase();
@@ -11,7 +20,7 @@ export async function fetchTopScores(topN = 10) {
       .limit(topN)
       .lean();
 
-    return scores.map((doc: any, index: number) => ({
+    return scores.map((doc: LeaderboardDoc, index: number) => ({
       id: doc._id.toString(),
       rank: index + 1,
       name: doc.name,
