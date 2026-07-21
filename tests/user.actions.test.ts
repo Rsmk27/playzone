@@ -10,9 +10,9 @@ vi.mock('../lib/mongodb', () => ({
 vi.mock('../models/User', () => ({
   default: {
     create: vi.fn(),
-    findOneAndUpdate: vi.fn(),
-    findOneAndDelete: vi.fn(),
-    findOne: vi.fn(),
+    findOneAndUpdate: vi.fn().mockReturnValue({ lean: vi.fn() }),
+    findOneAndDelete: vi.fn().mockReturnValue({ lean: vi.fn() }),
+    findOne: vi.fn().mockReturnValue({ lean: vi.fn() }),
   },
 }));
 
@@ -56,7 +56,7 @@ describe('user.actions', () => {
       const updateData = { username: 'newusername' };
       const updatedUser = { clerkId, ...updateData, _id: 'mock_db_id' };
 
-      vi.mocked(User.findOneAndUpdate).mockResolvedValueOnce(updatedUser as any);
+      vi.mocked(User.findOneAndUpdate).mockReturnValueOnce({ lean: vi.fn().mockResolvedValueOnce(updatedUser as any) } as any);
 
       const result = await updateUser(clerkId, updateData);
 
@@ -69,7 +69,7 @@ describe('user.actions', () => {
       const clerkId = 'non_existent_id';
       const updateData = { username: 'newusername' };
 
-      vi.mocked(User.findOneAndUpdate).mockResolvedValueOnce(null as any);
+      vi.mocked(User.findOneAndUpdate).mockReturnValueOnce({ lean: vi.fn().mockResolvedValueOnce(null as any) } as any);
 
       await expect(updateUser(clerkId, updateData)).rejects.toThrow('User update failed');
       expect(connectToDatabase).toHaveBeenCalledTimes(1);
@@ -80,7 +80,7 @@ describe('user.actions', () => {
       const updateData = { username: 'newusername' };
       const error = new Error('Database error');
 
-      vi.mocked(User.findOneAndUpdate).mockRejectedValueOnce(error);
+      vi.mocked(User.findOneAndUpdate).mockReturnValueOnce({ lean: vi.fn().mockRejectedValueOnce(error) } as any);
 
       await expect(updateUser(clerkId, updateData)).rejects.toThrow('Database error');
       expect(connectToDatabase).toHaveBeenCalledTimes(1);
@@ -92,7 +92,7 @@ describe('user.actions', () => {
       const clerkId = 'test_clerk_id';
       const deletedUser = { clerkId, _id: 'mock_db_id' };
 
-      vi.mocked(User.findOneAndDelete).mockResolvedValueOnce(deletedUser as any);
+      vi.mocked(User.findOneAndDelete).mockReturnValueOnce({ lean: vi.fn().mockResolvedValueOnce(deletedUser as any) } as any);
 
       const result = await deleteUser(clerkId);
 
@@ -104,7 +104,7 @@ describe('user.actions', () => {
     it('should throw an error if the user is not found during deletion', async () => {
       const clerkId = 'non_existent_id';
 
-      vi.mocked(User.findOneAndDelete).mockResolvedValueOnce(null as any);
+      vi.mocked(User.findOneAndDelete).mockReturnValueOnce({ lean: vi.fn().mockResolvedValueOnce(null as any) } as any);
 
       await expect(deleteUser(clerkId)).rejects.toThrow('User not found');
       expect(connectToDatabase).toHaveBeenCalledTimes(1);
@@ -114,7 +114,7 @@ describe('user.actions', () => {
       const clerkId = 'test_clerk_id';
       const error = new Error('Database error');
 
-      vi.mocked(User.findOneAndDelete).mockRejectedValueOnce(error);
+      vi.mocked(User.findOneAndDelete).mockReturnValueOnce({ lean: vi.fn().mockRejectedValueOnce(error) } as any);
 
       await expect(deleteUser(clerkId)).rejects.toThrow('Database error');
       expect(connectToDatabase).toHaveBeenCalledTimes(1);
@@ -126,7 +126,7 @@ describe('user.actions', () => {
       const clerkId = 'test_clerk_id';
       const user = { clerkId, username: 'testuser', _id: 'mock_db_id' };
 
-      vi.mocked(User.findOne).mockResolvedValueOnce(user as any);
+      vi.mocked(User.findOne).mockReturnValueOnce({ lean: vi.fn().mockResolvedValueOnce(user as any) } as any);
 
       const result = await getUserByClerkId(clerkId);
 
@@ -138,7 +138,7 @@ describe('user.actions', () => {
     it('should return null if the user is not found', async () => {
       const clerkId = 'non_existent_id';
 
-      vi.mocked(User.findOne).mockResolvedValueOnce(null as any);
+      vi.mocked(User.findOne).mockReturnValueOnce({ lean: vi.fn().mockResolvedValueOnce(null as any) } as any);
 
       const result = await getUserByClerkId(clerkId);
 
@@ -151,7 +151,7 @@ describe('user.actions', () => {
       const clerkId = 'test_clerk_id';
       const error = new Error('Database error');
 
-      vi.mocked(User.findOne).mockRejectedValueOnce(error);
+      vi.mocked(User.findOne).mockReturnValueOnce({ lean: vi.fn().mockRejectedValueOnce(error) } as any);
 
       await expect(getUserByClerkId(clerkId)).rejects.toThrow('Database error');
       expect(connectToDatabase).toHaveBeenCalledTimes(1);
