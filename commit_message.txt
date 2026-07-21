@@ -1,3 +1,5 @@
-🧪 [testing improvement] Add tests for MemoryCards matching logic
+🧪 [testing improvement] add missing tests for leaderboard actions
 
-Add comprehensive unit tests for MemoryCards component testing rendering, initial state, card flipping mechanics, matching logic, and mismatch behavior. All regressions across tests have been resolved.
+🎯 What: Add missing test scenarios for fetchTopScores and submitScore.
+📊 Coverage: Added tests for default parameters, formatting string dates, empty result sets, and boundary constraints on scores (0 and 100000).
+✨ Result: Increased test coverage in leaderboard.actions.test.ts, confirming these edge cases and defaults are handled gracefully.
