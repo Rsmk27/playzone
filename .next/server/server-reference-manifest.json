@@ -1,1 +1,14 @@
-{"node":{"7f2b3fe3b0f8dea625abfec7834ad3dd1972bf81":{"workers":{"app/_not-found/page":"96403","app/(auth)/sign-in/[[...sign-in]]/page":"96403","app/(auth)/sign-up/[[...sign-up]]/page":"96403","app/dashboard/page":"96403","app/game/[slug]/page":"96403","app/page":"96403"},"layer":{"app/_not-found/page":"action-browser","app/(auth)/sign-in/[[...sign-in]]/page":"action-browser","app/(auth)/sign-up/[[...sign-up]]/page":"action-browser","app/dashboard/page":"action-browser","app/game/[slug]/page":"action-browser","app/page":"action-browser"}}},"edge":{},"encryptionKey":"z7TgbEe6mRnugJgo51hML4dKhOkGfXRwcaksU4nxpsA="}
+{
+  "node": {
+    "7f2b3fe3b0f8dea625abfec7834ad3dd1972bf81": {
+      "workers": {
+        "app/_not-found/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fapp%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fserver-actions.js%22%2C%5B%22invalidateCacheAction%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/_not-found/page": "action-browser"
+      }
+    }
+  },
+  "edge": {},
+  "encryptionKey": "DerV+LoVdXtmIjUspQVDZOGVKEIRz2ZLPHmgXLnBoBA="
+}
