@@ -5,50 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 
-const GAMES = [
-  { slug: 'rock-paper-scissors', title: 'Rock–Paper–Scissors', category: 'Beginner', emoji: '✊✋✌️' },
-  { slug: 'tic-tac-toe', title: 'Tic‑Tac‑Toe', category: 'Beginner', emoji: '❌⭕' },
-  { slug: 'number-guessing', title: 'Number Guessing', category: 'Beginner', emoji: '🔢' },
-  { slug: 'coin-toss', title: 'Coin Toss', category: 'Beginner', emoji: '🪙' },
-  { slug: 'dice-roller', title: 'Dice Roller', category: 'Beginner', emoji: '🎲' },
-  { slug: 'quiz', title: 'Quiz / Trivia', category: 'Beginner', emoji: '❓' },
-  { slug: 'typing-test', title: 'Typing Speed Test', category: 'Beginner', emoji: '⌨️' },
-  { slug: 'color-guessing', title: 'Color Guessing', category: 'Beginner', emoji: '🎨' },
-  { slug: 'whack-a-mole', title: 'Whack‑a‑Mole', category: 'Beginner', emoji: '🐹' },
-  { slug: 'memory-cards', title: 'Memory Cards', category: 'Medium', emoji: '🃏' },
-  { slug: 'hangman', title: 'Hangman', category: 'Medium', emoji: '🪢' },
-  { slug: 'connect-four', title: 'Connect Four', category: 'Medium', emoji: '🔴🟡' },
-  { slug: 'simon-says', title: 'Simon Says', category: 'Medium', emoji: '🎵' },
-  { slug: 'sliding-puzzle', title: 'Sliding Puzzle', category: 'Medium', emoji: '🧩' },
-  { slug: 'minesweeper', title: 'Minesweeper', category: 'Medium', emoji: '💣' },
-  { slug: 'sudoku', title: 'Sudoku', category: 'Medium', emoji: '🔢' },
-  { slug: 'word-search', title: 'Word Search', category: 'Medium', emoji: '✏️' },
-  { slug: 'tower-of-hanoi', title: 'Tower of Hanoi', category: 'Medium', emoji: '🗼' },
-  { slug: 'snake', title: 'Snake', category: 'Arcade', emoji: '🐍' },
-  { slug: 'flappy-bird', title: 'Flappy Bird', category: 'Arcade', emoji: '🐦' },
-  { slug: 'breakout', title: 'Breakout', category: 'Arcade', emoji: '🧱' },
-  { slug: 'pong', title: 'Pong', category: 'Arcade', emoji: '🏓' },
-  { slug: 'space-invaders', title: 'Space Invaders', category: 'Arcade', emoji: '👾' },
-  { slug: 'asteroids', title: 'Asteroids', category: 'Arcade', emoji: '☄️' },
-  { slug: 'shooter-2d', title: '2D Shooter', category: 'Arcade', emoji: '🔫' },
-  { slug: 'car-racing', title: 'Car Racing', category: 'Arcade', emoji: '🏎️' },
-  { slug: 'helicopter', title: 'Helicopter', category: 'Arcade', emoji: '🚁' },
-  { slug: 'catch-object', title: 'Catch Object', category: 'Arcade', emoji: '🪃' },
-  { slug: 'physics-balls', title: 'Physics Balls', category: 'Arcade', emoji: '⚽' },
-  { slug: 'platformer', title: 'Platformer', category: 'Arcade', emoji: '🏃' },
-  { slug: '2048', title: '2048', category: 'Advanced', emoji: '2️⃣' },
-  { slug: 'chess', title: 'Chess', category: 'Advanced', emoji: '♟️' },
-  { slug: 'checkers', title: 'Checkers', category: 'Advanced', emoji: '⭕' },
-  { slug: 'reversi', title: 'Reversi', category: 'Advanced', emoji: '⚫⚪' },
-  { slug: 'rpg-adventure', title: 'RPG Adventure', category: 'Advanced', emoji: '🗡️' },
-  { slug: 'ludo', title: 'Ludo', category: 'Advanced', emoji: '🎯' },
-  { slug: 'lights-out', title: 'Lights Out', category: 'Advanced', emoji: '💡' },
-  { slug: 'maze', title: 'Maze', category: 'Advanced', emoji: '🌀' },
-  { slug: 'reaction-test', title: 'Reaction Test', category: 'Extras', emoji: '⚡' },
-  { slug: 'cps-counter', title: 'CPS Counter', category: 'Extras', emoji: '👆' },
-  { slug: 'typing-attack', title: 'Typing Attack', category: 'Extras', emoji: '⌨️' },
-  { slug: 'math-quiz', title: 'Math Quiz', category: 'Extras', emoji: '➕' },
-];
+import { GAMES } from '@/lib/constants';
 
 const CATEGORIES = ['All', 'Beginner', 'Medium', 'Arcade', 'Advanced', 'Extras'];
 
