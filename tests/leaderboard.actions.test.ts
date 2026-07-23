@@ -45,6 +45,13 @@ describe('leaderboard.actions', () => {
           userId: 'user2',
           createdAt: new Date('2023-01-02T00:00:00Z'),
         },
+        {
+          _id: { toString: () => 'id3' },
+          name: 'Player 3',
+          score: 80,
+          userId: 'user3',
+          createdAt: '2023-01-03T00:00:00.000Z',
+        },
       ];
 
       // Retrieve mocked methods to set their return values
@@ -78,6 +85,14 @@ describe('leaderboard.actions', () => {
           userId: 'user2',
           createdAt: '2023-01-02T00:00:00.000Z',
         },
+        {
+          id: 'id3',
+          rank: 3,
+          name: 'Player 3',
+          score: 80,
+          userId: 'user3',
+          createdAt: '2023-01-03T00:00:00.000Z',
+        },
       ]);
     });
 
@@ -89,6 +104,24 @@ describe('leaderboard.actions', () => {
 
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       await expect(fetchTopScores()).rejects.toThrow('Find failed');
+      consoleSpy.mockRestore();
+    });
+
+    it('throws error when data mapping fails', async () => {
+      const mockDocs = [
+        {
+          name: 'Player 1',
+          score: 100,
+          userId: 'user1',
+          createdAt: new Date('2023-01-01T00:00:00Z'),
+        },
+      ];
+
+      leanMock.mockResolvedValueOnce(mockDocs);
+      vi.mocked(Leaderboard.find).mockReturnValue({ sort: sortMock } as any);
+
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      await expect(fetchTopScores()).rejects.toThrow(TypeError);
       consoleSpy.mockRestore();
     });
 
