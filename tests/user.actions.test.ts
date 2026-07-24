@@ -30,7 +30,7 @@ describe('user.actions', () => {
       };
 
       const createdUser = { ...mockUser, _id: 'mock_db_id' };
-      vi.mocked(User.create).mockResolvedValueOnce(createdUser as any);
+      vi.mocked(User.create).mockResolvedValueOnce(createdUser as never);
 
       const result = await createUser(mockUser);
 
@@ -56,7 +56,7 @@ describe('user.actions', () => {
       const updateData = { username: 'newusername' };
       const updatedUser = { clerkId, ...updateData, _id: 'mock_db_id' };
 
-      vi.mocked(User.findOneAndUpdate).mockResolvedValueOnce(updatedUser as any);
+      vi.mocked(User.findOneAndUpdate).mockResolvedValueOnce(updatedUser as never);
 
       const result = await updateUser(clerkId, updateData);
 
@@ -69,7 +69,7 @@ describe('user.actions', () => {
       const clerkId = 'non_existent_id';
       const updateData = { username: 'newusername' };
 
-      vi.mocked(User.findOneAndUpdate).mockResolvedValueOnce(null as any);
+      vi.mocked(User.findOneAndUpdate).mockResolvedValueOnce(null as never);
 
       await expect(updateUser(clerkId, updateData)).rejects.toThrow('User update failed');
       expect(connectToDatabase).toHaveBeenCalledTimes(1);
@@ -92,7 +92,7 @@ describe('user.actions', () => {
       const clerkId = 'test_clerk_id';
       const deletedUser = { clerkId, _id: 'mock_db_id' };
 
-      vi.mocked(User.findOneAndDelete).mockResolvedValueOnce(deletedUser as any);
+      vi.mocked(User.findOneAndDelete).mockResolvedValueOnce(deletedUser as never);
 
       const result = await deleteUser(clerkId);
 
@@ -104,7 +104,7 @@ describe('user.actions', () => {
     it('should throw an error if the user is not found during deletion', async () => {
       const clerkId = 'non_existent_id';
 
-      vi.mocked(User.findOneAndDelete).mockResolvedValueOnce(null as any);
+      vi.mocked(User.findOneAndDelete).mockResolvedValueOnce(null as never);
 
       await expect(deleteUser(clerkId)).rejects.toThrow('User not found');
       expect(connectToDatabase).toHaveBeenCalledTimes(1);
@@ -126,7 +126,7 @@ describe('user.actions', () => {
       const clerkId = 'test_clerk_id';
       const user = { clerkId, username: 'testuser', _id: 'mock_db_id' };
 
-      vi.mocked(User.findOne).mockResolvedValueOnce(user as any);
+      vi.mocked(User.findOne).mockResolvedValueOnce(user as never);
 
       const result = await getUserByClerkId(clerkId);
 
@@ -138,7 +138,7 @@ describe('user.actions', () => {
     it('should return null if the user is not found', async () => {
       const clerkId = 'non_existent_id';
 
-      vi.mocked(User.findOne).mockResolvedValueOnce(null as any);
+      vi.mocked(User.findOne).mockResolvedValueOnce(null as never);
 
       const result = await getUserByClerkId(clerkId);
 
