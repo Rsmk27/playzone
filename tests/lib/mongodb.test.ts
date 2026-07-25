@@ -72,4 +72,47 @@ describe('connectToDatabase', () => {
 
     expect(mongoose.connect).toHaveBeenCalledTimes(2);
   });
+
+  it('should reuse existing globalThis.mongoose if it exists', async () => {
+    const mockCache = { conn: { readyState: 1 }, promise: Promise.resolve({ readyState: 1 }) };
+    globalThis.mongoose = mockCache as any;
+
+    vi.resetModules();
+    const { connectToDatabase: freshConnect } = await import('../../lib/mongodb');
+
+    process.env.MONGODB_URI = 'mongodb://localhost:27017/test';
+
+    const result = await freshConnect();
+
+    expect(result).toBe(mockCache.conn);
+    expect(mongoose.connect).not.toHaveBeenCalled();
+  });
+
+  it('should handle concurrent calls by returning the same promise', async () => {
+    // Reset modules to ensure fresh cache since previous test manipulated globalThis
+    vi.resetModules();
+    globalThis.mongoose = undefined;
+    const { connectToDatabase: freshConnect } = await import('../../lib/mongodb');
+
+    process.env.MONGODB_URI = 'mongodb://localhost:27017/test';
+    const mockMongooseInstance = { connection: { readyState: 1 } };
+
+    let resolvePromise: (value: any) => void;
+    const connectPromise = new Promise((resolve) => {
+      resolvePromise = resolve;
+    });
+
+    (mongoose.connect as any).mockReturnValue(connectPromise);
+
+    const promise1 = freshConnect();
+    const promise2 = freshConnect();
+
+    resolvePromise!(mockMongooseInstance);
+
+    const [result1, result2] = await Promise.all([promise1, promise2]);
+
+    expect(mongoose.connect).toHaveBeenCalledTimes(1);
+    expect(result1).toBe(mockMongooseInstance);
+    expect(result2).toBe(mockMongooseInstance);
+  });
 });
