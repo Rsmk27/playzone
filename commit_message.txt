@@ -1,0 +1,5 @@
+🔒 Replace innerHTML with textContent in color-guessing game
+
+🎯 **What:** Replaced `innerHTML` with `textContent` to clear element children in the color-guessing game.
+⚠️ **Risk:** Using `innerHTML` poses an XSS risk if the input string is ever user-controlled.
+🛡️ **Solution:** `textContent = ''` is the secure, standard way to empty an element's children without executing arbitrary scripts.
