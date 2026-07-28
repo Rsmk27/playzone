@@ -118,7 +118,7 @@
 
         function render() {
             const boardEl = document.getElementById('board');
-            boardEl.innerHTML = '';
+            boardEl.replaceChildren();
             for (let r = 0; r < ROWS; r++) {
                 for (let c = 0; c < COLS; c++) {
                     const cell = document.createElement('div');
