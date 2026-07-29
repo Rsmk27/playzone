@@ -1,0 +1,7 @@
+🎯 **What:** Added `console.error` to the MongoDB connection error handler in `lib/mongodb.ts`.
+
+💡 **Why:** To improve debuggability by logging connection errors to the console, making it easier to diagnose connection issues in production where tracing asynchronous errors is difficult.
+
+✅ **Verification:** Verified by running the existing MongoDB connection tests (`tests/mongodb.test.ts`), which continue to pass, demonstrating no change in error handling behavior for downstream consumers.
+
+✨ **Result:** Connection errors are now logged to the console before being thrown, drastically improving debuggability while maintaining existing error handling behavior.
