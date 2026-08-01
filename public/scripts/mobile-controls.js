@@ -63,6 +63,15 @@ function createDirectionalPad(callbacks) {
   const controls = document.getElementById('controls');
   if (!controls) return;
   
+  const dpad = createDPadElement();
+  injectDPadStyles();
+  controls.appendChild(dpad);
+  attachDPadEvents(dpad, callbacks);
+
+  return dpad;
+}
+
+function createDPadElement() {
   const dpad = document.createElement('div');
   dpad.className = 'dpad';
   dpad.innerHTML = `
@@ -76,9 +85,14 @@ function createDirectionalPad(callbacks) {
       <div class="dpad-btn" data-key="down">↓</div>
     </div>
   `;
+  return dpad;
+}
+
+function injectDPadStyles() {
+  if (document.getElementById('dpad-styles')) return;
   
-  // Add CSS
   const style = document.createElement('style');
+  style.id = 'dpad-styles';
   style.textContent = `
     .dpad {
       display: flex;
@@ -148,10 +162,9 @@ function createDirectionalPad(callbacks) {
     }
   `;
   document.head.appendChild(style);
-  
-  controls.appendChild(dpad);
-  
-  // Add touch event handlers
+}
+
+function attachDPadEvents(dpad, callbacks) {
   const buttons = dpad.querySelectorAll('.dpad-btn');
   buttons.forEach(btn => {
     const key = btn.dataset.key;
@@ -173,8 +186,6 @@ function createDirectionalPad(callbacks) {
     btn.addEventListener('mouseup', handleEnd);
     btn.addEventListener('mouseleave', handleEnd);
   });
-  
-  return dpad;
 }
 
 // Create on-screen action buttons (Space, Enter, etc.)
