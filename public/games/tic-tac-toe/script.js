@@ -16,7 +16,7 @@ function cell(i){
 }
 
 function render(){
-  board.innerHTML='';
+  board.replaceChildren();
   for(let i=0;i<9;i++){
     const d = cell(i);
     d.textContent = grid[i] || '';
