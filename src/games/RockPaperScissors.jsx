@@ -7,6 +7,8 @@ const OPTIONS = [
   { id: 'Scissors', emoji: '✌️', label: 'Scissors', color: '#4ade80', glow: 'rgba(74,222,128,0.5)' },
 ]
 
+const OPTIONS_MAP = OPTIONS.reduce((acc, opt) => ({ ...acc, [opt.id]: opt }), {})
+
 const BEATS = { Rock: 'Scissors', Paper: 'Rock', Scissors: 'Paper' }
 
 const RESULT_CONFIG = {
@@ -64,8 +66,8 @@ function Arena({ result }) {
   )
 
   const { player, cpu, winner } = result
-  const pOpt = OPTIONS.find(o => o.id === player)
-  const cOpt = OPTIONS.find(o => o.id === cpu)
+  const pOpt = OPTIONS_MAP[player]
+  const cOpt = OPTIONS_MAP[cpu]
   const cfg  = RESULT_CONFIG[winner]
 
   return (
