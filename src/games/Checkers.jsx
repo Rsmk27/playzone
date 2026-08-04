@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import StatChip from '../components/StatChip.jsx'
 
 const P1 = 1, P2 = 2, P1K = 3, P2K = 4
 
@@ -100,14 +101,14 @@ export default function Checkers() {
         <div className="chk-orb chk-orb-1"/><div className="chk-orb chk-orb-2"/>
 
         <div className="chk-header">
-          <SC label="Red" value={score[P1]} color="#f87171"/>
+          <StatChip label="Red" value={score[P1]} color="#f87171"/>
           <div className="chk-turn">
             {winner
               ? <span className="chk-result" style={{color:winner===P1?'#f87171':'#94a3b8'}}>{winner===P1?'🔴 Red Wins':'⚫ Black Wins'} 🏆</span>
               : <span className="chk-result">{turn===P1?'🔴':'⚫'} Turn</span>
             }
           </div>
-          <SC label="Blk" value={score[P2]} color="#94a3b8"/>
+          <StatChip label="Blk" value={score[P2]} color="#94a3b8"/>
         </div>
 
         <div className="chk-board">
@@ -154,10 +155,7 @@ const CHK_STYLES=`
   .chk-orb-2{width:200px;height:200px;background:rgba(139,92,246,0.1);bottom:-40px;right:-40px;animation-delay:-4s;}
 
   .chk-header{position:relative;z-index:1;display:flex;align-items:center;gap:12px;width:100%;max-width:360px;}
-  .chk-chip{flex:1;display:flex;flex-direction:column;align-items:center;padding:8px;border-radius:14px;background:rgba(15,23,42,0.65);border:1px solid rgba(139,92,246,0.22);backdrop-filter:blur(10px);}
-  .chk-chip-label{font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:#64748b;}
-  .chk-chip-val{font-size:20px;font-weight:800;color:var(--cc);}
-  .chk-turn{flex:1.5;text-align:center;}
+        .chk-turn{flex:1.5;text-align:center;}
   .chk-result{font-size:14px;font-weight:700;color:#94a3b8;}
 
   .chk-board{position:relative;z-index:1;display:grid;grid-template-columns:repeat(8,1fr);border-radius:12px;overflow:hidden;border:2px solid rgba(139,92,246,0.3);box-shadow:0 12px 40px rgba(0,0,0,0.5);width:100%;max-width:360px;}
