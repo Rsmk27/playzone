@@ -14,7 +14,7 @@ const TILE_COLORS = {
   2048: { bg: '#edc22e', color: '#fff' },
 }
 
-function addRandom(g) {
+export function addRandom(g) {
   const empty = []
   for(let i=0;i<4;i++) for(let j=0;j<4;j++) if(g[i][j]===0) empty.push({i,j})
   if(!empty.length) return g
@@ -24,13 +24,13 @@ function addRandom(g) {
   return ng
 }
 
-function init() {
+export function init() {
   let g = Array(4).fill().map(()=>Array(4).fill(0))
   g = addRandom(g); g = addRandom(g)
   return g
 }
 
-function slide(row) {
+export function slide(row) {
   let r = row.filter(x=>x), score = 0
   for(let i=0;i<r.length-1;i++) {
     if(r[i]===r[i+1]) { r[i]*=2; score+=r[i]; r.splice(i+1,1) }
@@ -39,7 +39,7 @@ function slide(row) {
   return { row: r, score }
 }
 
-function move(g, dir, mutate) {
+export function move(g, dir, mutate) {
   let moved=false, totalScore=0
   const ng = g.map(r=>[...r])
   if(dir==='left'||dir==='right') {
