@@ -19,6 +19,7 @@ vi.mock('../models/Leaderboard', () => {
     default: {
       find: vi.fn(),
       create: vi.fn(),
+      countDocuments: vi.fn(),
     },
   };
 });
@@ -150,6 +151,7 @@ describe('leaderboard.actions', () => {
       };
 
       vi.mocked(Leaderboard.create).mockResolvedValueOnce(mockScore as any);
+      vi.mocked(Leaderboard.countDocuments).mockResolvedValueOnce(0 as any);
 
       const result = await submitScore('Player 1', 150, 'clerk_user_1');
 
@@ -161,7 +163,7 @@ describe('leaderboard.actions', () => {
         userId: 'clerk_user_1',
         createdAt: expect.any(Date),
       }));
-      expect(result).toBe('new_score_id');
+      expect(result).toEqual({ id: 'new_score_id', rank: 1 });
     });
 
     it('trims and truncates long names', async () => {

@@ -42,7 +42,13 @@ export async function submitScore(name: string, score: number, clerkId: string) 
       userId: clerkId,
       createdAt: new Date()
     });
-    return newScore._id.toString();
+
+    const rank = await Leaderboard.countDocuments({ score: { $gt: score } }) + 1;
+
+    return {
+      id: newScore._id.toString(),
+      rank
+    };
   } catch (error) {
     console.error('Error submitting score:', error);
     throw error;
