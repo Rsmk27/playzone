@@ -75,10 +75,10 @@ export default function WhackAMole() {
 
         {/* stats */}
         <div className="wam-stats">
-          <SC2 label="Score" value={score} color="#a78bfa" />
-          <SC2 label="Best"  value={best}  color="#fbbf24" />
-          <SC2 label="Time"  value={`${timeLeft}s`} color={timerColor} />
-          <SC2 label="Speed" value={`${Math.round(1000/speed*10)/10}/s`} color="#4ade80" />
+          <StatChip label="Score" value={score} color="#a78bfa" />
+          <StatChip label="Best"  value={best}  color="#fbbf24" />
+          <StatChip label="Time"  value={`${timeLeft}s`} color={timerColor} />
+          <StatChip label="Speed" value={`${Math.round(1000/speed*10)/10}/s`} color="#4ade80" />
         </div>
 
         {/* timer bar */}
@@ -118,7 +118,7 @@ export default function WhackAMole() {
   )
 }
 
-function SC2({ label, value, color }) {
+function StatChip({ label, value, color }) {
   return (
     <div className="wam-chip" style={{ '--cc': color }}>
       <span className="wam-chip-label">{label}</span>
