@@ -3,15 +3,27 @@
 import { connectToDatabase } from '../mongodb';
 import Leaderboard from '../../models/Leaderboard';
 
+// In-memory cache for leaderboard scores
+const CACHE_TTL_MS = 60 * 1000;
+let cachedScores: { data: any[], timestamp: number, topN: number } | null = null;
+
+export function clearLeaderboardCache() {
+  cachedScores = null;
+}
+
 export async function fetchTopScores(topN = 10) {
   try {
+    if (cachedScores && (Date.now() - cachedScores.timestamp < CACHE_TTL_MS) && cachedScores.topN === topN) {
+      return cachedScores.data;
+    }
+
     await connectToDatabase();
     const scores = await Leaderboard.find({})
       .sort({ score: -1 })
       .limit(topN)
       .lean();
 
-    return scores.map((doc: any, index: number) => ({
+    const formattedScores = scores.map((doc: any, index: number) => ({
       id: doc._id.toString(),
       rank: index + 1,
       name: doc.name,
@@ -19,6 +31,14 @@ export async function fetchTopScores(topN = 10) {
       userId: doc.userId,
       createdAt: doc.createdAt instanceof Date ? doc.createdAt.toISOString() : doc.createdAt
     }));
+
+    cachedScores = {
+      data: formattedScores,
+      timestamp: Date.now(),
+      topN
+    };
+
+    return formattedScores;
   } catch (error) {
     console.error('Error fetching top scores:', error);
     throw error;
@@ -42,6 +62,10 @@ export async function submitScore(name: string, score: number, clerkId: string) 
       userId: clerkId,
       createdAt: new Date()
     });
+
+    // Invalidate the cache whenever a new score is submitted
+    clearLeaderboardCache();
+
     return newScore._id.toString();
   } catch (error) {
     console.error('Error submitting score:', error);

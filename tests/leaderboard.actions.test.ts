@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { fetchTopScores, submitScore } from '../lib/actions/leaderboard.actions';
+import { fetchTopScores, submitScore, clearLeaderboardCache } from '../lib/actions/leaderboard.actions';
 import Leaderboard from '../models/Leaderboard';
 import { connectToDatabase } from '../lib/mongodb';
 
@@ -26,6 +26,7 @@ vi.mock('../models/Leaderboard', () => {
 describe('leaderboard.actions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    clearLeaderboardCache();
   });
 
   describe('fetchTopScores', () => {
@@ -96,6 +97,51 @@ describe('leaderboard.actions', () => {
       ]);
     });
 
+    it('returns cached data on subsequent calls within TTL', async () => {
+      const mockDocs = [
+        {
+          _id: { toString: () => 'id1' },
+          name: 'Player 1',
+          score: 100,
+          userId: 'user1',
+          createdAt: new Date('2023-01-01T00:00:00Z'),
+        },
+      ];
+
+      leanMock.mockResolvedValueOnce(mockDocs);
+      vi.mocked(Leaderboard.find).mockReturnValue({ sort: sortMock } as any);
+
+      // First call (fetches from DB and caches)
+      const firstResult = await fetchTopScores(1);
+
+      // Second call (should return from cache)
+      const secondResult = await fetchTopScores(1);
+
+      expect(firstResult).toEqual(secondResult);
+      expect(Leaderboard.find).toHaveBeenCalledTimes(1); // Database query only happens once
+    });
+
+    it('does not use cache when topN changes', async () => {
+      const mockDocs = [
+        {
+          _id: { toString: () => 'id1' },
+          name: 'Player 1',
+          score: 100,
+          userId: 'user1',
+          createdAt: new Date('2023-01-01T00:00:00Z'),
+        },
+      ];
+
+      leanMock.mockResolvedValueOnce(mockDocs);
+      leanMock.mockResolvedValueOnce(mockDocs);
+      vi.mocked(Leaderboard.find).mockReturnValue({ sort: sortMock } as any);
+
+      await fetchTopScores(1);
+      await fetchTopScores(5); // Different topN, should query DB again
+
+      expect(Leaderboard.find).toHaveBeenCalledTimes(2);
+    });
+
     it('throws error when fetching scores fails', async () => {
       const error = new Error('Find failed');
 
@@ -141,7 +187,7 @@ describe('leaderboard.actions', () => {
   });
 
   describe('submitScore', () => {
-    it('successfully submits a valid score', async () => {
+    it('successfully submits a valid score and invalidates cache', async () => {
       const mockScore = {
         _id: { toString: () => 'new_score_id' },
         name: 'Player 1',
@@ -151,9 +197,14 @@ describe('leaderboard.actions', () => {
 
       vi.mocked(Leaderboard.create).mockResolvedValueOnce(mockScore as any);
 
+      // Populate cache first
+      leanMock.mockResolvedValueOnce([]);
+      vi.mocked(Leaderboard.find).mockReturnValue({ sort: sortMock } as any);
+      await fetchTopScores();
+
       const result = await submitScore('Player 1', 150, 'clerk_user_1');
 
-      expect(connectToDatabase).toHaveBeenCalledTimes(1);
+      expect(connectToDatabase).toHaveBeenCalled();
       expect(Leaderboard.create).toHaveBeenCalledTimes(1);
       expect(Leaderboard.create).toHaveBeenCalledWith(expect.objectContaining({
         name: 'Player 1',
@@ -162,6 +213,11 @@ describe('leaderboard.actions', () => {
         createdAt: expect.any(Date),
       }));
       expect(result).toBe('new_score_id');
+
+      // Verify cache invalidation by calling fetchTopScores again and expecting a DB query
+      leanMock.mockResolvedValueOnce([]);
+      await fetchTopScores();
+      expect(Leaderboard.find).toHaveBeenCalledTimes(2);
     });
 
     it('trims and truncates long names', async () => {
