@@ -42,7 +42,27 @@ export async function submitScore(name: string, score: number, clerkId: string) 
       userId: clerkId,
       createdAt: new Date()
     });
-    return newScore._id.toString();
+
+    // Fetch top scores directly to avoid a second round trip from the client
+    const topScores = await fetchTopScores(10);
+
+    // Calculate the user's rank
+    let rank;
+    const userRankInfo = topScores.find((s: any) => s.id === newScore._id.toString());
+
+    if (userRankInfo) {
+      rank = userRankInfo.rank;
+    } else {
+      // If not in top 10, calculate actual rank based on scores strictly greater
+      const betterScoresCount = await Leaderboard.countDocuments({ score: { $gt: score } });
+      rank = betterScoresCount + 1;
+    }
+
+    return {
+      id: newScore._id.toString(),
+      topScores,
+      rank
+    };
   } catch (error) {
     console.error('Error submitting score:', error);
     throw error;

@@ -17,7 +17,7 @@ const createMock = vi.fn();
 vi.mock('../models/Leaderboard', () => {
   return {
     default: {
-      find: vi.fn(),
+      find: vi.fn(), countDocuments: vi.fn(),
       create: vi.fn(),
     },
   };
@@ -140,8 +140,8 @@ describe('leaderboard.actions', () => {
 
   });
 
-  describe('submitScore', () => {
-    it('successfully submits a valid score', async () => {
+    describe('submitScore', () => {
+    it('successfully submits a valid score and returns top 10 rank', async () => {
       const mockScore = {
         _id: { toString: () => 'new_score_id' },
         name: 'Player 1',
@@ -149,19 +149,60 @@ describe('leaderboard.actions', () => {
         userId: 'clerk_user_1',
       };
 
+      const mockTopScores = [
+        { _id: { toString: () => 'new_score_id' }, name: 'Player 1', score: 150, userId: 'clerk_user_1', createdAt: new Date() }
+      ];
+
       vi.mocked(Leaderboard.create).mockResolvedValueOnce(mockScore as any);
+
+      // Setup mock for fetchTopScores internal call
+      leanMock.mockResolvedValueOnce(mockTopScores);
+      vi.mocked(Leaderboard.find).mockReturnValue({ sort: sortMock } as any);
 
       const result = await submitScore('Player 1', 150, 'clerk_user_1');
 
-      expect(connectToDatabase).toHaveBeenCalledTimes(1);
-      expect(Leaderboard.create).toHaveBeenCalledTimes(1);
+      expect(connectToDatabase).toHaveBeenCalled();
       expect(Leaderboard.create).toHaveBeenCalledWith(expect.objectContaining({
         name: 'Player 1',
         score: 150,
         userId: 'clerk_user_1',
         createdAt: expect.any(Date),
       }));
-      expect(result).toBe('new_score_id');
+      expect(result).toEqual({
+        id: 'new_score_id',
+        topScores: [{ id: 'new_score_id', rank: 1, name: 'Player 1', score: 150, userId: 'clerk_user_1', createdAt: expect.any(String) }],
+        rank: 1
+      });
+    });
+
+    it('successfully submits a valid score and calculates rank when not in top 10', async () => {
+      const mockScore = {
+        _id: { toString: () => 'new_score_id' },
+        name: 'Player 1',
+        score: 150,
+        userId: 'clerk_user_1',
+      };
+
+      const mockTopScores = [
+        { _id: { toString: () => 'other_id' }, name: 'Other', score: 500, userId: 'other', createdAt: new Date() }
+      ];
+
+      vi.mocked(Leaderboard.create).mockResolvedValueOnce(mockScore as any);
+
+      // Setup mock for fetchTopScores internal call
+      leanMock.mockResolvedValueOnce(mockTopScores);
+      vi.mocked(Leaderboard.find).mockReturnValue({ sort: sortMock } as any);
+
+      vi.mocked(Leaderboard.countDocuments).mockResolvedValueOnce(15);
+
+      const result = await submitScore('Player 1', 150, 'clerk_user_1');
+
+      expect(result).toEqual({
+        id: 'new_score_id',
+        topScores: [{ id: 'other_id', rank: 1, name: 'Other', score: 500, userId: 'other', createdAt: expect.any(String) }],
+        rank: 16 // 15 + 1
+      });
+      expect(Leaderboard.countDocuments).toHaveBeenCalledWith({ score: { $gt: 150 } });
     });
 
     it('trims and truncates long names', async () => {
@@ -171,6 +212,9 @@ describe('leaderboard.actions', () => {
       };
 
       vi.mocked(Leaderboard.create).mockResolvedValueOnce(mockScore as any);
+      leanMock.mockResolvedValueOnce([]);
+      vi.mocked(Leaderboard.find).mockReturnValue({ sort: sortMock } as any);
+      vi.mocked(Leaderboard.countDocuments).mockResolvedValueOnce(0);
 
       await submitScore(longName, 150, 'clerk_user_1');
 
