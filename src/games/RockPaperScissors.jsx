@@ -7,6 +7,8 @@ const OPTIONS = [
   { id: 'Scissors', emoji: '✌️', label: 'Scissors', color: '#4ade80', glow: 'rgba(74,222,128,0.5)' },
 ]
 
+const OPTIONS_BY_ID = Object.fromEntries(OPTIONS.map(o => [o.id, o]))
+
 const BEATS = { Rock: 'Scissors', Paper: 'Rock', Scissors: 'Paper' }
 
 const RESULT_CONFIG = {
@@ -64,8 +66,8 @@ function Arena({ result }) {
   )
 
   const { player, cpu, winner } = result
-  const pOpt = OPTIONS.find(o => o.id === player)
-  const cOpt = OPTIONS.find(o => o.id === cpu)
+  const pOpt = OPTIONS_BY_ID[player]
+  const cOpt = OPTIONS_BY_ID[cpu]
   const cfg  = RESULT_CONFIG[winner]
 
   return (
