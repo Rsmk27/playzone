@@ -3,15 +3,26 @@
 import { connectToDatabase } from '../mongodb';
 import Leaderboard from '../../models/Leaderboard';
 
+// In-memory cache for leaderboard to reduce DB queries
+let cachedScores: any = null;
+let lastCacheTime = 0;
+const CACHE_TTL_MS = 60 * 1000; // 1 minute
+
 export async function fetchTopScores(topN = 10) {
   try {
+    const now = Date.now();
+    // Use cached data if valid and fetching default topN
+    if (cachedScores && (now - lastCacheTime < CACHE_TTL_MS) && topN === 10) {
+      return cachedScores;
+    }
+
     await connectToDatabase();
     const scores = await Leaderboard.find({})
       .sort({ score: -1 })
       .limit(topN)
       .lean();
 
-    return scores.map((doc: any, index: number) => ({
+    const formattedScores = scores.map((doc: any, index: number) => ({
       id: doc._id.toString(),
       rank: index + 1,
       name: doc.name,
@@ -19,6 +30,14 @@ export async function fetchTopScores(topN = 10) {
       userId: doc.userId,
       createdAt: doc.createdAt instanceof Date ? doc.createdAt.toISOString() : doc.createdAt
     }));
+
+    // Only cache the default fetch size (10)
+    if (topN === 10) {
+      cachedScores = formattedScores;
+      lastCacheTime = now;
+    }
+
+    return formattedScores;
   } catch (error) {
     console.error('Error fetching top scores:', error);
     throw error;
@@ -42,9 +61,19 @@ export async function submitScore(name: string, score: number, clerkId: string) 
       userId: clerkId,
       createdAt: new Date()
     });
+
+    // Invalidate cache immediately on new score submission
+    cachedScores = null;
+    lastCacheTime = 0;
+
     return newScore._id.toString();
   } catch (error) {
     console.error('Error submitting score:', error);
     throw error;
   }
+}
+
+export function clearLeaderboardCache() {
+  cachedScores = null;
+  lastCacheTime = 0;
 }
