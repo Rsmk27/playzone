@@ -11,6 +11,8 @@ vi.mock('../mongodb', () => ({
 vi.mock('../../models/Leaderboard', () => ({
   default: {
     create: vi.fn(),
+    find: vi.fn(),
+    countDocuments: vi.fn(),
   },
 }));
 
@@ -20,6 +22,12 @@ describe('submitScore', () => {
   });
 
   it('should truncate a name longer than 20 characters', async () => {
+    const leanMock = vi.fn().mockResolvedValue([]);
+    const limitMock = vi.fn().mockReturnValue({ lean: leanMock });
+    const sortMock = vi.fn().mockReturnValue({ limit: limitMock });
+    (Leaderboard.find as any).mockReturnValue({ sort: sortMock });
+    (Leaderboard.countDocuments as any).mockResolvedValue(0);
+
     // Arrange
     const longName = 'This is a very long name that exceeds twenty characters';
     const score = 100;
@@ -32,7 +40,7 @@ describe('submitScore', () => {
     const result = await submitScore(longName, score, clerkId);
 
     // Assert
-    expect(result).toBe('new_id_123');
+    expect(result).toEqual({ id: 'new_id_123', topScores: [], rank: 1 });
     expect(connectToDatabase).toHaveBeenCalled();
     expect(Leaderboard.create).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -44,6 +52,12 @@ describe('submitScore', () => {
   });
 
   it('should trim the name before truncating', async () => {
+    const leanMock = vi.fn().mockResolvedValue([]);
+    const limitMock = vi.fn().mockReturnValue({ lean: leanMock });
+    const sortMock = vi.fn().mockReturnValue({ limit: limitMock });
+    (Leaderboard.find as any).mockReturnValue({ sort: sortMock });
+    (Leaderboard.countDocuments as any).mockResolvedValue(0);
+
     // Arrange
     const nameWithSpaces = '   This is a very long name that needs trimming   ';
     const score = 100;
@@ -65,6 +79,12 @@ describe('submitScore', () => {
   });
 
   it('should not truncate a name shorter than 20 characters', async () => {
+    const leanMock = vi.fn().mockResolvedValue([]);
+    const limitMock = vi.fn().mockReturnValue({ lean: leanMock });
+    const sortMock = vi.fn().mockReturnValue({ limit: limitMock });
+    (Leaderboard.find as any).mockReturnValue({ sort: sortMock });
+    (Leaderboard.countDocuments as any).mockResolvedValue(0);
+
     // Arrange
     const shortName = 'Short Name';
     const score = 100;

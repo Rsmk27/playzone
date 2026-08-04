@@ -50,13 +50,10 @@ const Leaderboard = ({ currentScore = null, onBack }) => {
     try {
       setSubmitting(true);
       setError(null);
-      await submitScore(name, currentScore, userId);
+      const response = await submitScore(name, currentScore, userId);
 
-      const updatedScores = await fetchTopScores(10);
-      setScores(updatedScores);
-      
-      const userRankInfo = updatedScores.find(s => s.name === name.trim() && s.score === currentScore);
-      setSubmittedRank(userRankInfo ? userRankInfo.rank : '10+');
+      setScores(response.topScores);
+      setSubmittedRank(response.rank > 10 ? '10+' : response.rank);
     } catch (err) {
       setError(err.message || 'Failed to submit score.');
     } finally {

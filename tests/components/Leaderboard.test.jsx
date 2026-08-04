@@ -12,7 +12,7 @@ vi.mock('@clerk/nextjs', () => ({
 // Mock leaderboard actions
 vi.mock('../../lib/actions/leaderboard.actions', () => ({
   fetchTopScores: vi.fn(),
-  submitScore: vi.fn(),
+  submitScore: vi.fn().mockResolvedValue({ id: '1', topScores: [], rank: 1 }),
 }));
 
 describe('Leaderboard Component', () => {
