@@ -1,0 +1,13 @@
+🎯 **What:**
+Added a comprehensive test suite for the \`NumberGuessing\` game component in \`tests/games/NumberGuessing.test.jsx\` to ensure its reliability and prevent regressions. Also fixed \`MAX_TRIES\` from 8 to 7 in \`src/games/NumberGuessing.jsx\` to match the desired specification.
+
+📊 **Coverage:**
+The new tests cover the following scenarios:
+- Initial state rendering (0 wins, 0 losses, 7 tries left, input elements present)
+- Guessing lower and higher than the secret number (verifying hint updates)
+- Winning the game (verifying the win message, score update, and auto-reset)
+- Losing the game by exhausting all 7 tries (verifying the loss message and auto-reset)
+- Manual score resets via "New Number" and "Reset Score" action buttons
+
+✨ **Result:**
+The \`NumberGuessing\` game logic is now verified automatically. The test suite correctly uses \`Math.random\` mocking for deterministic secret numbers, and utilizes \`vi.useFakeTimers\` to assert automated game resets efficiently, increasing the test coverage and reliability of the project.
