@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import StatBox from '../components/StatBox'
 
 const STREAK_MSGS = { 2:'🔥 2-streak!', 3:'🔥🔥 3-streak!', 4:'🚀 4-streak!', 5:'⚡ 5-streak!' }
 
@@ -69,7 +70,7 @@ export default function CoinToss() {
 
         {/* scoreboard */}
         <div className="ct-scoreboard">
-          <StatBox label="Heads" value={tally.heads} color="#fbbf24" />
+          <StatBox prefix="ct-stat" label="Heads" value={tally.heads} color="#fbbf24" />
           <div className="ct-sb-mid">
             <div className="ct-winbar">
               <div className="ct-winbar-fill" style={{ width: `${winPct}%` }} />
@@ -77,7 +78,7 @@ export default function CoinToss() {
             <div className="ct-sb-label">{winPct}% win rate</div>
             <div className="ct-sb-label">{tally.wins}W – {tally.losses}L</div>
           </div>
-          <StatBox label="Tails" value={tally.tails} color="#a78bfa" />
+          <StatBox prefix="ct-stat" label="Tails" value={tally.tails} color="#a78bfa" />
         </div>
 
         {/* streak */}
@@ -141,14 +142,6 @@ export default function CoinToss() {
   )
 }
 
-function StatBox({ label, value, color }) {
-  return (
-    <div className="ct-stat" style={{ '--sc': color }}>
-      <span className="ct-stat-label">{label}</span>
-      <span className="ct-stat-val">{value}</span>
-    </div>
-  )
-}
 
 function Burst({ color }) {
   const items = Array.from({ length: 16 }, (_, i) => {
