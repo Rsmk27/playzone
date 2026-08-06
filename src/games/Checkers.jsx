@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import StatChip from '../components/StatChip.jsx'
 
-const P1 = 1, P2 = 2, P1K = 3, P2K = 4
+export const P1 = 1, P2 = 2, P1K = 3, P2K = 4
 
-function initBoard() {
+export function initBoard() {
   const b = Array(8).fill(null).map(() => Array(8).fill(0))
   for (let r = 0; r < 3; r++)
     for (let c = 0; c < 8; c++)
@@ -14,7 +14,7 @@ function initBoard() {
   return b
 }
 
-function getJumps(board, r, c) {
+export function getJumps(board, r, c) {
   const piece = board[r][c]
   const dirs  = piece === P1 || piece >= P1K
     ? [[-1,-1],[-1,1],...(piece >= P1K ? [[1,-1],[1,1]] : [])]
@@ -22,13 +22,13 @@ function getJumps(board, r, c) {
   const jumps = []
   dirs.forEach(([dr,dc]) => {
     const mr = r+dr, mc = c+dc, lr = r+2*dr, lc = c+2*dc
-    if (lr>=0&&lr<8&&lc>=0&&lc<8&&board[mr]?.[mc]&&[P2,P2K].includes(board[mr][mc])!==([P1,P1K].includes(piece)) && board[lr][lc]===0)
+    if (lr>=0&&lr<8&&lc>=0&&lc<8&&board[mr]?.[mc]&&([P1,P1K].includes(piece) ? [P2,P2K].includes(board[mr][mc]) : [P1,P1K].includes(board[mr][mc])) && board[lr][lc]===0)
       jumps.push([lr,lc])
   })
   return jumps
 }
 
-function getMoves(board, r, c) {
+export function getMoves(board, r, c) {
   const piece = board[r][c]
   const dirs  = piece === P1 || piece >= P1K
     ? [[-1,-1],[-1,1],...(piece >= P1K ? [[1,-1],[1,1]] : [])]
