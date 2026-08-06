@@ -42,3 +42,8 @@ export const GAMES = [
   { slug: 'typing-attack', title: 'Typing Attack', category: 'Extras', emoji: '⌨️' },
   { slug: 'math-quiz', title: 'Math Quiz', category: 'Extras', emoji: '➕' },
 ];
+
+export const GAMES_BY_SLUG = GAMES.reduce((acc, game) => {
+  acc[game.slug] = game;
+  return acc;
+}, {} as Record<string, typeof GAMES[0]>);
