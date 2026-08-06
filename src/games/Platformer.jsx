@@ -58,9 +58,9 @@ const Platformer = () => {
 
   const loadLevel = useCallback((lvl) => {
     const levelData = levels[Math.min(lvl - 1, levels.length - 1)];
-    gameStateRef.current.platforms = JSON.parse(JSON.stringify(levelData.platforms));
-    gameStateRef.current.coins = JSON.parse(JSON.stringify(levelData.coins)).map(c => ({ ...c, collected: false }));
-    gameStateRef.current.enemies = JSON.parse(JSON.stringify(levelData.enemies));
+    gameStateRef.current.platforms = levelData.platforms.map(p => ({ ...p }));
+    gameStateRef.current.coins = levelData.coins.map(c => ({ ...c, collected: false }));
+    gameStateRef.current.enemies = levelData.enemies.map(e => ({ ...e }));
     gameStateRef.current.level = lvl;
     setLevel(lvl);
   }, []);
