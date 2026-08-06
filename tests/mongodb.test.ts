@@ -110,4 +110,39 @@ describe('connectToDatabase', () => {
     expect(conn1).toBe(mockMongoose);
     expect(conn2).toBe(mockMongoose);
   });
+
+  it('initializes globalThis.mongoose if it is not defined', async () => {
+    delete (globalThis as any).mongoose;
+
+    const { connectToDatabase } = await import('../lib/mongodb');
+    const mockMongoose = { connection: { readyState: 1 } };
+    vi.mocked(mongoose.connect).mockResolvedValueOnce(mockMongoose as any);
+
+    await connectToDatabase();
+
+    expect((globalThis as any).mongoose).toBeDefined();
+    expect((globalThis as any).mongoose.conn).toBe(mockMongoose);
+  });
+
+  it('allows a subsequent connection attempt to succeed after a failure', async () => {
+    const error = new Error('Connection failed');
+    const mockMongoose = { connection: { readyState: 1 } };
+
+    // First call fails, second call succeeds
+    vi.mocked(mongoose.connect)
+      .mockRejectedValueOnce(error)
+      .mockResolvedValueOnce(mockMongoose as any);
+
+    const { connectToDatabase } = await import('../lib/mongodb');
+
+    // First attempt should fail
+    await expect(connectToDatabase()).rejects.toThrow('Connection failed');
+    expect((globalThis as any).mongoose.promise).toBeNull();
+
+    // Second attempt should succeed
+    const conn = await connectToDatabase();
+
+    expect(conn).toBe(mockMongoose);
+    expect(mongoose.connect).toHaveBeenCalledTimes(2);
+  });
 });
