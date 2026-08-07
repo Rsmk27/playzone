@@ -6,7 +6,7 @@ import { useParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import MobileControls from '../../../src/components/MobileControls';
 
-import { GAMES } from '@/lib/constants';
+import { GAMES_BY_SLUG } from '@/lib/constants';
 
 const gameComponents: Record<string, React.ComponentType<any>> = {
   'rock-paper-scissors': dynamic(() => import('../../../src/games/RockPaperScissors'), { ssr: false }),
@@ -55,7 +55,7 @@ const gameComponents: Record<string, React.ComponentType<any>> = {
 
 export default function GamePage() {
   const { slug } = useParams() as { slug: string };
-  const game = GAMES.find(g => g.slug === slug);
+  const game = GAMES_BY_SLUG[slug];
   const GameComponent = gameComponents[slug];
 
   const [showControls, setShowControls] = useState(false);
