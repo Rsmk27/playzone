@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import StatChip from '../components/StatChip.jsx'
 
 export default function WordSearch() {
   const WORDS = ['CAT','DOG','BIRD','FISH','CODE','GAME','PLAY','ZONE','WORD','FIND']
@@ -85,14 +86,8 @@ export default function WordSearch() {
 
         {/* header */}
         <div className="ws-header">
-          <div className="ws-chip" style={{'--cc':'#a78bfa'}}>
-            <span className="ws-chip-label">Found</span>
-            <span className="ws-chip-val">{found.size}/{WORDS.length}</span>
-          </div>
-          <div className="ws-chip" style={{'--cc':'#4ade80'}}>
-            <span className="ws-chip-label">Time</span>
-            <span className="ws-chip-val">{fmt(elapsed)}</span>
-          </div>
+          <StatChip label="Found" value={`${found.size}/${WORDS.length}`} color="#a78bfa" />
+          <StatChip label="Time" value={fmt(elapsed)} color="#4ade80" />
         </div>
 
         {found.size===WORDS.length && (
@@ -143,9 +138,6 @@ const WS_STYLES=`
   .ws-orb-2{width:200px;height:200px;background:rgba(6,182,212,0.1);bottom:-40px;right:-40px;animation-delay:-4s;}
 
   .ws-header{position:relative;z-index:1;display:flex;gap:10px;animation:ws-in 0.4s ease;}
-  .ws-chip{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 18px;border-radius:14px;background:rgba(15,23,42,0.65);border:1px solid rgba(139,92,246,0.22);backdrop-filter:blur(10px);}
-  .ws-chip-label{font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:#64748b;}
-  .ws-chip-val{font-size:20px;font-weight:800;color:var(--cc);}
 
   .ws-win{position:relative;z-index:1;padding:10px 22px;border-radius:16px;background:rgba(74,222,128,0.15);border:1.5px solid rgba(74,222,128,0.35);font-size:14px;font-weight:700;color:#4ade80;animation:ws-win-in 0.4s ease;}
 

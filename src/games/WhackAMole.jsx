@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import StatChip from '../components/StatChip.jsx'
 
 export default function WhackAMole() {
   const [score, setScore]     = useState(0)
@@ -75,10 +76,10 @@ export default function WhackAMole() {
 
         {/* stats */}
         <div className="wam-stats">
-          <SC2 label="Score" value={score} color="#a78bfa" />
-          <SC2 label="Best"  value={best}  color="#fbbf24" />
-          <SC2 label="Time"  value={`${timeLeft}s`} color={timerColor} />
-          <SC2 label="Speed" value={`${Math.round(1000/speed*10)/10}/s`} color="#4ade80" />
+          <StatChip label="Score" value={score} color="#a78bfa" />
+          <StatChip label="Best"  value={best}  color="#fbbf24" />
+          <StatChip label="Time"  value={`${timeLeft}s`} color={timerColor} />
+          <StatChip label="Speed" value={`${Math.round(1000/speed*10)/10}/s`} color="#4ade80" />
         </div>
 
         {/* timer bar */}
@@ -118,14 +119,6 @@ export default function WhackAMole() {
   )
 }
 
-function SC2({ label, value, color }) {
-  return (
-    <div className="wam-chip" style={{ '--cc': color }}>
-      <span className="wam-chip-label">{label}</span>
-      <span className="wam-chip-val">{value}</span>
-    </div>
-  )
-}
 
 const WAM_STYLES = `
   @keyframes wam-orb { 0%,100%{transform:translate(0,0)} 40%{transform:translate(20px,-15px)} 70%{transform:translate(-12px,8px)} }
@@ -141,9 +134,6 @@ const WAM_STYLES = `
   .wam-orb-2 { width:200px;height:200px;background:rgba(139,92,246,0.1);bottom:-40px;right:-40px;animation-delay:-4s; }
 
   .wam-stats { position:relative;z-index:1;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;animation:wam-in 0.4s ease; }
-  .wam-chip { display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 14px;border-radius:14px;background:rgba(15,23,42,0.65);border:1px solid rgba(139,92,246,0.22);backdrop-filter:blur(10px); }
-  .wam-chip-label { font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:#64748b; }
-  .wam-chip-val { font-size:18px;font-weight:800;color:var(--cc); }
 
   .wam-timer { position:relative;z-index:1;width:100%;max-width:380px;height:6px;border-radius:6px;background:rgba(255,255,255,0.07); }
   .wam-timer-fill { height:100%;border-radius:6px;transition:width 1s linear, background 0.4s ease;box-shadow:0 0 8px currentColor; }

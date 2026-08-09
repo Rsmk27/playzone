@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import StatChip from '../components/StatChip.jsx'
 
 const ICONS = ['🚗','🚒','🏎️','🚑','✈️','🛥️','🚁','🏍️']
 
@@ -119,14 +120,6 @@ export default function MemoryCards() {
   )
 }
 
-function StatChip({ label, value, color }) {
-  return (
-    <div className="mc-chip" style={{ '--cc': color }}>
-      <span className="mc-chip-label">{label}</span>
-      <span className="mc-chip-val">{value}</span>
-    </div>
-  )
-}
 
 const MC_STYLES = `
   @keyframes mc-orb { 0%,100%{transform:translate(0,0)} 40%{transform:translate(20px,-15px)} 70%{transform:translate(-12px,8px)} }
@@ -141,9 +134,6 @@ const MC_STYLES = `
   .mc-orb-2 { width:200px;height:200px;background:rgba(6,182,212,0.10);bottom:-40px;right:-40px;animation-delay:-4s; }
 
   .mc-stats { position:relative;z-index:1;display:flex;gap:10px;animation:mc-slide-up 0.4s ease; }
-  .mc-chip { display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 14px;border-radius:14px;background:rgba(15,23,42,0.65);border:1px solid rgba(139,92,246,0.22);backdrop-filter:blur(10px); }
-  .mc-chip-label { font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:#64748b; }
-  .mc-chip-val { font-size:20px;font-weight:800;color:var(--cc); }
 
   .mc-prog-wrap { position:relative;z-index:1;width:100%;max-width:380px;height:6px;border-radius:6px;background:rgba(255,255,255,0.07); }
   .mc-prog-bar { height:100%;border-radius:6px;background:linear-gradient(90deg,#8b5cf6,#06b6d4);transition:width 0.4s ease;box-shadow:0 0 8px rgba(139,92,246,0.6); }

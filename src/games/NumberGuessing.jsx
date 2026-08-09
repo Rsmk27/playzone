@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 
 const MAX = 100
-const MAX_TRIES = 8
+const MAX_TRIES = 7
 
 // How "hot" is the guess? 0=cold, 1=burning
 const proximity = (guess, secret) => 1 - Math.abs(guess - secret) / MAX

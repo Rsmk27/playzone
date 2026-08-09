@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import StatChip from '../components/StatChip.jsx'
 
 const COLORS = ['#f87171','#fb923c','#fbbf24','#4ade80','#60a5fa','#a78bfa','#f472b6','#34d399']
 
@@ -60,9 +61,9 @@ export default function TowerOfHanoi() {
 
         {/* stats */}
         <div className="toh-stats">
-          <SC label="Moves"   value={moves}     color="#a78bfa"/>
-          <SC label="Min"     value={minMoves}  color="#4ade80"/>
-          <SC label="Efficiency" value={`${efficiency}%`} color={efficiency>=90?'#4ade80':efficiency>=60?'#fbbf24':'#f87171'}/>
+          <StatChip label="Moves"   value={moves}     color="#a78bfa"/>
+          <StatChip label="Min"     value={minMoves}  color="#4ade80"/>
+          <StatChip label="Efficiency" value={`${efficiency}%`} color={efficiency>=90?'#4ade80':efficiency>=60?'#fbbf24':'#f87171'}/>
         </div>
 
         {won && (
@@ -124,14 +125,6 @@ export default function TowerOfHanoi() {
   )
 }
 
-function SC({ label, value, color }) {
-  return (
-    <div className="toh-chip" style={{'--cc':color}}>
-      <span className="toh-chip-label">{label}</span>
-      <span className="toh-chip-val">{value}</span>
-    </div>
-  )
-}
 
 const TOH_STYLES=`
   @keyframes toh-orb{0%,100%{transform:translate(0,0)}40%{transform:translate(20px,-15px)}70%{transform:translate(-12px,8px)}}
@@ -145,9 +138,6 @@ const TOH_STYLES=`
   .toh-orb-2{width:200px;height:200px;background:rgba(6,182,212,0.1);bottom:-40px;right:-40px;animation-delay:-4s;}
 
   .toh-stats{position:relative;z-index:1;display:flex;gap:10px;}
-  .toh-chip{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 14px;border-radius:14px;background:rgba(15,23,42,0.65);border:1px solid rgba(139,92,246,0.22);backdrop-filter:blur(10px);}
-  .toh-chip-label{font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:#64748b;}
-  .toh-chip-val{font-size:18px;font-weight:800;color:var(--cc);}
 
   .toh-win{position:relative;z-index:1;padding:10px 22px;border-radius:16px;background:rgba(74,222,128,0.15);border:1.5px solid rgba(74,222,128,0.4);font-size:14px;font-weight:700;color:#4ade80;animation:toh-win 0.4s ease;}
 

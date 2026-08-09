@@ -1,12 +1,100 @@
 import ParticleBurst from '../components/ParticleBurst'
 import { useState, useEffect, useRef, useCallback } from 'react'
 
-import { OPTIONS, BEATS, RESULT_CONFIG } from './RockPaperScissorsComponents/config.js';
-import { RPS_STYLES } from './RockPaperScissorsComponents/styles.js';
-import { ChoiceCard } from './RockPaperScissorsComponents/ChoiceCard.jsx';
-import { Arena } from './RockPaperScissorsComponents/Arena.jsx';
-import { CountdownRipple } from './RockPaperScissorsComponents/CountdownRipple.jsx';
-import { ScoreBox } from './RockPaperScissorsComponents/ScoreBox.jsx';
+const OPTIONS = [
+  { id: 'Rock',     emoji: '✊', label: 'Rock',     color: '#f87171', glow: 'rgba(248,113,113,0.5)' },
+  { id: 'Paper',    emoji: '✋', label: 'Paper',    color: '#60a5fa', glow: 'rgba(96,165,250,0.5)'  },
+  { id: 'Scissors', emoji: '✌️', label: 'Scissors', color: '#4ade80', glow: 'rgba(74,222,128,0.5)' },
+]
+
+const OPTIONS_BY_ID = Object.fromEntries(OPTIONS.map(o => [o.id, o]))
+
+const BEATS = { Rock: 'Scissors', Paper: 'Rock', Scissors: 'Paper' }
+
+const RESULT_CONFIG = {
+  Player: { label: '🎉 You Win!',   gradient: 'linear-gradient(135deg, #4ade80, #06b6d4)', particleColor: '#4ade80' },
+  CPU:    { label: '💀 CPU Wins!',  gradient: 'linear-gradient(135deg, #f87171, #f59e0b)', particleColor: '#f87171' },
+  Draw:   { label: "🤝 It's a Draw!", gradient: 'linear-gradient(135deg, #8b5cf6, #06b6d4)', particleColor: '#a78bfa' },
+}
+
+
+// ── Choice card ─────────────────────────────────────────────────────────────
+function ChoiceCard({ opt, onClick, disabled }) {
+  const [pressed, setPressed] = useState(false)
+  const ref = useRef(null)
+
+  const handle = () => {
+    if (disabled) return
+    setPressed(true)
+    setTimeout(() => setPressed(false), 300)
+    onClick(ref.current?.getBoundingClientRect())
+  }
+
+  return (
+    <button
+      ref={ref}
+      className="rps-choice"
+      style={{
+        '--choice-color': opt.color,
+        '--choice-glow':  opt.glow,
+        transform: pressed ? 'scale(0.88) translateY(4px)' : '',
+      }}
+      onClick={handle}
+      disabled={disabled}
+      title={opt.label}
+    >
+      <span className="rps-choice-emoji">{opt.emoji}</span>
+      <span className="rps-choice-label">{opt.label}</span>
+    </button>
+  )
+}
+
+// ── Arena display ────────────────────────────────────────────────────────────
+function Arena({ result }) {
+  if (!result) return (
+    <div className="rps-arena rps-arena--idle">
+      <div className="rps-slot">
+        <span className="rps-slot-emoji rps-slot-idle">❓</span>
+        <span className="rps-slot-name">You</span>
+      </div>
+      <div className="rps-vs">VS</div>
+      <div className="rps-slot">
+        <span className="rps-slot-emoji rps-slot-idle">❓</span>
+        <span className="rps-slot-name">CPU</span>
+      </div>
+    </div>
+  )
+
+  const { player, cpu, winner } = result
+  const pOpt = OPTIONS_BY_ID[player]
+  const cOpt = OPTIONS_BY_ID[cpu]
+  const cfg  = RESULT_CONFIG[winner]
+
+  return (
+    <div className="rps-arena" style={{ '--result-gradient': cfg.gradient }}>
+      <div className={`rps-slot ${winner === 'Player' ? 'rps-slot--win' : winner === 'Draw' ? 'rps-slot--draw' : 'rps-slot--lose'}`}>
+        <span className="rps-slot-emoji rps-slot-bounce" style={{ '--slot-glow': pOpt.glow }}>{pOpt.emoji}</span>
+        <span className="rps-slot-name">You</span>
+      </div>
+      <div className="rps-vs" style={{ background: cfg.gradient, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+        {winner === 'Player' ? '🏆' : winner === 'CPU' ? '💀' : '🤝'}
+      </div>
+      <div className={`rps-slot ${winner === 'CPU' ? 'rps-slot--win' : winner === 'Draw' ? 'rps-slot--draw' : 'rps-slot--lose'}`}>
+        <span className="rps-slot-emoji rps-slot-bounce" style={{ '--slot-glow': cOpt.glow }}>{cOpt.emoji}</span>
+        <span className="rps-slot-name">CPU</span>
+      </div>
+    </div>
+  )
+}
+
+// ── Countdown ripple ─────────────────────────────────────────────────────────
+function CountdownRipple({ count }) {
+  return (
+    <div className="rps-countdown">
+      <span key={count} className="rps-countdown-num">{count}</span>
+    </div>
+  )
+}
 
 // ── Main component ───────────────────────────────────────────────────────────
 export default function RockPaperScissors() {

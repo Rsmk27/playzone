@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import StatChip from '../components/StatChip.jsx'
 
 const P1 = 1, P2 = 2
 
@@ -91,14 +92,14 @@ export default function Reversi() {
         <div className="rv-orb rv-orb-1"/><div className="rv-orb rv-orb-2"/>
 
         <div className="rv-header">
-          <SC label="◯ White" value={p1c} color="#f1f5f9"/>
+          <StatChip label="◯ White" value={p1c} color="#f1f5f9"/>
           <div className="rv-turn">
             {winner !== null
               ? <span className="rv-result">{winner===0?'🤝 Draw':winner===P1?'◯ White Wins':'● Black Wins'}</span>
               : <div className="rv-turn-ind" style={{background:turn===P1?'rgba(255,255,255,0.9)':'rgba(15,23,42,0.9)',border:`2px solid ${turn===P1?'#94a3b8':'#475569'}`}}/>
             }
           </div>
-          <SC label="● Black" value={p2c} color="#475569"/>
+          <StatChip label="● Black" value={p2c} color="#475569"/>
         </div>
 
         {/* score bar */}
@@ -149,10 +150,7 @@ const RV_STYLES=`
   .rv-orb-2{width:200px;height:200px;background:rgba(15,23,42,0.2);bottom:-40px;right:-40px;animation-delay:-4s;}
 
   .rv-header{position:relative;z-index:1;display:flex;align-items:center;gap:12px;width:100%;max-width:360px;}
-  .rv-chip{flex:1;display:flex;flex-direction:column;align-items:center;padding:8px;border-radius:14px;background:rgba(15,23,42,0.65);border:1px solid rgba(139,92,246,0.22);backdrop-filter:blur(10px);}
-  .rv-chip-label{font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:#64748b;}
-  .rv-chip-val{font-size:22px;font-weight:800;color:var(--cc);}
-  .rv-turn{flex:1;display:flex;justify-content:center;}
+        .rv-turn{flex:1;display:flex;justify-content:center;}
   .rv-turn-ind{width:34px;height:34px;border-radius:50%;transition:all 0.4s ease;}
   .rv-result{font-size:12px;font-weight:700;color:#a78bfa;text-align:center;}
 

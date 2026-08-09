@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import StatChip from '../components/StatChip.jsx'
 
 export default function CPSCounter() {
   const [clicks, setClicks]     = useState(0)
@@ -77,9 +78,9 @@ export default function CPSCounter() {
 
         {/* header stats */}
         <div className="cps-stats">
-          <SC label="Clicks" value={clicks} color="#a78bfa" />
-          <SC label="CPS"    value={cps.toFixed ? cps.toFixed(2) : cps} color={testing ? '#4ade80' : '#60a5fa'} />
-          <SC label="Best"   value={best.toFixed ? best.toFixed(2) : best} color="#fbbf24" />
+          <StatChip label="Clicks" value={clicks} color="#a78bfa" />
+          <StatChip label="CPS"    value={cps.toFixed ? cps.toFixed(2) : cps} color={testing ? '#4ade80' : '#60a5fa'} />
+          <StatChip label="Best"   value={best.toFixed ? best.toFixed(2) : best} color="#fbbf24" />
         </div>
 
         {/* circular zone */}
@@ -154,14 +155,6 @@ export default function CPSCounter() {
   )
 }
 
-function SC({ label, value, color }) {
-  return (
-    <div className="cps-chip" style={{ '--cc': color }}>
-      <span className="cps-chip-label">{label}</span>
-      <span className="cps-chip-val">{value}</span>
-    </div>
-  )
-}
 
 const CPSS_STYLES = `
   @keyframes cps-orb { 0%,100%{transform:translate(0,0)} 40%{transform:translate(20px,-15px)} 70%{transform:translate(-12px,8px)} }
@@ -176,9 +169,6 @@ const CPSS_STYLES = `
   .cps-orb-2 { width:200px;height:200px;background:rgba(6,182,212,0.1);bottom:-40px;right:-40px;animation-delay:-4s; }
 
   .cps-stats { position:relative;z-index:1;display:flex;gap:10px;animation:cps-in 0.4s ease; }
-  .cps-chip { display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 16px;border-radius:14px;background:rgba(15,23,42,0.65);border:1px solid rgba(139,92,246,0.22);backdrop-filter:blur(10px); }
-  .cps-chip-label { font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:#64748b; }
-  .cps-chip-val { font-size:22px;font-weight:800;color:var(--cc); }
 
   .cps-zone {
     position:relative;z-index:1;width:200px;height:200px;border-radius:50%;
