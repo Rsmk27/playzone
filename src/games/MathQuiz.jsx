@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import StatChip from '../components/StatChip.jsx'
 
 export default function MathQuiz() {
   const [score, setScore]     = useState(0)
@@ -68,10 +69,10 @@ export default function MathQuiz() {
 
         {/* stats */}
         <div className="mq-stats">
-          <SC label="Score"  value={score}  color="#4ade80" />
-          <SC label="Streak" value={streak} color="#fbbf24" badge={streak >= 3 ? '🔥' : null} />
-          <SC label="Best"   value={best}   color="#a78bfa" />
-          <SC label="Time"   value={fmt(time)} color="#60a5fa" />
+          <StatChip label="Score"  value={score}  color="#4ade80" />
+          <StatChip label="Streak" value={streak} color="#fbbf24" badge={streak >= 3 ? '🔥' : null} />
+          <StatChip label="Best"   value={best}   color="#a78bfa" />
+          <StatChip label="Time"   value={fmt(time)} color="#60a5fa" />
         </div>
 
         {/* question card */}
@@ -116,14 +117,6 @@ export default function MathQuiz() {
   )
 }
 
-function SC({ label, value, color, badge }) {
-  return (
-    <div className="mq-chip" style={{ '--cc': color }}>
-      <span className="mq-chip-label">{label}</span>
-      <span className="mq-chip-val">{badge && <span>{badge}</span>}{value}</span>
-    </div>
-  )
-}
 
 const MQ_STYLES = `
   @keyframes mq-orb { 0%,100%{transform:translate(0,0)} 40%{transform:translate(20px,-15px)} 70%{transform:translate(-12px,8px)} }
@@ -138,9 +131,6 @@ const MQ_STYLES = `
   .mq-orb-2 { width:200px;height:200px;background:rgba(251,191,36,0.1);bottom:-40px;right:-40px;animation-delay:-4s; }
 
   .mq-stats { position:relative;z-index:1;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;animation:mq-in 0.4s ease; }
-  .mq-chip { display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 14px;border-radius:14px;background:rgba(15,23,42,0.65);border:1px solid rgba(139,92,246,0.22);backdrop-filter:blur(10px); }
-  .mq-chip-label { font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:#64748b; }
-  .mq-chip-val { font-size:18px;font-weight:800;color:var(--cc);display:flex;align-items:center;gap:3px; }
 
   .mq-question {
     position:relative;z-index:1;

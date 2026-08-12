@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import StatChip from '../components/StatChip.jsx'
 
 // Pip positions for each face (row/col in a 3x3 grid, 0-indexed)
 const PIPS = {
@@ -134,14 +135,6 @@ export default function DiceRoller() {
   )
 }
 
-function StatChip({ label, value, color }) {
-  return (
-    <div className="dr-stat-chip" style={{ '--dc': color }}>
-      <span className="dr-stat-label">{label}</span>
-      <span className="dr-stat-val">{value}</span>
-    </div>
-  )
-}
 
 const DR_STYLES = `
   @keyframes dr-orb { 0%,100%{transform:translate(0,0)}40%{transform:translate(20px,-15px)}70%{transform:translate(-12px,8px)} }
@@ -178,14 +171,6 @@ const DR_STYLES = `
     position:relative;z-index:1;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;
     animation:dr-slide-up 0.4s ease;
   }
-  .dr-stat-chip {
-    display:flex;flex-direction:column;align-items:center;gap:2px;
-    padding:8px 12px;border-radius:12px;
-    background:rgba(15,23,42,0.65);border:1px solid rgba(139,92,246,0.2);
-    backdrop-filter:blur(10px);min-width:52px;
-  }
-  .dr-stat-label { font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:#64748b; }
-  .dr-stat-val   { font-size:18px;font-weight:800;color:var(--dc); }
 
   /* 3D die scene */
   .dr-scene {

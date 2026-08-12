@@ -62,11 +62,12 @@ export async function submitScore(name: string, score: number, clerkId: string) 
       createdAt: new Date()
     });
 
-    // Invalidate cache immediately on new score submission
-    cachedScores = null;
-    lastCacheTime = 0;
+    const rank = await Leaderboard.countDocuments({ score: { $gt: score } }) + 1;
 
-    return newScore._id.toString();
+    return {
+      id: newScore._id.toString(),
+      rank
+    };
   } catch (error) {
     console.error('Error submitting score:', error);
     throw error;

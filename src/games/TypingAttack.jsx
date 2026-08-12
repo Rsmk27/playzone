@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import StatChip from '../components/StatChip.jsx'
 
 const WORDS = [
   'JAVASCRIPT', 'PYTHON', 'REACT', 'VITE', 'CODING', 'PROGRAM', 'FUNCTION',
@@ -106,8 +107,8 @@ export default function TypingAttack() {
 
         {/* stats */}
         <div className="ta-stats">
-          <SC label="Score" value={score}  color="#a78bfa"/>
-          <SC label="Level" value={level}  color="#4ade80"/>
+          <StatChip label="Score" value={score}  color="#a78bfa"/>
+          <StatChip label="Level" value={level}  color="#4ade80"/>
           <div className="ta-lives">
             {Array(3).fill(null).map((_,i)=>(
               <span key={i} className={`ta-heart ${i<lives?'ta-heart--full':'ta-heart--empty'}`}>❤️</span>
@@ -180,10 +181,7 @@ const TA_STYLES=`
   .ta-orb-2{width:200px;height:200px;background:rgba(139,92,246,0.1);bottom:-40px;right:-40px;animation-delay:-4s;}
 
   .ta-stats{position:relative;z-index:1;display:flex;align-items:center;gap:10px;}
-  .ta-chip{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 14px;border-radius:14px;background:rgba(15,23,42,0.65);border:1px solid rgba(139,92,246,0.22);backdrop-filter:blur(10px);}
-  .ta-chip-label{font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:#64748b;}
-  .ta-chip-val{font-size:18px;font-weight:800;color:var(--cc);}
-  .ta-lives{display:flex;gap:4px;}
+        .ta-lives{display:flex;gap:4px;}
   .ta-heart{font-size:18px;transition:all 0.3s ease;}
   .ta-heart--empty{filter:grayscale(1);opacity:0.3;}
 
