@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import StatChip from '../components/StatChip.jsx'
 
 const randomColor = () => {
   const r = Math.floor(Math.random() * 256)
@@ -70,9 +71,9 @@ export default function ColorGuessing() {
 
         {/* Stats */}
         <div className="cg-stats">
-          <Chip label="Score"  value={score}  color="#a78bfa" />
-          <Chip label="Streak" value={streak} color="#fbbf24" />
-          <Chip label="Best"   value={best}   color="#4ade80" />
+          <StatChip label="Score"  value={score}  color="#a78bfa" />
+          <StatChip label="Streak" value={streak} color="#fbbf24" />
+          <StatChip label="Best"   value={best}   color="#4ade80" />
         </div>
 
         {/* color swatch */}
@@ -118,14 +119,6 @@ export default function ColorGuessing() {
   )
 }
 
-function Chip({ label, value, color }) {
-  return (
-    <div className="cg-chip" style={{ '--cc': color }}>
-      <span className="cg-chip-label">{label}</span>
-      <span className="cg-chip-val">{value}</span>
-    </div>
-  )
-}
 
 const CG_STYLES = `
   @keyframes cg-orb { 0%,100%{transform:translate(0,0)} 40%{transform:translate(20px,-15px)} 70%{transform:translate(-12px,8px)} }
@@ -140,9 +133,6 @@ const CG_STYLES = `
   .cg-orb-2 { width:200px;height:200px;background:rgba(6,182,212,0.12);bottom:-40px;right:-40px;animation-delay:-4s; }
 
   .cg-stats { position:relative;z-index:1;display:flex;gap:10px;animation:cg-slide-up 0.4s ease; }
-  .cg-chip { display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 16px;border-radius:14px;background:rgba(15,23,42,0.65);border:1px solid rgba(139,92,246,0.2);backdrop-filter:blur(10px); }
-  .cg-chip-label { font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:#64748b; }
-  .cg-chip-val { font-size:22px;font-weight:800;color:var(--cc); }
 
   .cg-swatch {
     position:relative;z-index:1;

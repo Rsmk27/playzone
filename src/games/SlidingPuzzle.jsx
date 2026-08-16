@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import StatChip from '../components/StatChip.jsx'
 
 export default function SlidingPuzzle() {
   const [tiles, setTiles]   = useState([])
@@ -53,8 +54,8 @@ export default function SlidingPuzzle() {
         <div className="sp-orb sp-orb-1" /><div className="sp-orb sp-orb-2" />
 
         <div className="sp-stats">
-          <SC label="Moves" value={moves}                   color="#a78bfa"/>
-          <SC label="Best"  value={best !== null ? best : '—'} color="#fbbf24"/>
+          <StatChip label="Moves" value={moves}                   color="#a78bfa"/>
+          <StatChip label="Best"  value={best !== null ? best : '—'} color="#fbbf24"/>
         </div>
 
         {solved && (
@@ -80,14 +81,6 @@ export default function SlidingPuzzle() {
   )
 }
 
-function SC({ label, value, color }) {
-  return (
-    <div className="sp-chip" style={{ '--cc': color }}>
-      <span className="sp-chip-label">{label}</span>
-      <span className="sp-chip-val">{value}</span>
-    </div>
-  )
-}
 
 const SP_STYLES = `
   @keyframes sp-orb { 0%,100%{transform:translate(0,0)} 40%{transform:translate(20px,-15px)} 70%{transform:translate(-12px,8px)} }
@@ -102,9 +95,6 @@ const SP_STYLES = `
   .sp-orb-2 { width:200px;height:200px;background:rgba(6,182,212,0.1);bottom:-40px;right:-40px;animation-delay:-4s; }
 
   .sp-stats { position:relative;z-index:1;display:flex;gap:12px;animation:sp-in 0.4s ease; }
-  .sp-chip { display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 18px;border-radius:14px;background:rgba(15,23,42,0.65);border:1px solid rgba(139,92,246,0.22);backdrop-filter:blur(10px); }
-  .sp-chip-label { font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:#64748b; }
-  .sp-chip-val { font-size:22px;font-weight:800;color:var(--cc); }
 
   .sp-win { position:relative;z-index:1;padding:12px 24px;border-radius:16px;background:rgba(74,222,128,0.15);border:1.5px solid rgba(74,222,128,0.4);font-size:14px;font-weight:700;color:#4ade80;animation:sp-win-in 0.4s cubic-bezier(0.34,1.2,0.64,1); }
 

@@ -11,6 +11,7 @@ vi.mock('../mongodb', () => ({
 vi.mock('../../models/Leaderboard', () => ({
   default: {
     create: vi.fn(),
+    countDocuments: vi.fn(),
   },
 }));
 
@@ -27,12 +28,13 @@ describe('submitScore', () => {
 
     // Mock the return value of create
     (Leaderboard.create as any).mockResolvedValue({ _id: { toString: () => 'new_id_123' } });
+    (Leaderboard.countDocuments as any).mockResolvedValue(4);
 
     // Act
     const result = await submitScore(longName, score, clerkId);
 
     // Assert
-    expect(result).toBe('new_id_123');
+    expect(result).toEqual({ id: 'new_id_123', rank: 5 });
     expect(connectToDatabase).toHaveBeenCalled();
     expect(Leaderboard.create).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -50,6 +52,7 @@ describe('submitScore', () => {
     const clerkId = 'user_123';
 
     (Leaderboard.create as any).mockResolvedValue({ _id: { toString: () => 'new_id_123' } });
+    (Leaderboard.countDocuments as any).mockResolvedValue(4);
 
     // Act
     await submitScore(nameWithSpaces, score, clerkId);
@@ -71,6 +74,7 @@ describe('submitScore', () => {
     const clerkId = 'user_123';
 
     (Leaderboard.create as any).mockResolvedValue({ _id: { toString: () => 'new_id_123' } });
+    (Leaderboard.countDocuments as any).mockResolvedValue(4);
 
     // Act
     await submitScore(shortName, score, clerkId);

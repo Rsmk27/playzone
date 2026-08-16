@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import StatChip from '../components/StatChip.jsx'
 
 const CELL_SZ = 20
 
@@ -157,8 +158,8 @@ export default function Snake() {
         <div className="snk-orb snk-orb-1"/><div className="snk-orb snk-orb-2"/>
 
         <div className="snk-stats">
-          <SC label="Score" value={displayScore} color="#4ade80"/>
-          <SC label="Best"  value={bestScore}    color="#fbbf24"/>
+          <StatChip label="Score" value={displayScore} color="#4ade80"/>
+          <StatChip label="Best"  value={bestScore}    color="#fbbf24"/>
           {phase === 'dead' && <div className="snk-badge-dead">💀 Game Over</div>}
         </div>
 
@@ -209,10 +210,7 @@ const SNK_STYLES=`
   .snk-orb-2{width:200px;height:200px;background:rgba(139,92,246,0.1);bottom:-40px;right:-40px;animation-delay:-4s;}
 
   .snk-stats{position:relative;z-index:1;display:flex;align-items:center;gap:10px;}
-  .snk-chip{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 16px;border-radius:14px;background:rgba(15,23,42,0.65);border:1px solid rgba(139,92,246,0.22);backdrop-filter:blur(10px);}
-  .snk-chip-label{font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:#64748b;}
-  .snk-chip-val{font-size:20px;font-weight:800;color:var(--cc);}
-  .snk-badge-dead{padding:6px 14px;border-radius:12px;background:rgba(248,113,113,0.15);border:1px solid rgba(248,113,113,0.3);color:#f87171;font-size:13px;font-weight:700;}
+        .snk-badge-dead{padding:6px 14px;border-radius:12px;background:rgba(248,113,113,0.15);border:1px solid rgba(248,113,113,0.3);color:#f87171;font-size:13px;font-weight:700;}
 
   .snk-canvas-wrap{position:relative;z-index:1;border-radius:16px;overflow:hidden;border:2px solid rgba(139,92,246,0.25);box-shadow:0 12px 40px rgba(0,0,0,0.5);}
   .snk-canvas{display:block;background:rgba(5,10,20,0.95);}

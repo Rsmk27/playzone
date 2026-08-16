@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import StatBox from '../components/StatBox'
 
 export default function ReactionTest() {
   const [phase, setPhase]    = useState('idle')   // idle | ready | go | result | tooEarly
@@ -72,10 +73,10 @@ export default function ReactionTest() {
 
         {/* stats bar */}
         <div className="rt-stats">
-          <StatBox label="Tries"   value={tries} color="#a78bfa" />
-          <StatBox label="Last"    value={reactionTime !== null ? `${reactionTime}ms` : '—'} color="#60a5fa" />
-          <StatBox label="Best"    value={best !== null ? `${best}ms` : '—'}    color="#4ade80" />
-          <StatBox label="Avg"     value={avg !== null ? `${avg}ms` : '—'}      color="#fbbf24" />
+          <StatBox prefix="rt-stat" label="Tries"   value={tries} color="#a78bfa" />
+          <StatBox prefix="rt-stat" label="Last"    value={reactionTime !== null ? `${reactionTime}ms` : '—'} color="#60a5fa" />
+          <StatBox prefix="rt-stat" label="Best"    value={best !== null ? `${best}ms` : '—'}    color="#4ade80" />
+          <StatBox prefix="rt-stat" label="Avg"     value={avg !== null ? `${avg}ms` : '—'}      color="#fbbf24" />
         </div>
 
         {/* rating badge */}
@@ -116,14 +117,6 @@ export default function ReactionTest() {
   )
 }
 
-function StatBox({ label, value, color }) {
-  return (
-    <div className="rt-stat" style={{ '--bc': color }}>
-      <span className="rt-stat-label">{label}</span>
-      <span className="rt-stat-val">{value}</span>
-    </div>
-  )
-}
 
 const RT_STYLES = `
   @keyframes rt-orb { 0%,100%{transform:translate(0,0)} 40%{transform:translate(20px,-15px)} 70%{transform:translate(-12px,8px)} }
