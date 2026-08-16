@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import StatChip from '../components/StatChip.jsx'
 
 export default function LightsOut() {
   const [grid, setGrid]   = useState(Array(5).fill().map(()=>Array(5).fill(false)))
@@ -51,9 +52,9 @@ export default function LightsOut() {
         <div className="lo-orb lo-orb-1" /><div className="lo-orb lo-orb-2" />
 
         <div className="lo-stats">
-          <SC label="Moves" value={moves} color="#fbbf24" />
-          <SC label="Lit"   value={litCount} color="#f87171" />
-          <SC label="Best"  value={best!==null?best:'—'} color="#4ade80" />
+          <StatChip label="Moves" value={moves} color="#fbbf24" />
+          <StatChip label="Lit"   value={litCount} color="#f87171" />
+          <StatChip label="Best"  value={best!==null?best:'—'} color="#4ade80" />
         </div>
 
         {won && (
@@ -84,14 +85,6 @@ export default function LightsOut() {
   )
 }
 
-function SC({ label, value, color }) {
-  return (
-    <div className="lo-chip" style={{ '--cc': color }}>
-      <span className="lo-chip-label">{label}</span>
-      <span className="lo-chip-val">{value}</span>
-    </div>
-  )
-}
 
 const LO_STYLES = `
   @keyframes lo-orb { 0%,100%{transform:translate(0,0)} 40%{transform:translate(20px,-15px)} 70%{transform:translate(-12px,8px)} }
@@ -106,9 +99,6 @@ const LO_STYLES = `
   .lo-orb-2 { width:200px;height:200px;background:rgba(139,92,246,0.1);bottom:-40px;right:-40px;animation-delay:-4s; }
 
   .lo-stats { position:relative;z-index:1;display:flex;gap:10px;animation:lo-in 0.4s ease; }
-  .lo-chip { display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 16px;border-radius:14px;background:rgba(15,23,42,0.65);border:1px solid rgba(139,92,246,0.22);backdrop-filter:blur(10px); }
-  .lo-chip-label { font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:#64748b; }
-  .lo-chip-val { font-size:22px;font-weight:800;color:var(--cc); }
 
   .lo-win { position:relative;z-index:1;padding:12px 24px;border-radius:16px;background:rgba(251,191,36,0.15);border:1.5px solid rgba(251,191,36,0.4);font-size:14px;font-weight:700;color:#fbbf24; }
 

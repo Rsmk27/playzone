@@ -43,7 +43,4 @@ export const GAMES = [
   { slug: 'math-quiz', title: 'Math Quiz', category: 'Extras', emoji: '➕' },
 ];
 
-export const GAMES_BY_SLUG = GAMES.reduce((acc, game) => {
-  acc[game.slug] = game;
-  return acc;
-}, {} as Record<string, typeof GAMES[0]>);
+export const GAMES_BY_SLUG = Object.fromEntries(GAMES.map(g => [g.slug, g]));
