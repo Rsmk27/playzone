@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { updateUser, deleteUser } from '../../../lib/actions/user.actions';
+import { updateUser, deleteUser, getUserByClerkId } from '../../../lib/actions/user.actions';
 import User from '../../../models/User';
 import * as mongodb from '../../../lib/mongodb';
 
@@ -12,6 +12,7 @@ vi.mock('../../../models/User', () => {
     default: {
       findOneAndUpdate: vi.fn(),
       findOneAndDelete: vi.fn(),
+      findOne: vi.fn(),
     },
   };
 });
@@ -106,5 +107,51 @@ describe('deleteUser', () => {
 
     expect(result).toEqual(mockUser);
     expect(User.findOneAndDelete).toHaveBeenCalledWith({ clerkId: 'test-id' });
+  });
+});
+
+describe('getUserByClerkId', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should successfully fetch and return a user', async () => {
+    const mockUser = {
+      _id: 'some-id',
+      clerkId: 'test-id',
+      username: 'Test User',
+    };
+    (User.findOne as any).mockResolvedValue(mockUser);
+
+    const result = await getUserByClerkId('test-id');
+
+    expect(result).toEqual(mockUser);
+    expect(mongodb.connectToDatabase).toHaveBeenCalled();
+    expect(User.findOne).toHaveBeenCalledWith({ clerkId: 'test-id' });
+  });
+
+  it('should return null if user is not found', async () => {
+    (User.findOne as any).mockResolvedValue(null);
+
+    const result = await getUserByClerkId('test-id');
+
+    expect(result).toBeNull();
+    expect(mongodb.connectToDatabase).toHaveBeenCalled();
+    expect(User.findOne).toHaveBeenCalledWith({ clerkId: 'test-id' });
+  });
+
+  it('should throw an error and log it if database query fails', async () => {
+    const error = new Error('Database fetch error');
+    (User.findOne as any).mockRejectedValue(error);
+
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    await expect(getUserByClerkId('test-id')).rejects.toThrow('Database fetch error');
+
+    expect(mongodb.connectToDatabase).toHaveBeenCalled();
+    expect(User.findOne).toHaveBeenCalledWith({ clerkId: 'test-id' });
+    expect(consoleSpy).toHaveBeenCalledWith('Error fetching user:', error);
+
+    consoleSpy.mockRestore();
   });
 });
