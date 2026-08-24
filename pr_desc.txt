@@ -1,0 +1,3 @@
+🎯 What: Replaced `Math.random()` with `window.crypto.getRandomValues()`.
+⚠️ Risk: Predictable randomness could allow users to predict dice rolls, compromising the fairness of the game.
+🛡️ Solution: Used a cryptographically secure random number generator via `window.crypto.getRandomValues`.

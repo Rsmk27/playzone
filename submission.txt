@@ -1,6 +1,0 @@
-Title: "🧪 [testing improvement] Added accuracy and WPM tests for TypingTest"
-
-Description:
-🎯 What: Added unit tests to `TypingTest` to cover accuracy and WPM calculation logic, which was previously untested.
-📊 Coverage: The tests now cover perfect typing accuracy and WPM calculations, reduced accuracy and WPM for incorrect typing, and completion state transitions.
-✨ Result: Ensured the accuracy and WPM logic behaves correctly through deterministic time and Math.random mocking.

@@ -19,6 +19,7 @@ vi.mock('../models/Leaderboard', () => {
     default: {
       find: vi.fn(),
       create: vi.fn(),
+      countDocuments: vi.fn(),
     },
   };
 });
@@ -44,6 +45,13 @@ describe('leaderboard.actions', () => {
           score: 90,
           userId: 'user2',
           createdAt: new Date('2023-01-02T00:00:00Z'),
+        },
+        {
+          _id: { toString: () => 'id3' },
+          name: 'Player 3',
+          score: 80,
+          userId: 'user3',
+          createdAt: '2023-01-03T00:00:00.000Z',
         },
       ];
 
@@ -78,6 +86,14 @@ describe('leaderboard.actions', () => {
           userId: 'user2',
           createdAt: '2023-01-02T00:00:00.000Z',
         },
+        {
+          id: 'id3',
+          rank: 3,
+          name: 'Player 3',
+          score: 80,
+          userId: 'user3',
+          createdAt: '2023-01-03T00:00:00.000Z',
+        },
       ]);
     });
 
@@ -89,6 +105,25 @@ describe('leaderboard.actions', () => {
 
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       await expect(fetchTopScores()).rejects.toThrow('Find failed');
+      expect(consoleSpy).toHaveBeenCalledWith('Error fetching top scores:', error);
+      consoleSpy.mockRestore();
+    });
+
+    it('throws error when data mapping fails', async () => {
+      const mockDocs = [
+        {
+          name: 'Player 1',
+          score: 100,
+          userId: 'user1',
+          createdAt: new Date('2023-01-01T00:00:00Z'),
+        },
+      ];
+
+      leanMock.mockResolvedValueOnce(mockDocs);
+      vi.mocked(Leaderboard.find).mockReturnValue({ sort: sortMock } as any);
+
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      await expect(fetchTopScores()).rejects.toThrow(TypeError);
       consoleSpy.mockRestore();
     });
 
@@ -98,6 +133,7 @@ describe('leaderboard.actions', () => {
 
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       await expect(fetchTopScores()).rejects.toThrow('DB Connection Failed');
+      expect(consoleSpy).toHaveBeenCalledWith('Error fetching top scores:', error);
       consoleSpy.mockRestore();
       expect(Leaderboard.find).not.toHaveBeenCalled();
     });
@@ -115,6 +151,7 @@ describe('leaderboard.actions', () => {
       };
 
       vi.mocked(Leaderboard.create).mockResolvedValueOnce(mockScore as any);
+      vi.mocked(Leaderboard.countDocuments).mockResolvedValueOnce(0 as any);
 
       const result = await submitScore('Player 1', 150, 'clerk_user_1');
 
@@ -126,7 +163,7 @@ describe('leaderboard.actions', () => {
         userId: 'clerk_user_1',
         createdAt: expect.any(Date),
       }));
-      expect(result).toBe('new_score_id');
+      expect(result).toEqual({ id: 'new_score_id', rank: 1 });
     });
 
     it('trims and truncates long names', async () => {
@@ -169,6 +206,7 @@ describe('leaderboard.actions', () => {
 
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       await expect(submitScore('Player', 100, 'clerk_id')).rejects.toThrow('DB Connection Failed');
+      expect(consoleSpy).toHaveBeenCalledWith('Error submitting score:', error);
       consoleSpy.mockRestore();
       expect(Leaderboard.create).not.toHaveBeenCalled();
     });
@@ -179,6 +217,7 @@ describe('leaderboard.actions', () => {
 
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       await expect(submitScore('Player', 100, 'clerk_id')).rejects.toThrow('Create failed');
+      expect(consoleSpy).toHaveBeenCalledWith('Error submitting score:', error);
       consoleSpy.mockRestore();
     });
   });
